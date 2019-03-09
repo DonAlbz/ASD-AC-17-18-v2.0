@@ -60,7 +60,7 @@ public class SpazioComportamentale {
             rimuoviVertice(statoDaTogliere);
         }
     }
-    
+
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
@@ -70,13 +70,14 @@ public class SpazioComportamentale {
             s.append(Parametri.TAB);
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
-            for (StatoReteAbstract statoArrivo : verticiAdiacenti.get(statoPartenza)) {                
+            for (StatoReteAbstract statoArrivo : verticiAdiacenti.get(statoPartenza)) {
                 s.append(Parametri.PARENTESI_A);
                 s.append(statoArrivo.getTransizionePrecedente());
                 s.append(Parametri.VIRGOLA);
                 s.append(Parametri.SPAZIO);
+                
                 s.append(Parametri.PARENTESI_A);
-                s.append(statoArrivo.getDescrizione());
+                s.append(statoArrivo.toString());
                 s.append(Parametri.PARENTESI_C);
                 s.append(Parametri.PARENTESI_C);
                 s.append(Parametri.TAB);

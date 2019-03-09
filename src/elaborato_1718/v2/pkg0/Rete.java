@@ -27,6 +27,7 @@ public class Rete {
     private static Evento[] link;
     private static int numeroStati;
     private static SpazioComportamentale spazioC;
+    private static LinkedList<StatoRete> stati;
     //private static Transizione transizioneAbilitata;
 
     public static void creaRete(String s, Evento[] _link, Evento[] _eventi) {
@@ -156,8 +157,10 @@ public class Rete {
         stampaCammini();
         ArrayList<Cammino> traiettorie = potatura();
         stampaTraiettorie(traiettorie);
+        inserisciVerticiSpazioComportamentale(traiettorie);
         inserisciLatiSpazioComportamentale(traiettorie);
         System.out.println(spazioC.toString());
+   
     }
 
     /**
@@ -169,7 +172,7 @@ public class Rete {
         Stack<StatoRete> pilaDiramazioni = new Stack<StatoRete>();//pila degli stati che hanno più di una transizione in uscita
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
-        LinkedList<StatoRete> stati = new LinkedList<>();
+        stati = new LinkedList<>();
         int numeroCammino = 0;
         numeroStati = 0;
 
@@ -184,7 +187,7 @@ public class Rete {
                 statoAttuale.setNumero(stati.size());
                 stati.add(statoAttuale);
                 camminoAttuale.add(statoAttuale);
-                spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
+                //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
 //                System.out.println(statoAttuale.toString());
                 setRete(statoAttuale);
                 if (statoAttuale.isAbilitato(automi)) {
@@ -260,7 +263,7 @@ public class Rete {
     }
 
     private static void stampaCammini() {
-        
+
         System.out.println(Parametri.CAMMINI_ETICHETTA);
         System.out.println();
         for (int i = 0; i < cammini.size(); i++) {
@@ -371,12 +374,39 @@ public class Rete {
             ArrayList<StatoRete> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
-                    StatoReteRidenominato statoPrecedente = new StatoReteRidenominato(statiTraiettoria.get(i - 1));
-                    StatoReteRidenominato statoCorrente = new StatoReteRidenominato(statiTraiettoria.get(i));
+                    int numeroStatoPrecedente;
+                    numeroStatoPrecedente=stati.indexOf(statiTraiettoria.get(i-1));
+                    StatoRete statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);
+                    statoPrecedenteTraiettoria.setNumero(numeroStatoPrecedente);
+                    StatoReteRidenominato statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
+                    
+                    int numeroStatoCorrente;
+                    numeroStatoCorrente=stati.indexOf(statiTraiettoria.get(i));
+                    StatoRete statoCorrenteTraiettoria = statiTraiettoria.get(i);
+                    statoCorrenteTraiettoria.setNumero(numeroStatoCorrente);
+                    StatoReteRidenominato statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
+                   
                     spazioC.aggiungiLato(statoPrecedente, statoCorrente);
                 }
             }
         }
+    }
+
+    /**Etichetta in maniera ordinata gli stati e li inserisce nello spazio comportamentale
+     *
+     * @param traiettorie
+     */
+    private static void inserisciVerticiSpazioComportamentale(ArrayList<Cammino> traiettorie) {
+        ArrayList<StatoRete> tuttiGliStatiDelleTraiettorie = new ArrayList<>();
+        for (Cammino traiettoria : traiettorie) {
+            tuttiGliStatiDelleTraiettorie.addAll(traiettoria.getCammino());
+        }
+        stati.retainAll(tuttiGliStatiDelleTraiettorie); //rimuove da stati tutti gli StatoRete che non sono contenuti nelle traiettorie
+        for (int i = 0; i < stati.size(); i++) {
+            stati.get(i).setNumero(i);
+            spazioC.aggiungiVertice(new StatoReteRidenominato(stati.get(i)));
+        }
+        
     }
 
     public void setEventi(Evento[] eventi) {
@@ -432,23 +462,23 @@ public class Rete {
             }
         }
 
-        // rimozione dallo spazio comportamentale degli stati potati
-        for (int i = 0; i < notTraiettorie.size(); i++) {
-            boolean appartieneATraiettoria = false;
-            do {
-                StatoRete ultimoStato = notTraiettorie.get(i).getUltimoStato();
-                notTraiettorie.get(i).rimuoviUltimoStato();
-                StatoRete penultimoStato = notTraiettorie.get(i).getUltimoStato();
-
-                spazioC.provaARimuovereVertice(new StatoReteRidenominato(ultimoStato));
-
-                for (int j = 0; j < traiettorie.size() && !appartieneATraiettoria; j++) {
-                    if (traiettorie.get(j).contains(penultimoStato)) {
-                        appartieneATraiettoria = true;
-                    }
-                }
-            } while (!appartieneATraiettoria);
-        }
+//        // rimozione dallo spazio comportamentale degli stati potati
+//        for (int i = 0; i < notTraiettorie.size(); i++) {
+//            boolean appartieneATraiettoria = false;
+//            do {
+//                StatoRete ultimoStato = notTraiettorie.get(i).getUltimoStato();
+//                notTraiettorie.get(i).rimuoviUltimoStato();
+//                StatoRete penultimoStato = notTraiettorie.get(i).getUltimoStato();
+//
+//                spazioC.provaARimuovereVertice(new StatoReteRidenominato(ultimoStato));
+//
+//                for (int j = 0; j < traiettorie.size() && !appartieneATraiettoria; j++) {
+//                    if (traiettorie.get(j).contains(penultimoStato)) {
+//                        appartieneATraiettoria = true;
+//                    }
+//                }
+//            } while (!appartieneATraiettoria);
+//        }
         return traiettorie;
     }
 
