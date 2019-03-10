@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  */
 public class SpazioComportamentale {
 
+    private StatoReteAbstract root;
     private Map<StatoReteAbstract, List<StatoReteAbstract>> verticiAdiacenti;
 
     public SpazioComportamentale() {
@@ -61,6 +62,29 @@ public class SpazioComportamentale {
         }
     }
 
+    public boolean isAbilitato(StatoRete statoAttuale) {
+        if (verticiAdiacenti.get(statoAttuale) == null) {//TODO: forse si può togliere, da provare
+            return false;
+        }
+        return verticiAdiacenti.get(statoAttuale).size() > 0;
+    }
+
+    public StatoReteAbstract getRoot() {
+        return root;
+    }
+
+    public void setRoot(StatoReteAbstract root) {
+        this.root = root;
+    }
+
+    public boolean contains(StatoReteAbstract stato) {
+        return verticiAdiacenti.containsKey(stato);
+    }
+
+    public List<StatoReteAbstract> getVerticiAdiacenti(StatoReteAbstract s) {
+        return verticiAdiacenti.get(s);
+    }
+
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
@@ -70,21 +94,31 @@ public class SpazioComportamentale {
             s.append(Parametri.TAB);
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
+            int i = 0;
             for (StatoReteAbstract statoArrivo : verticiAdiacenti.get(statoPartenza)) {
-                s.append(Parametri.PARENTESI_A);
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+
+                s.append(Parametri.PARENTESI_TONDA_A);
                 s.append(statoArrivo.getTransizionePrecedente());
                 s.append(Parametri.VIRGOLA);
                 s.append(Parametri.SPAZIO);
-                
-                s.append(Parametri.PARENTESI_A);
-                s.append(statoArrivo.toString());
-                s.append(Parametri.PARENTESI_C);
-                s.append(Parametri.PARENTESI_C);
-                s.append(Parametri.TAB);
+
+                s.append(Parametri.PARENTESI_TONDA_A);
+                s.append(Parametri.PARENTESI_QUADRA_A);
+                s.append(statoArrivo.getNumero());
+                s.append(Parametri.PARENTESI_QUADRA_C);
+                s.append(Parametri.VIRGOLA);
+                s.append(Parametri.SPAZIO);
+                s.append(statoArrivo.getDescrizione());
+                s.append(Parametri.PARENTESI_TONDA_C);
+                s.append(Parametri.PARENTESI_TONDA_C);
+                i++;
             }
             s.append(Parametri.A_CAPO);
         }
-
         return s.toString();
     }
 

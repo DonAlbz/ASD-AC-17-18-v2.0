@@ -16,6 +16,8 @@ public class Transizione {
     private int linkIn; //Link in ingresso
     private Evento eventoRichiesto; //evento richiesto sul link in ingresso
     private Evento[] linkOut; // eventi in uscita, la posizione di ciascun evento indica su quale link viene posizionato
+    private String[] rilevanza;
+    private String[] osservabilita;
     private Stato statoDestinazione;
     private String descrizione;
 
@@ -41,6 +43,13 @@ public class Transizione {
         this.linkIn = linkIn;
         this.eventoRichiesto = eventoRichiesto;
         this.linkOut = linkOut;
+    }
+    
+    public Transizione(String s, Stato destinazione, int linkIn,
+            Evento eventoRichiesto, Evento[] linkOut, String[] _rilevanza, String[] _osservabilita){
+        this(s, destinazione, linkIn, eventoRichiesto, linkOut);
+        rilevanza=_rilevanza;
+        osservabilita=_osservabilita;
     }
 
     boolean isAbilitato(Evento[] _link) {
@@ -81,7 +90,22 @@ public class Transizione {
     }
 
     public String toString() {
-        return descrizione;
+        StringBuilder s= new StringBuilder();
+        s.append(descrizione);
+//        s.append(" + ");
+//        if(rilevanza!=null){
+//            for(String e:rilevanza){
+//                s.append(e);
+//                s.append(" ");
+//            }        
+//        }
+//         if(osservabilita!=null){
+//             for(String e:osservabilita){
+//                s.append(e);
+//                s.append(" ");
+//            }        
+//         }        
+        return s.toString();
     }
 
     public int getLinkIn() {
@@ -102,6 +126,14 @@ public class Transizione {
 
     public String getDescrizione() {
         return descrizione;
+    }
+
+    public String[] getRilevanza() {
+        return rilevanza;
+    }
+
+    public String[] getOsservabilita() {
+        return osservabilita;
     }
     
     

@@ -5,10 +5,12 @@
  */
 package elaborato_1718.v2.pkg0;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -22,145 +24,39 @@ public class Rete {
 
     private static Vector<Automa> automi;
     private static Evento[] eventi;
-    private static Vector<Cammino> cammini;
+    private static List<Cammino> cammini;
+    private static List<Cammino> camminiDecorati;
     private static String descrizione;
     private static Evento[] link;
     private static int numeroStati;
     private static SpazioComportamentale spazioC;
     private static LinkedList<StatoRete> stati;
+    private static String[] etichettaOsservabilita;
+    private static String[] etichettaRilevanza;
     //private static Transizione transizioneAbilitata;
 
-    public static void creaRete(String s, Evento[] _link, Evento[] _eventi) {
+    public static void creaRete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
         descrizione = s;
         automi = new Vector<Automa>();
         eventi = _eventi;
         link = _link;
-        cammini = new Vector<Cammino>();
+        cammini = new ArrayList<Cammino>();
         spazioC = new SpazioComportamentale();
-    }
-
-    public static void start() {
-
-        Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
-        int numeroCammino = 0;
-        numeroStati = 0;
-        StatoRete statoRadice = creaStatoCorrente();
-        scatta(camminoAttuale, statoRadice, (Vector<Automa>) automi.clone(), link.clone());
-        stampaCammini();
-        potatura();
-
-    }
-
-    private static void scatta(Cammino camminoAttuale, StatoRete statoAttuale, Vector<Automa> _automi, Evento[] _link) {
-        boolean almenoUnAutomaAbilitato;
-        boolean automaAttualeAbilitato;
-
-        if (isNuovoStato(camminoAttuale, statoAttuale)) {//fintanto che si incontra un nuovo StatoRete non finale
-            numeroStati++;
-            ArrayList<Transizione>[] transizioneAbilitata = new ArrayList[_automi.size()];//Array di ArrayList, nella posizione i dell'array sono contenute le transizioni abilitate per l'automa i
-            Transizione transizioneEseguita;
-            almenoUnAutomaAbilitato = false;
-            automaAttualeAbilitato = false;
-            for (int i = 0; i < _automi.size() /*&& !scattato*/; i++) {//se nessun automa è già scattato, si itera su tutti gli automi
-                //setRete(statoAttuale);
-                automaAttualeAbilitato = _automi.get(i).isAbilitato(_link);//true se l'automa attuale ha uno stato con una transizione abilitata
-                almenoUnAutomaAbilitato = almenoUnAutomaAbilitato || automaAttualeAbilitato;//true se almeno uno tra gli automi è abilitato
-                transizioneAbilitata[i] = _automi.get(i).getTransizioneAbilitata();//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
-
-            }
-            if (almenoUnAutomaAbilitato) {
-                eseguiTransizioni(transizioneAbilitata.clone(), _automi, _link, statoAttuale, camminoAttuale);
-//                for (int i = 0; i < _automi.size(); i++) {
-//                    if (_automi.get(i).isAbilitato(_link)) {//se l'automa attuale è abilitato
-//                        if (transizioneAbilitata[i].size() == 1) {
-//                            //eseguiTransizione(statoAttuale, camminoAttuale, _link, _automi.get(i));
-//                            transizioneEseguita = _automi.get(i).scatta(_link);//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
-//                            statoAttuale.setTransizioneEseguita(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-//                            camminoAttuale.add(statoAttuale);//Lo StatoRete prima dello scatto viene aggiunto al cammino attuale                    
-//                            StatoRete statoDopoLoScatto = creaStatoCorrente(_automi, _link);
-//                            scatta(camminoAttuale, statoDopoLoScatto, _automi, _link);
-//                        }
-//                        if (transizioneAbilitata[i].size() > 1) {//Se lo StatoRete attuale ha più di una transizione abilitata
-//                            for (int j = 0; j < transizioneAbilitata[i].size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
-//                                //setRete(statoAttuale);
-//                                Transizione transizioneDaEseguire = transizioneAbilitata[i].get(j);
-//                                Cammino nuovoCamminoAttuale = new Cammino();//viene creato un nuovo cammino
-//                                nuovoCamminoAttuale.copiaCammino(camminoAttuale);
-//                                Vector<Automa> automiAttuali = copiaAutomi(_automi);
-//                                //vengono creati nuovi automi indipendenti da utilizzare su questo nuovo cammino, clonati da _automi
-//                                Evento[] linkAttuali = _link.clone();//vengono creati nuovi link indipendenti da utilizzare su questo nuovo cammino
-//                                StatoRete nuovoStatoAttuale;
-//                                nuovoStatoAttuale = creaStatoCorrente(automiAttuali, linkAttuali, statoAttuale.getNumero());//viene clonato un nuovo stato corrente
-//                                transizioneEseguita = automiAttuali.get(i).scatta(transizioneDaEseguire, linkAttuali);//viene fatta scattare la transizione da eseguire
-//                                nuovoStatoAttuale.setTransizioneEseguita(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-//                                nuovoCamminoAttuale.add(nuovoStatoAttuale);//Lo StatoRete attuale viene aggiunto al cammino attuale                    
-//                                StatoRete statoDopoLoScatto = creaStatoCorrente(automiAttuali, linkAttuali);//creazione dello stato corrente per la verifica nel while
-//                                scatta(nuovoCamminoAttuale, statoDopoLoScatto, automiAttuali, linkAttuali);
-//                            }
-//                        }
-//                    }
-//                }
-            } else {//se nessuno degli automi è abilitato allo scatto               
-                camminoAttuale.add(statoAttuale);//lo StatoRete attuale è uno stato finale
-                cammini.add(camminoAttuale);
-
-            }
-        } else {//è il caso del LOOP: lo stato corrente viene aggiunto al cammino (è uguale allo ad un altro stato del cammino)
-            camminoAttuale.add(statoAttuale);
-            cammini.add(camminoAttuale);
-        }
-    }
-
-    private static void eseguiTransizioni(ArrayList<Transizione>[] _transizioneAbilitata, Vector<Automa> _automi,
-            Evento[] _link, StatoRete statoAttuale, Cammino camminoAttuale) {
-        ArrayList<Transizione>[] transizioneAbilitata = _transizioneAbilitata;
-        Transizione transizioneEseguita;
-        int numeroTransizioni = 0;
-        for (ArrayList<Transizione> t : transizioneAbilitata) {
-            numeroTransizioni += t.size();
-        }
-        for (int i = 0; i < _automi.size(); i++) {
-            if (_automi.get(i).isAbilitato(_link)) {//se l'automa attuale è abilitato
-                if (numeroTransizioni == 1) {
-                    //eseguiTransizione(statoAttuale, camminoAttuale, _link, _automi.get(i));
-                    transizioneEseguita = _automi.get(i).scatta(_link);//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
-                    statoAttuale.setTransizioneEseguita(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-                    camminoAttuale.add(statoAttuale);//Lo StatoRete prima dello scatto viene aggiunto al cammino attuale                    
-                    StatoRete statoDopoLoScatto = creaStatoCorrente(_automi, _link);
-                    scatta(camminoAttuale, statoDopoLoScatto, _automi, _link);
-                }
-                if (numeroTransizioni > 1) {//Se lo StatoRete attuale ha più di una transizione abilitata
-                    for (int j = 0; j < transizioneAbilitata[i].size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
-                        //setRete(statoAttuale);
-                        Transizione transizioneDaEseguire = transizioneAbilitata[i].get(j);
-                        Cammino nuovoCamminoAttuale = new Cammino();//viene creato un nuovo cammino
-                        nuovoCamminoAttuale.copiaCammino(camminoAttuale);
-                        Vector<Automa> automiAttuali = copiaAutomi(_automi);
-                        //vengono creati nuovi automi indipendenti da utilizzare su questo nuovo cammino, clonati da _automi
-                        Evento[] linkAttuali = _link.clone();//vengono creati nuovi link indipendenti da utilizzare su questo nuovo cammino
-                        StatoRete nuovoStatoAttuale;
-                        nuovoStatoAttuale = creaStatoCorrente(automiAttuali, linkAttuali, statoAttuale.getNumero());//viene clonato un nuovo stato corrente
-                        transizioneEseguita = automiAttuali.get(i).scatta(transizioneDaEseguire, linkAttuali);//viene fatta scattare la transizione da eseguire
-                        nuovoStatoAttuale.setTransizioneEseguita(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-                        nuovoCamminoAttuale.add(nuovoStatoAttuale);//Lo StatoRete attuale viene aggiunto al cammino attuale                    
-                        StatoRete statoDopoLoScatto = creaStatoCorrente(automiAttuali, linkAttuali);//creazione dello stato corrente per la verifica nel while
-                        scatta(nuovoCamminoAttuale, statoDopoLoScatto, automiAttuali, linkAttuali);
-                    }
-                }
-            }
-        }
-
+        etichettaOsservabilita = osservabilita;
+        etichettaRilevanza = rilevanza;
     }
 
     public static void start2() {
         scatta2();
-        stampaCammini();
+        stampaCammini(cammini);
         ArrayList<Cammino> traiettorie = potatura();
         stampaTraiettorie(traiettorie);
         inserisciVerticiSpazioComportamentale(traiettorie);
         inserisciLatiSpazioComportamentale(traiettorie);
+        creaSpazioComportamentaleDecorato(spazioC);
+        stampaCammini(camminiDecorati);
         System.out.println(spazioC.toString());
-   
+
     }
 
     /**
@@ -173,18 +69,18 @@ public class Rete {
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         stati = new LinkedList<>();
-        int numeroCammino = 0;
+
         numeroStati = 0;
 
         StatoRete statoRadice = creaStatoCorrente();
         pilaStato.push(statoRadice);
-        // pilaCammino.push(camminoAttuale);
+
         while (!pilaStato.isEmpty()) {
             StatoRete statoAttuale = pilaStato.pop();
-//            Cammino camminoTest=pilaCammino.pop();
+//            
 
             if (!stati.contains(statoAttuale)) {//se è uno stato nuovo
-                statoAttuale.setNumero(stati.size());
+                //statoAttuale.setNumero(stati.size());
                 stati.add(statoAttuale);
                 camminoAttuale.add(statoAttuale);
                 //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
@@ -232,7 +128,7 @@ public class Rete {
 
                     for (StatoRete s : statiDopoLoScatto) {
                         pilaStato.push(s);
-//                        spazioC.aggiungiLato(statoAttuale, s);
+//                       
                     }
                 } else {
                     //stato senza transizioni abilitate
@@ -245,12 +141,10 @@ public class Rete {
                     }
                 }
             } else {
-                //TODO: loop nuovoCammino;
                 Cammino nuovoCammino = new Cammino();
                 statoAttuale.setNumero(stati.indexOf(statoAttuale));
-                StatoRete statoPrecedente = camminoAttuale.getUltimoStato();
-                camminoAttuale.add(statoAttuale);
-//                spazioC.aggiungiLato(statoPrecedente, statoAttuale);
+                StatoRete statoPrecedente = (StatoRete) camminoAttuale.getUltimoStato();
+                camminoAttuale.add(statoAttuale);//                
                 nuovoCammino.copiaCammino(camminoAttuale);
                 cammini.add(nuovoCammino);
                 if (!pilaDiramazioni.isEmpty()) {
@@ -262,27 +156,17 @@ public class Rete {
 
     }
 
-    private static void stampaCammini() {
+    private static void stampaCammini(List<Cammino> daStampare) {
 
         System.out.println(Parametri.CAMMINI_ETICHETTA);
         System.out.println();
-        for (int i = 0; i < cammini.size(); i++) {
+        for (int i = 0; i < daStampare.size(); i++) {
             int numeroCammino = i + 1;
             System.out.println("numero cammino: " + numeroCammino);
             System.out.println();
-            System.out.println(cammini.get(i).toString());
+            System.out.println(daStampare.get(i).toString());
             System.out.println();
         }
-    }
-
-    private static void eseguiTransizione(StatoRete s, Cammino c, Evento[] _link, Automa a) {
-        Transizione transizioneEseguita = a.scatta(_link);//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
-        s.setTransizioneEseguita(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-        c.add(s);//Lo StatoRete prima dello scatto viene aggiunto al cammino attuale    
-    }
-
-    private static Cammino scattaR(Cammino camminoAttuale) {
-        return null;
     }
 
     public static void addAutoma(Automa a) {
@@ -305,35 +189,12 @@ public class Rete {
         return new StatoRete(_link.clone(), statoAutomi, numeroStati);
     }
 
-    private static StatoRete creaStatoCorrente(Vector<Automa> _automi, Evento[] _link, int nStato) {
-        Stato[] statoAutomi = new Stato[_automi.size()];
-        for (int i = 0; i < statoAutomi.length; i++) {
-            statoAutomi[i] = _automi.get(i).getStatoCorrente();
-        }
-        return new StatoRete(_link.clone(), statoAutomi, nStato);
-    }
-
-    /*private static void addStatoAlCammino(int numeroCammino, StatoRete statoRete) {
-        cammini.get(numeroCammino).add(statoRete);
-    }*/
-    private static boolean isNuovoStato(Cammino camminoAttuale, StatoRete statoRete) {
-        return !camminoAttuale.contains(statoRete);
-    }
-
-    private static void inizializza() {
-        cammini.add(new Cammino());
-        impostaStatiIniziali();
-    }
-
     private static void impostaStatiIniziali() {
         Arrays.fill(link, null); // svuota l'array link
 
         for (Automa automa : automi) {
             automa.setStatoIniziale(link);
         }
-
-        //addStatoAlCammino(numeroCammino, statoRete);
-        //       System.out.println(statoRete.getDescrizione());
     }
 
     private static Cammino creaNuovoCammino() {
@@ -369,44 +230,66 @@ public class Rete {
         return daRitornare;
     }
 
+    /**
+     * Inserisce i lati (o archi) dello spazio comportamentale
+     *
+     * @param traiettorie
+     */
     private static void inserisciLatiSpazioComportamentale(ArrayList<Cammino> traiettorie) {
         for (Cammino traiettoria : traiettorie) {
-            ArrayList<StatoRete> statiTraiettoria = traiettoria.getCammino();
+            ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
                     int numeroStatoPrecedente;
-                    numeroStatoPrecedente=stati.indexOf(statiTraiettoria.get(i-1));
-                    StatoRete statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);
+                    numeroStatoPrecedente = stati.indexOf(statiTraiettoria.get(i - 1));
+                    StatoRete statoPrecedenteTraiettoria = (StatoRete) statiTraiettoria.get(i - 1);
                     statoPrecedenteTraiettoria.setNumero(numeroStatoPrecedente);
                     StatoReteRidenominato statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
-                    
+
                     int numeroStatoCorrente;
-                    numeroStatoCorrente=stati.indexOf(statiTraiettoria.get(i));
-                    StatoRete statoCorrenteTraiettoria = statiTraiettoria.get(i);
+                    numeroStatoCorrente = stati.indexOf(statiTraiettoria.get(i));
+                    StatoRete statoCorrenteTraiettoria = (StatoRete) statiTraiettoria.get(i);
                     statoCorrenteTraiettoria.setNumero(numeroStatoCorrente);
                     StatoReteRidenominato statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
-                   
+
                     spazioC.aggiungiLato(statoPrecedente, statoCorrente);
                 }
             }
         }
     }
 
-    /**Etichetta in maniera ordinata gli stati e li inserisce nello spazio comportamentale
+    /**
+     * Etichetta in maniera ordinata gli stati e li inserisce nello spazio
+     * comportamentale
      *
      * @param traiettorie
      */
     private static void inserisciVerticiSpazioComportamentale(ArrayList<Cammino> traiettorie) {
-        ArrayList<StatoRete> tuttiGliStatiDelleTraiettorie = new ArrayList<>();
+        ArrayList<StatoReteAbstract> tuttiGliStatiDelleTraiettorie = new ArrayList<>();
         for (Cammino traiettoria : traiettorie) {
             tuttiGliStatiDelleTraiettorie.addAll(traiettoria.getCammino());
         }
         stati.retainAll(tuttiGliStatiDelleTraiettorie); //rimuove da stati tutti gli StatoRete che non sono contenuti nelle traiettorie
-        for (int i = 0; i < stati.size(); i++) {
+        stati.get(0).setNumero(0);
+        StatoReteRidenominato root = new StatoReteRidenominato(stati.get(0));
+
+        spazioC.aggiungiVertice(root);
+        spazioC.setRoot(root);
+        for (int i = 1; i < stati.size(); i++) {
             stati.get(i).setNumero(i);
             spazioC.aggiungiVertice(new StatoReteRidenominato(stati.get(i)));
         }
-        
+
+    }
+
+    private static List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
+        List<String> daRitornare = decorazioneAggiornata;
+        for (String s : asList) {
+            if (!daRitornare.contains(s)) {
+                daRitornare.add(s);
+            }
+        }
+        return daRitornare;
     }
 
     public void setEventi(Evento[] eventi) {
@@ -419,6 +302,14 @@ public class Rete {
 
     public static void setLink(int i, Evento evento) {
         link[i] = evento;
+    }
+
+    public static String[] getEtichettaOsservabilita() {
+        return etichettaOsservabilita;
+    }
+
+    public static String[] getEtichettaRilevanza() {
+        return etichettaRilevanza;
     }
 
     /**
@@ -453,7 +344,7 @@ public class Rete {
         }
         for (int j = 0; j < traiettorie.size(); j++) {
             for (int i = 0; i < notTraiettorie.size(); i++) {
-                if (traiettorie.get(j).contains(notTraiettorie.get(i).getUltimoStato())) {
+                if (traiettorie.get(j).contains((StatoRete) notTraiettorie.get(i).getUltimoStato())) {
                     notTraiettorie.get(i).setIsTraiettoria(true);
                     traiettorie.add(notTraiettorie.get(i));
                     notTraiettorie.remove(i);
@@ -461,25 +352,92 @@ public class Rete {
                 }
             }
         }
-
-//        // rimozione dallo spazio comportamentale degli stati potati
-//        for (int i = 0; i < notTraiettorie.size(); i++) {
-//            boolean appartieneATraiettoria = false;
-//            do {
-//                StatoRete ultimoStato = notTraiettorie.get(i).getUltimoStato();
-//                notTraiettorie.get(i).rimuoviUltimoStato();
-//                StatoRete penultimoStato = notTraiettorie.get(i).getUltimoStato();
-//
-//                spazioC.provaARimuovereVertice(new StatoReteRidenominato(ultimoStato));
-//
-//                for (int j = 0; j < traiettorie.size() && !appartieneATraiettoria; j++) {
-//                    if (traiettorie.get(j).contains(penultimoStato)) {
-//                        appartieneATraiettoria = true;
-//                    }
-//                }
-//            } while (!appartieneATraiettoria);
-//        }
         return traiettorie;
+    }
+
+    private static SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
+        camminiDecorati = new ArrayList();
+        SpazioComportamentale spazioComportamentale = _spazioComportamentale;
+        SpazioComportamentale spazioComportamentaleDecorato = new SpazioComportamentale();
+        LinkedList<StatoReteDecorato> statiDecorati = new LinkedList<>();;
+        Stack<StatoReteDecorato> pilaStato = new Stack<>();//pila dei nuovi stati
+        Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
+        //Stack<Cammino> pilaCammino = new Stack<>();
+        Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
+        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot());
+//        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
+//        spazioComportamentaleDecorato.setRoot(rootDecorata);
+        ArrayList<String> decorazione = new ArrayList<>();
+
+        pilaStato.push(root);
+
+        while (!pilaStato.isEmpty()) {
+            StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
+            StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
+            statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
+
+            if (!spazioComportamentaleDecorato.contains(statoAttualeDecorato)) {//se è uno stato nuovo
+                spazioComportamentaleDecorato.aggiungiVertice(statoAttualeDecorato);
+                //statoAttuale.setNumero(stati.size());
+//                statiDecorati.add(statoAttualeDecorato);
+                camminoAttuale.add(statoAttualeDecorato);
+                //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
+//                System.out.println(statoAttuale.toString());
+//                setRete(statoAttuale);
+                List<StatoReteAbstract> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
+                if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
+                    ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
+                    List<String> decorazioneAggiornata;
+
+                    if (verticiAdiacenti.size() == 1) {
+                        decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                        StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
+                        if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
+                            decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
+                        }
+                        statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
+
+                    } else {
+                        for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
+                            decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+//                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
+//                                transizioneEseguita = automi.get(i).scatta(transizioneDaEseguire, link);//viene fatta scattare la transizione da eseguire
+//                                copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
+                            StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(j);
+                            if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
+                                decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
+                            }
+                            statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
+                            pilaDiramazioni.add(statoAttualeDecorato);
+                        }
+                        pilaDiramazioni.pop();
+                    }
+
+                    for (StatoReteDecorato s : statiSuccessivi) {
+                        pilaStato.push(s);//                       
+                    }
+                } else {
+                    //stato senza transizioni abilitate
+                    Cammino nuovoCammino = new Cammino();
+                    nuovoCammino.copiaCammino(camminoAttuale);
+                    camminiDecorati.add(nuovoCammino);
+                    if (!pilaDiramazioni.isEmpty()) {
+                        camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+                    }
+                }
+            } else {
+                Cammino nuovoCammino = new Cammino();
+                camminoAttuale.add(statoAttualeDecorato);//                
+                nuovoCammino.copiaCammino(camminoAttuale);
+                camminiDecorati.add(nuovoCammino);
+                if (!pilaDiramazioni.isEmpty()) {
+                    camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+                }
+
+            }
+        }
+
+        return null;
     }
 
     private static void stampaTraiettorie(ArrayList<Cammino> traiettorie) {

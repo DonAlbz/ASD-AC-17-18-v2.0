@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Cammino {
 
-    private ArrayList<StatoRete> cammino;
+    private ArrayList<StatoReteAbstract> cammino;
     private boolean isTraiettoria;
 
     public Cammino() {
@@ -32,7 +32,7 @@ public class Cammino {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        for (StatoRete stato : cammino) {
+        for (StatoReteAbstract stato : cammino) {
             if (stato.getTransizionePrecedente() != null) {
                 s.append(stato.getTransizionePrecedente().toString());
                 s.append(Parametri.A_CAPO);
@@ -66,13 +66,13 @@ public class Cammino {
     }*/
 
     void copiaCammino(Cammino camminoAttuale) {
-        ArrayList<StatoRete> vecchioCammino = camminoAttuale.getCammino();
+        ArrayList<StatoReteAbstract> vecchioCammino = camminoAttuale.getCammino();
         for (int i = 0; i < vecchioCammino.size(); i++) {//copia tutti gli elementi
             this.cammino.add(vecchioCammino.get(i));
         }
     }
 
-    public StatoRete getUltimoStato() {
+    public StatoReteAbstract getUltimoStato() {
         return this.cammino.get(this.cammino.size() - 1);
     }
     
@@ -80,7 +80,7 @@ public class Cammino {
         this.cammino.remove(cammino.size()-1);
     }
 
-    public ArrayList<StatoRete> getCammino() {
+    public ArrayList<StatoReteAbstract> getCammino() {
         return cammino;
     }
 
