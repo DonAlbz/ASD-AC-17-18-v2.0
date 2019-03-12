@@ -12,6 +12,7 @@ package elaborato_1718.v2.pkg0;
 public class Parametri {
 
     public final static String EVENTO_NULLO = "\u0190";
+    public final static String INSIEME_VUOTO ="\u00D8";
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
@@ -21,6 +22,8 @@ public class Parametri {
     public final static String PARENTESI_TONDA_C = ")";
     public final static String PARENTESI_QUADRA_A = "[";
     public final static String PARENTESI_QUADRA_C = "]";
+    public final static String PARENTESI_GRAFFA_A = "{";
+    public final static String PARENTESI_GRAFFA_C = "}";
     public final static String SPAZIO = " ";
     public final static String VIRGOLA = ",";
     public final static String FRECCIA = "-->";

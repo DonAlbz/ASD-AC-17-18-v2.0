@@ -50,7 +50,7 @@ public abstract class StatoReteAbstract {
     public String toString(){
         StringBuilder s = new StringBuilder();
         s.append('[');
-        s.append(numero);
+        s.append(getNumeroToString());
         s.append(']');
         s.append('\t');
         s.append(descrizione);
@@ -59,7 +59,9 @@ public abstract class StatoReteAbstract {
         
     }
     
-    
+    public String getNumeroToString(){
+        return Integer.toString(numero);
+    }
 
     public Evento[] getLink() {
         return link;

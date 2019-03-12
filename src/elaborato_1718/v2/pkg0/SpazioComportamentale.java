@@ -25,7 +25,7 @@ public class SpazioComportamentale {
     }
 
     void aggiungiVertice(StatoReteAbstract vertice) {
-        verticiAdiacenti.putIfAbsent(new StatoReteRidenominato(vertice), new ArrayList<>());
+        verticiAdiacenti.putIfAbsent(vertice, new ArrayList<>());
     }
 
     public void rimuoviVertice(StatoReteAbstract statoDaRimuovere) {

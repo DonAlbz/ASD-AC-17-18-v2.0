@@ -37,14 +37,48 @@ public class StatoReteDecorato extends StatoRete {
             setTransizionePrecedente(stato.getTransizionePrecedente());
         }
         decorazione = _decorazione;
-        java.util.Collections.sort(decorazione);
+        if (decorazione != null) {
+            java.util.Collections.sort(decorazione);
+        }
     }
 
     public StatoReteDecorato(StatoReteAbstract root) {
         super(root);
         decorazione = null;
     }
+    
+    public StatoReteDecorato(StatoReteDecorato statoReteDecorato) {
+        super(statoReteDecorato);
+        decorazione = statoReteDecorato.getDecorazione();
+    }
 
+    public String getNumeroToString() {
+        StringBuilder s = new StringBuilder();
+        s.append(getNumero());
+        s.append(Parametri.SPAZIO);
+        s.append(Parametri.PARENTESI_GRAFFA_A);
+        if (decorazione == null) {
+            s.append(Parametri.INSIEME_VUOTO);
+        } else {
+            for (int i = 0; i < decorazione.size(); i++) {
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+                s.append(decorazione.get(i));
+            }
+        }
+        s.append(Parametri.PARENTESI_GRAFFA_C);
+        return s.toString();
+
+    }
+
+//    public String toString() {
+//        StringBuilder s = new StringBuilder();
+//        s.append(super.toString());
+//
+//        return s.toString();
+//    }
     /**
      * Override del metodo per poter implementare il metodo contains() in un
      * arrayList di cammini
@@ -65,7 +99,17 @@ public class StatoReteDecorato extends StatoRete {
         }
         StatoReteDecorato stato2 = (StatoReteDecorato) o;
 
-        if (getNumero() == stato2.getNumero() && decorazione.equals(stato2.getDecorazione())) {            
+        if (decorazione == null ^ stato2.getDecorazione() == null) { //^ e' l'operatore logico XOR
+            return false;
+        }
+        if (decorazione == null && stato2.getDecorazione() == null) {
+            if (getNumero() == stato2.getNumero()) {
+                return true;
+            }
+            return false;
+        }
+
+        if (getNumero() == stato2.getNumero() && decorazione.equals(stato2.getDecorazione())) {
             return true;
         }
         return false;

@@ -50,13 +50,15 @@ public class Rete {
         scatta2();
         stampaCammini(cammini);
         ArrayList<Cammino> traiettorie = potatura();
+        traiettorie = ridenominazione(traiettorie);
         stampaTraiettorie(traiettorie);
         inserisciVerticiSpazioComportamentale(traiettorie);
-        inserisciLatiSpazioComportamentale(traiettorie);
-        creaSpazioComportamentaleDecorato(spazioC);
-        stampaCammini(camminiDecorati);
+        inserisciLatiSpazioComportamentale(spazioC, traiettorie);
         System.out.println(spazioC.toString());
-
+        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
+        stampaCammini(camminiDecorati);
+        System.out.println(spazioComportamentaleDecorato);
+        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
     }
 
     /**
@@ -235,24 +237,33 @@ public class Rete {
      *
      * @param traiettorie
      */
-    private static void inserisciLatiSpazioComportamentale(ArrayList<Cammino> traiettorie) {
+    private static void inserisciLatiSpazioComportamentale(SpazioComportamentale spazioComportamentale, List<Cammino> traiettorie) {
         for (Cammino traiettoria : traiettorie) {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
-                    int numeroStatoPrecedente;
-                    numeroStatoPrecedente = stati.indexOf(statiTraiettoria.get(i - 1));
-                    StatoRete statoPrecedenteTraiettoria = (StatoRete) statiTraiettoria.get(i - 1);
-                    statoPrecedenteTraiettoria.setNumero(numeroStatoPrecedente);
-                    StatoReteRidenominato statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
+                    
+                    StatoReteAbstract statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);                    
+                    StatoReteAbstract statoPrecedente = null;
+                    if (statoPrecedenteTraiettoria.getClass()==StatoRete.class) {
+                        statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
+                    }
+                    if (statoPrecedenteTraiettoria.getClass()==StatoReteDecorato.class) {
+                        statoPrecedente = new StatoReteDecorato(statoPrecedenteTraiettoria);
+                    }
 
-                    int numeroStatoCorrente;
-                    numeroStatoCorrente = stati.indexOf(statiTraiettoria.get(i));
-                    StatoRete statoCorrenteTraiettoria = (StatoRete) statiTraiettoria.get(i);
-                    statoCorrenteTraiettoria.setNumero(numeroStatoCorrente);
-                    StatoReteRidenominato statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
+                   
+                    StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);                   
+                    StatoReteAbstract statoCorrente = null;
+                    if (statoCorrenteTraiettoria.getClass()== StatoRete.class) {
+                        statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
+                    }
+                    if (statoCorrenteTraiettoria.getClass()==StatoReteDecorato.class) {
+                        statoCorrente = new StatoReteDecorato(statoCorrenteTraiettoria);
+                        statoCorrente.setTransizionePrecedente(statoCorrente.getTransizionePrecedente());
+                    }
 
-                    spazioC.aggiungiLato(statoPrecedente, statoCorrente);
+                    spazioComportamentale.aggiungiLato(statoPrecedente, statoCorrente);
                 }
             }
         }
@@ -283,10 +294,18 @@ public class Rete {
     }
 
     private static List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
-        List<String> daRitornare = decorazioneAggiornata;
-        for (String s : asList) {
-            if (!daRitornare.contains(s)) {
-                daRitornare.add(s);
+        List<String> daRitornare = new ArrayList<>();
+        if (decorazioneAggiornata != null) {
+            daRitornare.addAll(decorazioneAggiornata);
+        }
+        if (asList != null) {
+            if (daRitornare == null) {
+                return asList;
+            }
+            for (String s : asList) {
+                if (!daRitornare.contains(s)) {
+                    daRitornare.add(s);
+                }
             }
         }
         return daRitornare;
@@ -355,6 +374,19 @@ public class Rete {
         return traiettorie;
     }
 
+    private static ArrayList<Cammino> ridenominazione(ArrayList<Cammino> traiettorie) {
+        for (Cammino traiettoria : traiettorie) {
+            ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
+            for (int i = 0; i < statiTraiettoria.size(); i++) {
+                int numeroStato;
+                numeroStato = stati.indexOf(statiTraiettoria.get(i));
+                StatoReteAbstract statoTraiettoria = statiTraiettoria.get(i);
+                statoTraiettoria.setNumero(numeroStato);
+            }
+        }
+        return traiettorie;
+    }
+
     private static SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
         camminiDecorati = new ArrayList();
         SpazioComportamentale spazioComportamentale = _spazioComportamentale;
@@ -375,6 +407,7 @@ public class Rete {
             StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
             StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
             statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
+            decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
 
             if (!spazioComportamentaleDecorato.contains(statoAttualeDecorato)) {//se è uno stato nuovo
                 spazioComportamentaleDecorato.aggiungiVertice(statoAttualeDecorato);
@@ -387,10 +420,12 @@ public class Rete {
                 List<StatoReteAbstract> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
                 if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
                     ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
-                    List<String> decorazioneAggiornata;
+                    List<String> decorazioneAggiornata = null;
 
                     if (verticiAdiacenti.size() == 1) {
-                        decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                        if (decorazione != null) {
+                            decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                        }
                         StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
                         if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
                             decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
@@ -399,7 +434,11 @@ public class Rete {
 
                     } else {
                         for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
-                            decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                            if (decorazione != null) {
+                                decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                            } else {
+                                decorazioneAggiornata = null;
+                            }
 //                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
 //                                transizioneEseguita = automi.get(i).scatta(transizioneDaEseguire, link);//viene fatta scattare la transizione da eseguire
 //                                copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
@@ -437,7 +476,7 @@ public class Rete {
             }
         }
 
-        return null;
+        return spazioComportamentaleDecorato;
     }
 
     private static void stampaTraiettorie(ArrayList<Cammino> traiettorie) {
