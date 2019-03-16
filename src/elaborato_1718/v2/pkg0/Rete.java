@@ -5,16 +5,14 @@
  */
 package elaborato_1718.v2.pkg0;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+
 import java.util.Stack;
-import java.util.Vector;
+
 
 /**
  *
@@ -22,7 +20,7 @@ import java.util.Vector;
  */
 public class Rete {
 
-    private static Vector<Automa> automi;
+    private static List<Automa> automi;
     private static Evento[] eventi;
     private static List<Cammino> cammini;
     private static List<Cammino> camminiDecorati;
@@ -35,13 +33,17 @@ public class Rete {
     private static String[] etichettaRilevanza;
     //private static Transizione transizioneAbilitata;
 
-    public static void creaRete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
+    public static void creaRete(String s, Evento[] _link, Evento[] _eventi) {
         descrizione = s;
-        automi = new Vector<Automa>();
+        automi = new ArrayList<Automa>();
         eventi = _eventi;
         link = _link;
         cammini = new ArrayList<Cammino>();
         spazioC = new SpazioComportamentale();
+    }
+
+    public static void creaRete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
+        creaRete(s, _link, _eventi);
         etichettaOsservabilita = osservabilita;
         etichettaRilevanza = rilevanza;
     }
@@ -55,10 +57,10 @@ public class Rete {
         inserisciVerticiSpazioComportamentale(traiettorie);
         inserisciLatiSpazioComportamentale(spazioC, traiettorie);
         System.out.println(spazioC.toString());
-        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
-        stampaCammini(camminiDecorati);
-        System.out.println(spazioComportamentaleDecorato);
-        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+//        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
+//        stampaCammini(camminiDecorati);
+//        System.out.println(spazioComportamentaleDecorato);
+//        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
     }
 
     /**
@@ -171,10 +173,6 @@ public class Rete {
         }
     }
 
-    public static void addAutoma(Automa a) {
-        automi.add(a);
-    }
-
     private static StatoRete creaStatoCorrente() {
         Stato[] statoAutomi = new Stato[automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
@@ -183,7 +181,7 @@ public class Rete {
         return new StatoRete(link.clone(), statoAutomi, numeroStati);
     }
 
-    private static StatoRete creaStatoCorrente(Vector<Automa> _automi, Evento[] _link) {
+    private static StatoRete creaStatoCorrente(List<Automa> _automi, Evento[] _link) {
         Stato[] statoAutomi = new Stato[_automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
             statoAutomi[i] = _automi.get(i).getStatoCorrente();
@@ -224,8 +222,8 @@ public class Rete {
      * @param _automi
      * @return
      */
-    private static Vector<Automa> copiaAutomi(Vector<Automa> _automi) {
-        Vector<Automa> daRitornare = new Vector<>();
+    private static List<Automa> copiaAutomi(List<Automa> _automi) {
+        List<Automa> daRitornare = new ArrayList<>();
         for (int i = 0; i < _automi.size(); i++) {
             daRitornare.add(_automi.get(i).copia());
         }
@@ -242,23 +240,22 @@ public class Rete {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
-                    
-                    StatoReteAbstract statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);                    
+
+                    StatoReteAbstract statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);
                     StatoReteAbstract statoPrecedente = null;
-                    if (statoPrecedenteTraiettoria.getClass()==StatoRete.class) {
+                    if (statoPrecedenteTraiettoria.getClass() == StatoRete.class) {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
-                    if (statoPrecedenteTraiettoria.getClass()==StatoReteDecorato.class) {
+                    if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
                         statoPrecedente = new StatoReteDecorato(statoPrecedenteTraiettoria);
                     }
 
-                   
-                    StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);                   
+                    StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
                     StatoReteAbstract statoCorrente = null;
-                    if (statoCorrenteTraiettoria.getClass()== StatoRete.class) {
+                    if (statoCorrenteTraiettoria.getClass() == StatoRete.class) {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
                     }
-                    if (statoCorrenteTraiettoria.getClass()==StatoReteDecorato.class) {
+                    if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {
                         statoCorrente = new StatoReteDecorato(statoCorrenteTraiettoria);
                         statoCorrente.setTransizionePrecedente(statoCorrente.getTransizionePrecedente());
                     }
@@ -309,26 +306,6 @@ public class Rete {
             }
         }
         return daRitornare;
-    }
-
-    public void setEventi(Evento[] eventi) {
-        this.eventi = eventi;
-    }
-
-    public static Evento getLink(int i) {
-        return link[i];
-    }
-
-    public static void setLink(int i, Evento evento) {
-        link[i] = evento;
-    }
-
-    public static String[] getEtichettaOsservabilita() {
-        return etichettaOsservabilita;
-    }
-
-    public static String[] getEtichettaRilevanza() {
-        return etichettaRilevanza;
     }
 
     /**
@@ -493,4 +470,41 @@ public class Rete {
         }
     }
 
+    public static Evento getEvento(String nomeEvento) {
+        Evento evento = null;
+        for (int i = 0; i < eventi.length; i++) {
+            if (eventi[i].getDescrizione().equalsIgnoreCase(nomeEvento)) {
+                evento = eventi[i];
+            }
+        }
+        return evento;
+    }
+
+    public static void addAutoma(Automa a) {
+        automi.add(a);
+    }
+
+    public void setEventi(Evento[] eventi) {
+        this.eventi = eventi;
+    }
+
+    public static Evento getLink(int i) {
+        return link[i];
+    }
+
+    public static void setLink(int i, Evento evento) {
+        link[i] = evento;
+    }
+
+    public static String[] getEtichettaOsservabilita() {
+        return etichettaOsservabilita;
+    }
+
+    public static String[] getEtichettaRilevanza() {
+        return etichettaRilevanza;
+    }
+
+    public static List<Automa> getAutomi() {
+        return automi;
+    }
 }

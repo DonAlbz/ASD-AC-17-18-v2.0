@@ -12,7 +12,12 @@ package elaborato_1718.v2.pkg0;
 public class Parametri {
 
     public final static String EVENTO_NULLO = "\u0190";
-    public final static String INSIEME_VUOTO ="\u00D8";
+    public final static String INSIEME_VUOTO = "\u00D8";
+    public final static String SEPARATORE = "-----------------------";
+    public final static String NULL = "null";
+    public final static String INIZIALIZZAZIONE_RETE_1 = " -------------------------- ";
+    public final static String INIZIALIZZAZIONE_RETE_2 = "|   INIZIALIZZAZIONE RETE   |";
+
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";

@@ -6,8 +6,9 @@
 package elaborato_1718.v2.pkg0;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
+
 
 /**
  *
@@ -34,7 +35,7 @@ public class StatoRete extends StatoReteAbstract {
         return transizioneEseguita;
     }
 
-    public boolean isAbilitato(Vector<Automa> automi){
+    public boolean isAbilitato(List<Automa> automi){
         for(int i=0;i<automi.size();i++){
             if (automi.get(i).isAbilitato(this.getLink())){
                 return true;

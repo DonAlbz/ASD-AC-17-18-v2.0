@@ -24,8 +24,21 @@ public class Main {
         }
         
         */
+       long tempoInizio = System.currentTimeMillis();
+       long tempoFine;
         Import.primoScenario();
+        Import.caricaReteDaFile();
+        
         Rete.start2();
+        tempoFine=System.currentTimeMillis();
+        long differenza = tempoFine - tempoInizio;
+        System.out.println("Tempo impiegato:");
+        System.out.print(differenza);
+        System.out.print("ms");
+        System.out.println();
+       
+        
+        
        // Rete.test();
     }
     
