@@ -13,7 +13,6 @@ import java.util.List;
 
 import java.util.Stack;
 
-
 /**
  *
  * @author Alb
@@ -57,10 +56,11 @@ public class Rete {
         inserisciVerticiSpazioComportamentale(traiettorie);
         inserisciLatiSpazioComportamentale(spazioC, traiettorie);
         System.out.println(spazioC.toString());
-//        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
-//        stampaCammini(camminiDecorati);
-//        System.out.println(spazioComportamentaleDecorato);
-//        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
+        stampaCammini(camminiDecorati);
+        System.out.println(spazioComportamentaleDecorato.toString());
+        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+        System.out.println(spazioComportamentaleDecorato);
     }
 
     /**
@@ -247,7 +247,7 @@ public class Rete {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
                     if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
-                        statoPrecedente = new StatoReteDecorato(statoPrecedenteTraiettoria);
+                        statoPrecedente = new StatoReteDecorato((StatoReteDecorato) statoPrecedenteTraiettoria);
                     }
 
                     StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
@@ -256,8 +256,8 @@ public class Rete {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
                     }
                     if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {
-                        statoCorrente = new StatoReteDecorato(statoCorrenteTraiettoria);
-                        statoCorrente.setTransizionePrecedente(statoCorrente.getTransizionePrecedente());
+                        statoCorrente = new StatoReteDecorato((StatoReteDecorato) statoCorrenteTraiettoria);
+                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
 
                     spazioComportamentale.aggiungiLato(statoPrecedente, statoCorrente);
@@ -285,7 +285,7 @@ public class Rete {
         spazioC.setRoot(root);
         for (int i = 1; i < stati.size(); i++) {
             stati.get(i).setNumero(i);
-            spazioC.aggiungiVertice(new StatoReteRidenominato(stati.get(i)));
+            spazioC.aggiungiVertice(new StatoReteRidenominato(stati.get(i), null));
         }
 
     }
@@ -373,7 +373,9 @@ public class Rete {
         Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
-        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot());
+        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot(), null);
+        root.setTransizionePrecedente(null);
+        spazioComportamentaleDecorato.setRoot(root);
 //        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
 //        spazioComportamentaleDecorato.setRoot(rootDecorata);
         ArrayList<String> decorazione = new ArrayList<>();
@@ -387,7 +389,9 @@ public class Rete {
             decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
 
             if (!spazioComportamentaleDecorato.contains(statoAttualeDecorato)) {//se è uno stato nuovo
-                spazioComportamentaleDecorato.aggiungiVertice(statoAttualeDecorato);
+                StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
+                verticeDaInserire.setTransizionePrecedente(null);
+                spazioComportamentaleDecorato.aggiungiVertice(verticeDaInserire);
                 //statoAttuale.setNumero(stati.size());
 //                statiDecorati.add(statoAttualeDecorato);
                 camminoAttuale.add(statoAttualeDecorato);

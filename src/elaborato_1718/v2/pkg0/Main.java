@@ -27,7 +27,7 @@ public class Main {
        long tempoInizio = System.currentTimeMillis();
        long tempoFine;
         Import.primoScenario();
-        Import.caricaReteDaFile();
+//        Import.caricaReteDaFile();
         
         Rete.start2();
         tempoFine=System.currentTimeMillis();

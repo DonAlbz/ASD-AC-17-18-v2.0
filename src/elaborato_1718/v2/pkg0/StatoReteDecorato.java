@@ -42,10 +42,7 @@ public class StatoReteDecorato extends StatoRete {
         }
     }
 
-    public StatoReteDecorato(StatoReteAbstract root) {
-        super(root);
-        decorazione = null;
-    }
+    
     
     public StatoReteDecorato(StatoReteDecorato statoReteDecorato) {
         super(statoReteDecorato);
@@ -125,4 +122,10 @@ public class StatoReteDecorato extends StatoRete {
         return decorazione;
     }
 
+    public void setDecorazione(List<String> decorazione) {
+        this.decorazione = decorazione;
+    }
+
+    
+    
 }

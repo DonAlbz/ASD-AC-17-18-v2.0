@@ -63,7 +63,7 @@ public class Import {
             // aggiunta dell'automa
             Automa automa = new Automa(automa_str);
             Rete.addAutoma(automa);
-            System.out.println("Automa: " + automa.getDescrizione());
+//            System.out.println("Automa: " + automa.getDescrizione());
             
             // aggiunta degli stati di automa
             ArrayList<String> statiAutoma = getStatiDaAutoma(automa, file);
@@ -71,11 +71,11 @@ public class Import {
             for (String stato_str : statiAutoma) {
                 Stato stato = new Stato(stato_str);
                 automa.addStato(stato);
-                System.out.println("Stato " + i + " : " + stato.getDescrizione());
+//                System.out.println("Stato " + i + " : " + stato.getDescrizione());
                 i++;
             }
             
-            System.out.println("");
+//            System.out.println("");
         }
 
         // Ciclo inizializzazione delle transizioni
@@ -83,29 +83,29 @@ public class Import {
             for (Stato stato : automa.getStati()) {
                 ArrayList<String> transizioniUscenti = getStatiDiPartenza(stato, automa, file);
                 for(String transizione : transizioniUscenti){
-                    System.out.println("Automa " + automa.getDescrizione() + " - dallo stato " + stato.getDescrizione() + " la transazione uscente è: " + transizioniUscenti.get(0));
+//                    System.out.println("Automa " + automa.getDescrizione() + " - dallo stato " + stato.getDescrizione() + " la transazione uscente è: " + transizioniUscenti.get(0));
                     String nomeTransizione = transizione;
                     String nomeStatoDestinazione = getStatoDestinazioneDiTransizione(automa, transizione, file);
-                    System.out.println("Lo stato di destinazione è: " + nomeStatoDestinazione);
+//                    System.out.println("Lo stato di destinazione è: " + nomeStatoDestinazione);
                     Stato statoDestinazione = automa.getStato(nomeStatoDestinazione);
                     int posizioneLinkIn = getLinkInDiTransizione(automa, transizione, linkString, file);
-                    System.out.println("Posizione link in: " + posizioneLinkIn);
+//                    System.out.println("Posizione link in: " + posizioneLinkIn);
                     int indiceEventoRichiesto = getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file);
                     if (indiceEventoRichiesto == -1) {
-                        System.out.println("Nessun evento richiesto");
+//                        System.out.println("Nessun evento richiesto");
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(eventiString, eventiInUscitaString);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, null, eventiInUscita);
                         stato.addTransazione(transizioneDaInserire);
                     } else {
                         Evento eventoRichiesto = eventi[getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file)];
-                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
+//                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(eventiString, eventiInUscitaString);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, eventoRichiesto, eventiInUscita);
                         stato.addTransazione(transizioneDaInserire);
                     }
-                    System.out.println("");
+//                    System.out.println("");
                 }
             }
         }

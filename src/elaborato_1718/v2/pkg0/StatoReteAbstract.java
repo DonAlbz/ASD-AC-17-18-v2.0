@@ -19,17 +19,16 @@ public abstract class StatoReteAbstract {
     private String descrizione;
     private Transizione transizionePrecedente;
 
-    public StatoReteAbstract (Evento[] link, Stato[] stati, int _numero) {
+    public StatoReteAbstract(Evento[] link, Stato[] stati, int _numero) {
         this.link = link;
         this.stati = stati;
         this.numero = _numero;
         this.descrizione = creaDescrizione();
     }
 
-    
     public String creaDescrizione() {
         StringBuilder s = new StringBuilder();
-        
+
         for (int i = 0; i < stati.length; i++) {
             s.append(stati[i].toString());
             s.append(" ");
@@ -44,22 +43,29 @@ public abstract class StatoReteAbstract {
         }
         return s.toString().trim();
     }
-    
-    
-    
-    public String toString(){
+
+    public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append('[');
+        if (transizionePrecedente != null) {
+            s.append(transizionePrecedente);
+            s.append(Parametri.VIRGOLA);
+            s.append(Parametri.SPAZIO);
+        }
+        s.append(Parametri.PARENTESI_QUADRA_A);
         s.append(getNumeroToString());
-        s.append(']');
-        s.append('\t');
+        s.append(Parametri.PARENTESI_QUADRA_C);
+        s.append(Parametri.TAB);
+        if (s.length() < 9) // serve per intabellare lo spazio decorato se ha uno stato iniziale più lungo di 9 caratteri
+        {
+            s.append(Parametri.TAB);
+        }
         s.append(descrizione);
         s.toString();
         return s.toString();
-        
+
     }
-    
-    public String getNumeroToString(){
+
+    public String getNumeroToString() {
         return Integer.toString(numero);
     }
 
@@ -73,9 +79,10 @@ public abstract class StatoReteAbstract {
 
     public String getDescrizione() {
         return descrizione;
-    }    
+    }
 
-    /**Controllo se e' uno stato finale, quindi se ha i link vuoti
+    /**
+     * Controllo se e' uno stato finale, quindi se ha i link vuoti
      *
      * @return
      */
@@ -95,12 +102,12 @@ public abstract class StatoReteAbstract {
     public void setNumero(int numero) {
         this.numero = numero;
     }
-    
+
     public Transizione getTransizionePrecedente() {
         return transizionePrecedente;
     }
 
     public void setTransizionePrecedente(Transizione transizionePrecedente) {
         this.transizionePrecedente = transizionePrecedente;
-    }    
+    }
 }

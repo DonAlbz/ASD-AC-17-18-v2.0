@@ -37,6 +37,10 @@ public class SpazioComportamentale {
     }
 
     public void aggiungiLato(StatoReteAbstract partenza, StatoReteAbstract arrivo) {
+        if(partenza.getClass() == StatoReteDecorato.class && arrivo.getClass() == StatoReteDecorato.class){
+            partenza =(StatoReteDecorato)partenza;
+            arrivo=(StatoReteDecorato)arrivo;
+        }
         ArrayList<StatoReteAbstract> listaDiAdiacenza;
         listaDiAdiacenza = (ArrayList<StatoReteAbstract>) verticiAdiacenti.get(partenza);
         if (!listaDiAdiacenza.contains(arrivo)) {
@@ -86,12 +90,15 @@ public class SpazioComportamentale {
     }
 
     public String toString() {
+        boolean isDecorato = false;
+        if(root.getClass()==StatoReteDecorato.class)
+            isDecorato=true;
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
         s.append(Parametri.A_CAPO);
         for (StatoReteAbstract statoPartenza : verticiAdiacenti.keySet()) {
-            s.append(statoPartenza);
-            s.append(Parametri.TAB);
+            s.append(statoPartenza.toString());
+            s.append(Parametri.TAB);           
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
             int i = 0;
@@ -100,20 +107,23 @@ public class SpazioComportamentale {
                     s.append(Parametri.VIRGOLA);
                     s.append(Parametri.SPAZIO);
                 }
-
+                if(isDecorato)
+                    statoArrivo = (StatoReteDecorato)statoArrivo;
                 s.append(Parametri.PARENTESI_TONDA_A);
-                s.append(statoArrivo.getTransizionePrecedente());
-                s.append(Parametri.VIRGOLA);
-                s.append(Parametri.SPAZIO);
-
-                s.append(Parametri.PARENTESI_TONDA_A);
-                s.append(Parametri.PARENTESI_QUADRA_A);
-                s.append(statoArrivo.getNumero());
-                s.append(Parametri.PARENTESI_QUADRA_C);
-                s.append(Parametri.VIRGOLA);
-                s.append(Parametri.SPAZIO);
-                s.append(statoArrivo.getDescrizione());
-                s.append(Parametri.PARENTESI_TONDA_C);
+                    s.append(statoArrivo.toString());
+//                s.append(statoArrivo.getTransizionePrecedente());
+//                s.append(Parametri.VIRGOLA);
+//                s.append(Parametri.SPAZIO);
+//
+//                s.append(Parametri.PARENTESI_TONDA_A);
+//                s.append(Parametri.PARENTESI_QUADRA_A);
+//                    
+//                s.append(statoArrivo.getNumero());
+//                s.append(Parametri.PARENTESI_QUADRA_C);
+//                s.append(Parametri.VIRGOLA);
+//                s.append(Parametri.SPAZIO);
+//                s.append(statoArrivo.getDescrizione());
+//                s.append(Parametri.PARENTESI_TONDA_C);
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
             }
