@@ -16,8 +16,8 @@ public class Transizione {
     private int linkIn; //Link in ingresso
     private Evento eventoRichiesto; //evento richiesto sul link in ingresso
     private Evento[] linkOut; // eventi in uscita, la posizione di ciascun evento indica su quale link viene posizionato
-    private String[] rilevanza;
-    private String[] osservabilita;
+    private String rilevanza;
+    private String osservabilita;
     private Stato statoDestinazione;
     private String descrizione;
 
@@ -46,7 +46,7 @@ public class Transizione {
     }
     
     public Transizione(String s, Stato destinazione, int linkIn,
-            Evento eventoRichiesto, Evento[] linkOut, String[] _rilevanza, String[] _osservabilita){
+            Evento eventoRichiesto, Evento[] linkOut, String _rilevanza, String _osservabilita){
         this(s, destinazione, linkIn, eventoRichiesto, linkOut);
         rilevanza=_rilevanza;
         osservabilita=_osservabilita;
@@ -128,11 +128,11 @@ public class Transizione {
         return descrizione;
     }
 
-    public String[] getRilevanza() {
+    public String getRilevanza() {
         return rilevanza;
     }
 
-    public String[] getOsservabilita() {
+    public String getOsservabilita() {
         return osservabilita;
     }
     

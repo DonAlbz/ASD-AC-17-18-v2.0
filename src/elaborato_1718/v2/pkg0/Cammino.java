@@ -33,10 +33,10 @@ public class Cammino {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (StatoReteAbstract stato : cammino) {
-            if (stato.getTransizionePrecedente() != null) {
-                s.append(stato.getTransizionePrecedente().toString());
-                s.append(Parametri.A_CAPO);
-            }
+//            if (stato.getTransizionePrecedente() != null) {
+//                s.append(stato.getTransizionePrecedente().toString());
+//                s.append(Parametri.A_CAPO);
+//            }
             s.append(stato.toString());
             s.append(Parametri.A_CAPO);
         }

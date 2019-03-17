@@ -133,16 +133,16 @@ public class Import {
         List<Evento> eventiOut = new ArrayList<>();
 
         Evento[] eventoOut = {null, e3};
-        String[] osservabilitaT2a = new String[1];
-        String[] rilevanzaT2a = null;
-        osservabilitaT2a[0] = Rete.getEtichettaOsservabilita()[0];
+        String osservabilitaT2a;
+        String rilevanzaT2a = null;
+        osservabilitaT2a = Rete.getEtichettaOsservabilita()[0];
         Transizione t2a = new Transizione("t2a", s21, 0, e2, eventoOut, rilevanzaT2a, osservabilitaT2a);
         s20.addTransazione(t2a);
 
         Evento[] eventot2b = {null, e3};
-        String[] osservabilitaT2b = null;
-        String[] rilevanzaT2b = new String[1];
-        rilevanzaT2b[0] = Rete.getEtichettaRilevanza()[0];
+        String osservabilitaT2b = null;
+        String rilevanzaT2b;
+        rilevanzaT2b = Rete.getEtichettaRilevanza()[0];
         Transizione t2b = new Transizione("t2b", s20, -1, null, eventot2b, rilevanzaT2b, osservabilitaT2b);
         s21.addTransazione(t2b);
 
@@ -157,16 +157,16 @@ public class Import {
         Stato s31 = new Stato("31");
 
         Evento[] eventit3a = {e2, null};
-        String[] osservabilitaT3a = new String[1];
-        String[] rilevanzaT3a = null;
-        osservabilitaT3a[0] = Rete.getEtichettaOsservabilita()[1];
+        String osservabilitaT3a;
+        String rilevanzaT3a = null;
+        osservabilitaT3a = Rete.getEtichettaOsservabilita()[1];
         Transizione t3a = new Transizione("t3a", s31, -1, null, eventit3a, rilevanzaT3a, osservabilitaT3a);
         s30.addTransazione(t3a);
 
-        String[] osservabilitaT3c = null;
-        String[] rilevanzaT3c = new String[1];
+        String osservabilitaT3c = null;
+        String rilevanzaT3c;
         
-        rilevanzaT3c[0] = Rete.getEtichettaRilevanza()[1];
+        rilevanzaT3c = Rete.getEtichettaRilevanza()[1];
         Transizione t3c = new Transizione("t3c", s31, 1, e3, null, rilevanzaT3c, osservabilitaT3c);
         Transizione t3b = new Transizione("t3b", s30, 1, e3, null, null, null);
         s31.addTransazione(t3b);

@@ -14,12 +14,12 @@ import java.util.Objects;
  */
 public class StatoReteDecorato extends StatoRete {
 
-    private List<String> decorazione;
+  
 
     public StatoReteDecorato(Evento[] link, Stato[] stati, int _numero, List<String> _decorazione) {
         super(link, stati, _numero);
-        decorazione = _decorazione;
-        java.util.Collections.sort(decorazione);
+        setDecorazione(_decorazione);
+        java.util.Collections.sort(getDecorazione());
 //      Implementation note: This implementation is a stable, adaptive,
 //        iterative mergesort that requires far fewer than n lg(n) comparisons when
 //        the input array is partially sorted, while offering the performance of a
@@ -36,9 +36,9 @@ public class StatoReteDecorato extends StatoRete {
         if (stato.getTransizionePrecedente() != null) {
             setTransizionePrecedente(stato.getTransizionePrecedente());
         }
-        decorazione = _decorazione;
-        if (decorazione != null) {
-            java.util.Collections.sort(decorazione);
+        setDecorazione(_decorazione);
+        if (getDecorazione() != null) {
+            java.util.Collections.sort(getDecorazione());
         }
     }
 
@@ -46,7 +46,7 @@ public class StatoReteDecorato extends StatoRete {
     
     public StatoReteDecorato(StatoReteDecorato statoReteDecorato) {
         super(statoReteDecorato);
-        decorazione = statoReteDecorato.getDecorazione();
+        setDecorazione(statoReteDecorato.getDecorazione());
     }
 
     public String getNumeroToString() {
@@ -54,15 +54,15 @@ public class StatoReteDecorato extends StatoRete {
         s.append(getNumero());
         s.append(Parametri.SPAZIO);
         s.append(Parametri.PARENTESI_GRAFFA_A);
-        if (decorazione == null) {
+        if (getDecorazione() == null) {
             s.append(Parametri.INSIEME_VUOTO);
         } else {
-            for (int i = 0; i < decorazione.size(); i++) {
+            for (int i = 0; i < getDecorazione().size(); i++) {
                 if (i > 0) {
                     s.append(Parametri.VIRGOLA);
                     s.append(Parametri.SPAZIO);
                 }
-                s.append(decorazione.get(i));
+                s.append(getDecorazione().get(i));
             }
         }
         s.append(Parametri.PARENTESI_GRAFFA_C);
@@ -96,17 +96,17 @@ public class StatoReteDecorato extends StatoRete {
         }
         StatoReteDecorato stato2 = (StatoReteDecorato) o;
 
-        if (decorazione == null ^ stato2.getDecorazione() == null) { //^ e' l'operatore logico XOR
+        if (getDecorazione() == null ^ stato2.getDecorazione() == null) { //^ e' l'operatore logico XOR
             return false;
         }
-        if (decorazione == null && stato2.getDecorazione() == null) {
+        if (getDecorazione() == null && stato2.getDecorazione() == null) {
             if (getNumero() == stato2.getNumero()) {
                 return true;
             }
             return false;
         }
 
-        if (getNumero() == stato2.getNumero() && decorazione.equals(stato2.getDecorazione())) {
+        if (getNumero() == stato2.getNumero() && getDecorazione().equals(stato2.getDecorazione())) {
             return true;
         }
         return false;
@@ -114,17 +114,11 @@ public class StatoReteDecorato extends StatoRete {
 
     @Override
     public int hashCode() {
-        int hash = Objects.hash(getNumero(), decorazione);
+        int hash = Objects.hash(getNumero(), getDecorazione());
         return hash;
     }
 
-    public List<String> getDecorazione() {
-        return decorazione;
-    }
-
-    public void setDecorazione(List<String> decorazione) {
-        this.decorazione = decorazione;
-    }
+    
 
     
     

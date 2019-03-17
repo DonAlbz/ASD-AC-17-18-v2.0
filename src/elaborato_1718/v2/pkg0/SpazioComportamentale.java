@@ -60,6 +60,11 @@ public class SpazioComportamentale {
 
     }
 
+    public void ridenominaStatiDecorati(){
+       verticiAdiacenti.keySet();
+        
+    }
+    
     void provaARimuovereVertice(StatoReteRidenominato statoDaTogliere) {
         if (verticiAdiacenti.get(statoDaTogliere) == null || verticiAdiacenti.get(statoDaTogliere).isEmpty()) {
             rimuoviVertice(statoDaTogliere);
@@ -91,6 +96,7 @@ public class SpazioComportamentale {
 
     public String toString() {
         boolean isDecorato = false;
+        boolean isRidenominato;
         if(root.getClass()==StatoReteDecorato.class)
             isDecorato=true;
         StringBuilder s = new StringBuilder();
@@ -110,20 +116,7 @@ public class SpazioComportamentale {
                 if(isDecorato)
                     statoArrivo = (StatoReteDecorato)statoArrivo;
                 s.append(Parametri.PARENTESI_TONDA_A);
-                    s.append(statoArrivo.toString());
-//                s.append(statoArrivo.getTransizionePrecedente());
-//                s.append(Parametri.VIRGOLA);
-//                s.append(Parametri.SPAZIO);
-//
-//                s.append(Parametri.PARENTESI_TONDA_A);
-//                s.append(Parametri.PARENTESI_QUADRA_A);
-//                    
-//                s.append(statoArrivo.getNumero());
-//                s.append(Parametri.PARENTESI_QUADRA_C);
-//                s.append(Parametri.VIRGOLA);
-//                s.append(Parametri.SPAZIO);
-//                s.append(statoArrivo.getDescrizione());
-//                s.append(Parametri.PARENTESI_TONDA_C);
+                    s.append(statoArrivo.toStringShort());//                
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
             }
@@ -132,4 +125,7 @@ public class SpazioComportamentale {
         return s.toString();
     }
 
+    
+ 
+    
 }
