@@ -1,4 +1,4 @@
-package elaborato_1718.v2.pkg0;
+package Model;
 
 import java.util.Objects;
 
@@ -15,8 +15,6 @@ import java.util.Objects;
  */
 public class StatoReteRidenominato extends StatoReteAbstract {
 
-    private String nome;
-
     /**
      * Crea uno StatoRete ridenominato
      *
@@ -26,7 +24,7 @@ public class StatoReteRidenominato extends StatoReteAbstract {
      */
     public StatoReteRidenominato(Evento[] link, Stato[] stati, int _numero) {
         super(link, stati, _numero);
-        nome = Integer.toString(_numero);
+        setNome(Integer.toString(_numero));
     }
 
     /**
@@ -39,7 +37,11 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public StatoReteRidenominato(StatoReteAbstract s) {
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(s.getTransizionePrecedente());
-        nome = Integer.toString(s.getNumero());
+        if (s.getNome() == null) {
+            setNome(Integer.toString(s.getNumero()));
+        } else {
+            setNome(s.getNome());
+        }
     }
 
     /**
@@ -51,15 +53,19 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public StatoReteRidenominato(StatoReteAbstract s, Transizione t) {
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(t);
-        nome = Integer.toString(s.getNumero());
+        
+        if (s.getNome() == null) {
+            setNome(Integer.toString(s.getNumero()));
+        } else {
+            setNome(s.getNome());
+        }
+
     }
 
-    
- public String getNomeToString(){
-     return getNome();
- }
-    
-    
+    public String getNomeToString() {
+        return getNome();
+    }
+
     /**
      * Override del metodo per poter implementare il metodo contains() in un
      * arrayList di cammini
@@ -89,14 +95,6 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public int hashCode() {
         int hash = Objects.hash(getNome());
         return hash;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
 }

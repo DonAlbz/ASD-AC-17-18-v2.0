@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import view.Parametri;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -20,20 +20,35 @@ import java.util.Stack;
  */
 public class Rete {
 
-    private static List<Automa> automi;
-    private static Evento[] eventi;
-    private static List<Cammino> cammini;
-    private static List<Cammino> camminiDecorati;
-    private static String descrizione;
-    private static Evento[] link;
-    private static int numeroStati;
-    private static SpazioComportamentale spazioC;
-    private static LinkedList<StatoReteAbstract> stati;
-    private static String[] etichettaOsservabilita;
-    private static String[] etichettaRilevanza;
+    private  List<Automa> automi;
+    private  Evento[] eventi;
+    private  List<Cammino> cammini;
+    private  List<Cammino> camminiDecorati;
+    private  String descrizione;
+    private  Evento[] link;
+    private  int numeroStati;
+    private  SpazioComportamentale spazioC;
+    private  LinkedList<StatoReteAbstract> stati;
+    private  String[] etichettaOsservabilita;
+    private  String[] etichettaRilevanza;
     //private static Transizione transizioneAbilitata;
 
-    public static void creaRete(String s, Evento[] _link, Evento[] _eventi) {
+    public Rete(String s, Evento[] _link, Evento[] _eventi) {
+        descrizione = s;
+        automi = new ArrayList<Automa>();
+        eventi = _eventi;
+        link = _link;
+        cammini = new ArrayList<Cammino>();
+        spazioC = new SpazioComportamentale();
+    }
+    
+    public Rete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
+        this(s, _link, _eventi);
+        etichettaOsservabilita = osservabilita;
+        etichettaRilevanza = rilevanza;
+    }
+    
+    public  void creaRete(String s, Evento[] _link, Evento[] _eventi) {
         descrizione = s;
         automi = new ArrayList<Automa>();
         eventi = _eventi;
@@ -42,13 +57,13 @@ public class Rete {
         spazioC = new SpazioComportamentale();
     }
 
-    public static void creaRete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
+    public void creaRete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
         creaRete(s, _link, _eventi);
         etichettaOsservabilita = osservabilita;
         etichettaRilevanza = rilevanza;
     }
 
-    public static void start2() {
+    public void start2() {
         scatta2();
         stampaCammini(cammini);
         ArrayList<Cammino> traiettorie = potatura();
@@ -69,7 +84,7 @@ public class Rete {
      * Creazione dei cammini e dello spazio comportamentale
      *
      */
-    public static void scatta2() {
+    public void scatta2() {
         Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
         Stack<StatoRete> pilaDiramazioni = new Stack<StatoRete>();//pila degli stati che hanno più di una transizione in uscita
         //Stack<Cammino> pilaCammino = new Stack<>();
@@ -162,7 +177,7 @@ public class Rete {
 
     }
 
-    private static void stampaCammini(List<Cammino> daStampare) {
+    private void stampaCammini(List<Cammino> daStampare) {
 
         System.out.println(Parametri.CAMMINI_ETICHETTA);
         System.out.println();
@@ -175,7 +190,7 @@ public class Rete {
         }
     }
 
-    private static StatoRete creaStatoCorrente() {
+    private StatoRete creaStatoCorrente() {
         Stato[] statoAutomi = new Stato[automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
             statoAutomi[i] = automi.get(i).getStatoCorrente();
@@ -183,7 +198,7 @@ public class Rete {
         return new StatoRete(link.clone(), statoAutomi, numeroStati);
     }
 
-    private static StatoRete creaStatoCorrente(List<Automa> _automi, Evento[] _link) {
+    private StatoRete creaStatoCorrente(List<Automa> _automi, Evento[] _link) {
         Stato[] statoAutomi = new Stato[_automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
             statoAutomi[i] = _automi.get(i).getStatoCorrente();
@@ -191,7 +206,7 @@ public class Rete {
         return new StatoRete(_link.clone(), statoAutomi, numeroStati);
     }
 
-    private static void impostaStatiIniziali() {
+    public void impostaStatiIniziali() {
         Arrays.fill(link, null); // svuota l'array link
 
         for (Automa automa : automi) {
@@ -199,13 +214,13 @@ public class Rete {
         }
     }
 
-    private static Cammino creaNuovoCammino() {
+    private Cammino creaNuovoCammino() {
         Cammino nuovoCammino = new Cammino();
         impostaStatiIniziali();
         return nuovoCammino;
     }
 
-    private static void setRete(StatoRete statoAttuale) {
+    public void setRete(StatoRete statoAttuale) {
         for (int i = 0; i < automi.size(); i++) {
             automi.get(i).setStatoCorrente(statoAttuale.getStati()[i]);
         }
@@ -224,7 +239,7 @@ public class Rete {
      * @param _automi
      * @return
      */
-    private static List<Automa> copiaAutomi(List<Automa> _automi) {
+    private List<Automa> copiaAutomi(List<Automa> _automi) {
         List<Automa> daRitornare = new ArrayList<>();
         for (int i = 0; i < _automi.size(); i++) {
             daRitornare.add(_automi.get(i).copia());
@@ -237,7 +252,7 @@ public class Rete {
      *
      * @param traiettorie
      */
-    private static SpazioComportamentale inserisciLatiSpazioComportamentale(SpazioComportamentale spazioComportamentale, List<Cammino> traiettorie) {
+    private SpazioComportamentale inserisciLatiSpazioComportamentale(SpazioComportamentale spazioComportamentale, List<Cammino> traiettorie) {
         for (Cammino traiettoria : traiettorie) {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
@@ -248,8 +263,8 @@ public class Rete {
                     if (statoPrecedenteTraiettoria.getClass() == StatoRete.class) {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
-                    if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
-                        statoPrecedente = new StatoReteDecorato((StatoReteDecorato) statoPrecedenteTraiettoria);
+                    if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {                        
+                        statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);                       
                     }
 
                     StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
@@ -258,8 +273,8 @@ public class Rete {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
                     }
                     if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {
-                        statoCorrente = new StatoReteDecorato((StatoReteDecorato) statoCorrenteTraiettoria);
-                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
+                        statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
+//                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
 
                     spazioComportamentale.aggiungiLato(statoPrecedente, statoCorrente);
@@ -275,7 +290,7 @@ public class Rete {
      *
      * @param traiettorie
      */
-    private static SpazioComportamentale inserisciVerticiSpazioComportamentale(SpazioComportamentale _spazioC, List<Cammino> traiettorie, LinkedList<StatoReteAbstract> _stati) {
+    private SpazioComportamentale inserisciVerticiSpazioComportamentale(SpazioComportamentale _spazioC, List<Cammino> traiettorie, LinkedList<StatoReteAbstract> _stati) {
         ArrayList<StatoReteAbstract> tuttiGliStatiDelleTraiettorie = new ArrayList<>();
         for (Cammino traiettoria : traiettorie) {
             tuttiGliStatiDelleTraiettorie.addAll(traiettoria.getCammino());
@@ -288,9 +303,9 @@ public class Rete {
         }
 
         if (root.getClass() == StatoReteDecorato.class) {
-            root = new StatoReteRidenominato(_stati.get(0));
             String nomeRoot = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(0);
-            ((StatoReteRidenominato) root).setNome(nomeRoot);
+            root.setNome(nomeRoot);
+            root = new StatoReteRidenominato(_stati.get(0));
         }
 
         _spazioC.aggiungiVertice(root);
@@ -302,7 +317,8 @@ public class Rete {
             StatoReteRidenominato statoDaAggiungere = new StatoReteRidenominato(_stati.get(i), null);
             if (_stati.get(i).getClass() == StatoReteDecorato.class) {
             String nome = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(i);
-            ((StatoReteRidenominato) statoDaAggiungere).setNome(nome);
+            _stati.get(i).setNome(nome);
+            statoDaAggiungere.setNome(nome);
         }            
             _spazioC.aggiungiVertice(statoDaAggiungere);
         }
@@ -315,7 +331,7 @@ public class Rete {
      *
      * @param traiettorie
      */
-    private static void inserisciVerticiSpazioComportamentaleDecorato(ArrayList<Cammino> traiettorie) {
+    private void inserisciVerticiSpazioComportamentaleDecorato(ArrayList<Cammino> traiettorie) {
         ArrayList<StatoReteAbstract> tuttiGliStatiDelleTraiettorie = new ArrayList<>();
         for (Cammino traiettoria : traiettorie) {
             tuttiGliStatiDelleTraiettorie.addAll(traiettoria.getCammino());
@@ -333,7 +349,7 @@ public class Rete {
 
     }
 
-    private static List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
+    private List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
         List<String> daRitornare = new ArrayList<>();
         if (decorazioneAggiornata != null) {
             daRitornare.addAll(decorazioneAggiornata);
@@ -354,7 +370,7 @@ public class Rete {
     /**
      * metodo per testare la rete
      */
-    public static void test() {
+    public void test() {
         link[0] = eventi[0];
         for (Automa automa : automi) {
             automa.setStatoIniziale(link);
@@ -371,7 +387,7 @@ public class Rete {
 
     }
 
-    private static ArrayList<Cammino> potatura() {
+    private ArrayList<Cammino> potatura() {
         ArrayList<Cammino> traiettorie = new ArrayList<>();
         ArrayList<Cammino> notTraiettorie = new ArrayList<>();
         for (Cammino c : cammini) {
@@ -394,7 +410,7 @@ public class Rete {
         return traiettorie;
     }
 
-    private static ArrayList<Cammino> ridenominazione(ArrayList<Cammino> traiettorie) {
+    private ArrayList<Cammino> ridenominazione(ArrayList<Cammino> traiettorie) {
         for (Cammino traiettoria : traiettorie) {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             for (int i = 0; i < statiTraiettoria.size(); i++) {
@@ -407,7 +423,7 @@ public class Rete {
         return traiettorie;
     }
 
-    private static SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
+    private SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
         camminiDecorati = new ArrayList();
         SpazioComportamentale spazioComportamentale = _spazioComportamentale;
 
@@ -434,7 +450,7 @@ public class Rete {
             if (!statiDecorati.contains(statoAttualeDecorato)) {//se è uno stato nuovo
                 StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
                 verticeDaInserire.setTransizionePrecedente(null);
-                statiDecorati.add(verticeDaInserire);
+                statiDecorati.add(statoAttualeDecorato);//TODO: sostituito, prima era passato verticeDaInserire
 //                spazioComportamentaleDecorato.aggiungiVertice(verticeDaInserire);
                 //statoAttuale.setNumero(stati.size());
 //                statiDecorati.add(statoAttualeDecorato);
@@ -506,7 +522,7 @@ public class Rete {
         return spazioComportamentaleDecorato;
     }
 
-    private static void stampaTraiettorie(ArrayList<Cammino> traiettorie) {
+    private void stampaTraiettorie(ArrayList<Cammino> traiettorie) {
 
         System.out.println(Parametri.TRAIETTORIE_ETICHETTA);
         System.out.println();
@@ -520,7 +536,7 @@ public class Rete {
         }
     }
 
-    public static Evento getEvento(String nomeEvento) {
+    public Evento getEvento(String nomeEvento) {
         Evento evento = null;
         for (int i = 0; i < eventi.length; i++) {
             if (eventi[i].getDescrizione().equalsIgnoreCase(nomeEvento)) {
@@ -530,7 +546,7 @@ public class Rete {
         return evento;
     }
 
-    public static void addAutoma(Automa a) {
+    public void addAutoma(Automa a) {
         automi.add(a);
     }
 
@@ -538,23 +554,66 @@ public class Rete {
         this.eventi = eventi;
     }
 
-    public static Evento getLink(int i) {
+    public Evento getLink(int i) {
         return link[i];
     }
 
-    public static void setLink(int i, Evento evento) {
+    public void setLink(int i, Evento evento) {
         link[i] = evento;
     }
 
-    public static String[] getEtichettaOsservabilita() {
+    public String[] getEtichettaOsservabilita() {
         return etichettaOsservabilita;
     }
 
-    public static String[] getEtichettaRilevanza() {
+    public String[] getEtichettaRilevanza() {
         return etichettaRilevanza;
     }
 
-    public static List<Automa> getAutomi() {
+    public List<Automa> getAutomi() {
         return automi;
     }
+
+    public List<Cammino> getCammini() {
+        return cammini;
+    }
+
+    public void setCammini(List<Cammino> cammini) {
+        this.cammini = cammini;
+    }
+
+    public List<Cammino> getCamminiDecorati() {
+        return camminiDecorati;
+    }
+
+    public void setCamminiDecorati(List<Cammino> camminiDecorati) {
+        this.camminiDecorati = camminiDecorati;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public Evento[] getLink() {
+        return link;
+    }
+
+    public void setLink(Evento[] link) {
+        this.link = link;
+    }
+
+    public SpazioComportamentale getSpazioC() {
+        return spazioC;
+    }
+
+    public void setSpazioC(SpazioComportamentale spazioC) {
+        this.spazioC = spazioC;
+    }
+    
+    
+    
 }

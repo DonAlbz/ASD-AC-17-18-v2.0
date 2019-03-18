@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
+import view.Parametri;
 import java.util.ArrayList;
 
 /**
@@ -65,7 +66,7 @@ public class Cammino {
         this.cammino.add(ultimoStato);
     }*/
 
-    void copiaCammino(Cammino camminoAttuale) {
+    public void copiaCammino(Cammino camminoAttuale) {
         ArrayList<StatoReteAbstract> vecchioCammino = camminoAttuale.getCammino();
         for (int i = 0; i < vecchioCammino.size(); i++) {//copia tutti gli elementi
             this.cammino.add(vecchioCammino.get(i));

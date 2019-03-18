@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class Automa {
         transizioniAbilitate = new ArrayList<>();
     }
     
-    boolean isAbilitato(Evento[] _link) {
+   public boolean isAbilitato(Evento[] _link) {
         boolean resp = statoCorrente.isAbilitato(_link);
         if (resp) {
             transizioniAbilitate = statoCorrente.getTransizioniAbilitate();
@@ -41,25 +41,25 @@ public class Automa {
         return resp;
     }
     
-    Transizione scatta(Transizione t, Evento[] _link) {
+   public Transizione scatta(Transizione t, Evento[] _link) {
         transizioneEseguita = t;
         this.statoCorrente = statoCorrente.scatta(t, _link);
         return t;
     }
     
-    Transizione scatta(Evento[] _link) {
+   public Transizione scatta(Evento[] _link) {
         transizioneEseguita = statoCorrente.getTransizioniAbilitate().get(0);
         this.statoCorrente = statoCorrente.scatta(_link);
         return transizioneEseguita;
     }
     
-    Transizione scatta(int i, Evento[] _link) {
+   public Transizione scatta(int i, Evento[] _link) {
         transizioneEseguita = statoCorrente.getTransizioniAbilitate().get(i);
         this.statoCorrente = statoCorrente.scatta(_link);
         return transizioneEseguita;
     }
     
-    void addStato(Stato s) {
+   public void addStato(Stato s) {
         stati.add(s);
     }
     
@@ -70,11 +70,11 @@ public class Automa {
         }
     }
     
-    Stato getStatoCorrente() {
+   public Stato getStatoCorrente() {
         return statoCorrente;
     }
     
-    ArrayList<Transizione> getTransizioneAbilitata() {
+   public ArrayList<Transizione> getTransizioneAbilitata() {
         return transizioniAbilitate;
     }
     

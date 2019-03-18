@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package view;
 
 /**
  *
@@ -23,6 +23,8 @@ public class Parametri {
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
     public final static String CAMMINI_ETICHETTA = "********* CAMMINI *********";
+    public final static String CAMMINI_NUMERO_ETICHETTA = "numero cammino: ";
+    public final static String TRAIETTORIA_NUMERO_ETICHETTA = "numero traiettoria: " ;
     public final static String TAB = "\t";
     public final static String PARENTESI_TONDA_A = "(";
     public final static String PARENTESI_TONDA_C = ")";

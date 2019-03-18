@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
 /**
  *

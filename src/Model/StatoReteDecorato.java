@@ -1,5 +1,6 @@
-package elaborato_1718.v2.pkg0;
+package Model;
 
+import view.Parametri;
 import java.util.List;
 import java.util.Objects;
 

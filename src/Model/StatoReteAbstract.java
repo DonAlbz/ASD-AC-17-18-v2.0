@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
+import view.Parametri;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ public abstract class StatoReteAbstract {
     private Transizione transizionePrecedente;
     private List<String> decorazione;
     private List<String> osservabilita;
+    private String nome;
 
     public StatoReteAbstract(Evento[] link, Stato[] stati, int _numero) {
         this.link = link;
@@ -148,5 +150,11 @@ public abstract class StatoReteAbstract {
         this.osservabilita = osservabilita;
     }
     
-    
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }

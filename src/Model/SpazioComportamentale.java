@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package Model;
 
+import view.Parametri;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class SpazioComportamentale {
         verticiAdiacenti = new HashMap<>();
     }
 
-    void aggiungiVertice(StatoReteAbstract vertice) {
+    public void aggiungiVertice(StatoReteAbstract vertice) {
         verticiAdiacenti.putIfAbsent(vertice, new ArrayList<>());
     }
 
@@ -48,7 +49,7 @@ public class SpazioComportamentale {
         }
     }
 
-    void rimuoviLato(StatoReteAbstract partenza, StatoReteAbstract arrivo) {
+   public void rimuoviLato(StatoReteAbstract partenza, StatoReteAbstract arrivo) {
         List<StatoReteAbstract> statiArrivo = verticiAdiacenti.get(partenza);
         if (statiArrivo != null) {
             statiArrivo.remove(arrivo);
@@ -65,7 +66,7 @@ public class SpazioComportamentale {
         
     }
     
-    void provaARimuovereVertice(StatoReteRidenominato statoDaTogliere) {
+    public void provaARimuovereVertice(StatoReteRidenominato statoDaTogliere) {
         if (verticiAdiacenti.get(statoDaTogliere) == null || verticiAdiacenti.get(statoDaTogliere).isEmpty()) {
             rimuoviVertice(statoDaTogliere);
         }

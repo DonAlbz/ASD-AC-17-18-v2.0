@@ -5,6 +5,7 @@
  */
 package elaborato_1718.v2.pkg0;
 
+import Model.Rete;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -29,7 +30,7 @@ public class Main {
         Import.primoScenario();
 //        Import.caricaReteDaFile();
         
-        Rete.start2();
+        ControllerUtente.start();
         tempoFine=System.currentTimeMillis();
         long differenza = tempoFine - tempoInizio;
         System.out.println("Tempo impiegato:");

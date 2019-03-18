@@ -5,6 +5,12 @@
  */
 package elaborato_1718.v2.pkg0;
 
+import view.Parametri;
+import Model.Stato;
+import Model.Rete;
+import Model.Evento;
+import Model.Transizione;
+import Model.Automa;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -23,18 +29,19 @@ public class Import {
     private static List<String> file;
     
     
-    public static void caricaReteDaFile(){
+    public static Rete caricaReteDaFile(){
         try {
             apriFileTxt();
         } catch (IOException ex) {
             Logger.getLogger(Import.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        inizializzazioneRete();
+        return inizializzazioneRete();
         
     }
     
-    private static void inizializzazioneRete(){
+    private static Rete inizializzazioneRete(){
+        Rete rete;
         // Inizializzazione della rete
         System.out.println(Parametri.INIZIALIZZAZIONE_RETE_1);
         System.out.println(Parametri.INIZIALIZZAZIONE_RETE_2);
@@ -55,14 +62,14 @@ public class Import {
         Evento[] link = new Evento[linkString.length];
         
         // Creazione della rete
-        Rete.creaRete("primo scenario", link, eventi);
+        rete = new Rete("primo scenario", link, eventi);
         
         // Ciclo di inizializzazione degli automi
         String[] automi = getAutomi(file);
         for (String automa_str : automi) {
             // aggiunta dell'automa
             Automa automa = new Automa(automa_str);
-            Rete.addAutoma(automa);
+            rete.addAutoma(automa);
 //            System.out.println("Automa: " + automa.getDescrizione());
             
             // aggiunta degli stati di automa
@@ -79,7 +86,7 @@ public class Import {
         }
 
         // Ciclo inizializzazione delle transizioni
-        for(Automa automa : Rete.getAutomi()) {
+        for(Automa automa : rete.getAutomi()) {
             for (Stato stato : automa.getStati()) {
                 ArrayList<String> transizioniUscenti = getStatiDiPartenza(stato, automa, file);
                 for(String transizione : transizioniUscenti){
@@ -94,14 +101,14 @@ public class Import {
                     if (indiceEventoRichiesto == -1) {
 //                        System.out.println("Nessun evento richiesto");
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
-                        Evento[] eventiInUscita = getEventiInUscita(eventiString, eventiInUscitaString);
+                        Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, null, eventiInUscita);
                         stato.addTransazione(transizioneDaInserire);
                     } else {
                         Evento eventoRichiesto = eventi[getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file)];
 //                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
-                        Evento[] eventiInUscita = getEventiInUscita(eventiString, eventiInUscitaString);
+                        Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, eventoRichiesto, eventiInUscita);
                         stato.addTransazione(transizioneDaInserire);
                     }
@@ -109,6 +116,7 @@ public class Import {
                 }
             }
         }
+        return rete;
                 
     }
    
@@ -116,8 +124,8 @@ public class Import {
     
     
 
-    static void primoScenario() {
-
+    static Rete primoScenario() {
+        Rete rete;
         Automa c2 = new Automa("c2");
         Stato s20 = new Stato("20");
         Stato s21 = new Stato("21");
@@ -127,7 +135,7 @@ public class Import {
         Evento[] link = new Evento[2];
         String[] osservabilita = {"o2", "o3"};
         String[] rilevanza = {"r", "f"};
-        Rete.creaRete("primo scenario", link, eventi, osservabilita, rilevanza);
+        rete = new Rete("primo scenario", link, eventi, osservabilita, rilevanza);
 
         List<Evento> eventiIn = new ArrayList<>();
         List<Evento> eventiOut = new ArrayList<>();
@@ -135,21 +143,21 @@ public class Import {
         Evento[] eventoOut = {null, e3};
         String osservabilitaT2a;
         String rilevanzaT2a = null;
-        osservabilitaT2a = Rete.getEtichettaOsservabilita()[0];
+        osservabilitaT2a = rete.getEtichettaOsservabilita()[0];
         Transizione t2a = new Transizione("t2a", s21, 0, e2, eventoOut, rilevanzaT2a, osservabilitaT2a);
         s20.addTransazione(t2a);
 
         Evento[] eventot2b = {null, e3};
         String osservabilitaT2b = null;
         String rilevanzaT2b;
-        rilevanzaT2b = Rete.getEtichettaRilevanza()[0];
+        rilevanzaT2b = rete.getEtichettaRilevanza()[0];
         Transizione t2b = new Transizione("t2b", s20, -1, null, eventot2b, rilevanzaT2b, osservabilitaT2b);
         s21.addTransazione(t2b);
 
         c2.addStato(s20);
         c2.addStato(s21);
 
-        Rete.addAutoma(c2);
+        rete.addAutoma(c2);
 
         Automa c3 = new Automa("c3");
 
@@ -159,14 +167,14 @@ public class Import {
         Evento[] eventit3a = {e2, null};
         String osservabilitaT3a;
         String rilevanzaT3a = null;
-        osservabilitaT3a = Rete.getEtichettaOsservabilita()[1];
+        osservabilitaT3a = rete.getEtichettaOsservabilita()[1];
         Transizione t3a = new Transizione("t3a", s31, -1, null, eventit3a, rilevanzaT3a, osservabilitaT3a);
         s30.addTransazione(t3a);
 
         String osservabilitaT3c = null;
         String rilevanzaT3c;
         
-        rilevanzaT3c = Rete.getEtichettaRilevanza()[1];
+        rilevanzaT3c = rete.getEtichettaRilevanza()[1];
         Transizione t3c = new Transizione("t3c", s31, 1, e3, null, rilevanzaT3c, osservabilitaT3c);
         Transizione t3b = new Transizione("t3b", s30, 1, e3, null, null, null);
         s31.addTransazione(t3b);
@@ -175,7 +183,8 @@ public class Import {
         c3.addStato(s30);
         c3.addStato(s31);
 
-        Rete.addAutoma(c3);
+        rete.addAutoma(c3);
+        return rete;
     }
 
        public static void apriFileTxt() throws FileNotFoundException, IOException {
@@ -371,7 +380,7 @@ public class Import {
      * @param eventiInUscita eventi in uscita dalla transizione considerata
      * @return ritorna l'array di Evento nel caso ci sono eventiInUscita dalla transizione, altrimenti ritorna null
      */
-    private static Evento[] getEventiInUscita(String[] eventi, String[] eventiInUscita) {
+    private static Evento[] getEventiInUscita(Rete rete, String[] eventi, String[] eventiInUscita) {
         Evento[] eventiFinale = new Evento[eventi.length];
         for (int x = 0; x < eventi.length; x++) {
             //eventiFinale[x] = new Evento(null);
@@ -385,7 +394,7 @@ public class Import {
                     if (eventiInUscita[i].equalsIgnoreCase(eventi[j])) {
                         String daCopiare = eventiInUscita[i];
                         //eventiFinale[j] = new Evento(daCopiare);
-                        eventiFinale[j] = Rete.getEvento(daCopiare);
+                        eventiFinale[j] = rete.getEvento(daCopiare);
                     }
                 }
                 i++;
