@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import view.Parametri;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public abstract class StatoReteAbstract {
+public abstract class StatoReteAbstract implements Serializable{
 
     private Evento[] link;
     private Stato[] stati;

@@ -39,4 +39,10 @@ public class View {
             System.out.println();
         }
     }
+    
+    public static void stampaFileTxt(List<String> fileTxt){
+        for(String str : fileTxt){
+            System.out.println(str);
+        }
+    }
 }

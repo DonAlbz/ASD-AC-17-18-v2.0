@@ -5,13 +5,15 @@
  */
 package Model;
 
+import java.io.Serializable;
+
 
 
 /**
  *
  * @author Alb
  */
-public class Transizione {
+public class Transizione implements Serializable{
 
     private int linkIn; //Link in ingresso
     private Evento eventoRichiesto; //evento richiesto sul link in ingresso

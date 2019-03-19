@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import view.Parametri;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.Stack;
  *
  * @author Alb
  */
-public class Rete {
+public class Rete implements Serializable{
 
     private  List<Automa> automi;
     private  Evento[] eventi;

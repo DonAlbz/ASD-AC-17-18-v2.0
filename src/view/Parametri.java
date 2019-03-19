@@ -18,7 +18,6 @@ public class Parametri {
     public final static String NULL = "null";
     public final static String INIZIALIZZAZIONE_RETE_1 = " -------------------------- ";
     public final static String INIZIALIZZAZIONE_RETE_2 = "|   INIZIALIZZAZIONE RETE   |";
-
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
@@ -35,6 +34,15 @@ public class Parametri {
     public final static String SPAZIO = " ";
     public final static String VIRGOLA = ",";
     public final static String FRECCIA = "-->";
-    //public static int 
+    public final static String TITOLO_MENU_INIZIALE = "AUTOMA A STATI FINITI";
+    public final static String VOCI_MENU_INIZIALE[] = {"Importa una nuova rete",
+                                                        "Carica una nuova rete"};
+    public final static String MESSAGGIO_FINE_PROGRAMMA = "Sei sicuro di voler uscire? ";
+    public final static String TITOLO_MENU_RETE = "AUTOMA";
+    public final static String VOCI_MENU_RETE[] = {"Stampa informazioni della rete",
+                                                    "Esegui compito",
+                                                    "Salva rete",
+                                                    "Cambia rete"};
+    public final static String PATH_FILE_INPUT = "./src/FileInput";
 
 }

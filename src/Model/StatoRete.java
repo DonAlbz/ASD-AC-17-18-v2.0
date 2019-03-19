@@ -6,6 +6,7 @@
 package Model;
 
 import Model.Automa;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoRete extends StatoReteAbstract {
+public class StatoRete extends StatoReteAbstract implements Serializable{
     
     private Transizione transizioneEseguita; 
     
