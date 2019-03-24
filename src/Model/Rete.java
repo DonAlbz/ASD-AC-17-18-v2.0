@@ -28,6 +28,7 @@ public class Rete {
     private  Evento[] link;
     private  int numeroStati;
     private  SpazioComportamentale spazioC;
+    private  SpazioComportamentale spazioComportamentaleDecorato;
     private  LinkedList<StatoReteAbstract> stati;
     private  String[] etichettaOsservabilita;
     private  String[] etichettaRilevanza;
@@ -612,6 +613,14 @@ public class Rete {
 
     public void setSpazioC(SpazioComportamentale spazioC) {
         this.spazioC = spazioC;
+    }
+
+    public SpazioComportamentale getSpazioComportamentaleDecorato() {
+        return spazioComportamentaleDecorato;
+    }
+
+    public void setSpazioComportamentaleDecorato(SpazioComportamentale spazioComportamentaleDecorato) {
+        this.spazioComportamentaleDecorato = spazioComportamentaleDecorato;
     }
     
     

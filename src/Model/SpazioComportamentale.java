@@ -60,11 +60,7 @@ public class SpazioComportamentale {
         }
 
     }
-
-    public void ridenominaStatiDecorati(){
-       verticiAdiacenti.keySet();
-        
-    }
+    
     
     public void provaARimuovereVertice(StatoReteRidenominato statoDaTogliere) {
         if (verticiAdiacenti.get(statoDaTogliere) == null || verticiAdiacenti.get(statoDaTogliere).isEmpty()) {

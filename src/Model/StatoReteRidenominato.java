@@ -37,11 +37,7 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public StatoReteRidenominato(StatoReteAbstract s) {
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(s.getTransizionePrecedente());
-        if (s.getNome() == null) {
-            setNome(Integer.toString(s.getNumero()));
-        } else {
-            setNome(s.getNome());
-        }
+        setNome(s);
     }
 
     /**
@@ -53,13 +49,7 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public StatoReteRidenominato(StatoReteAbstract s, Transizione t) {
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(t);
-        
-        if (s.getNome() == null) {
-            setNome(Integer.toString(s.getNumero()));
-        } else {
-            setNome(s.getNome());
-        }
-
+        setNome(s);
     }
 
     public String getNomeToString() {
@@ -97,4 +87,6 @@ public class StatoReteRidenominato extends StatoReteAbstract {
         return hash;
     }
 
+    
+    
 }

@@ -21,14 +21,14 @@ public abstract class StatoReteAbstract {
     private String descrizione;
     private Transizione transizionePrecedente;
     private List<String> decorazione;
-    private List<String> osservabilita;
+    private String osservabilita;
     private String nome;
 
     public StatoReteAbstract(Evento[] link, Stato[] stati, int _numero) {
         this.link = link;
         this.stati = stati;
         this.numero = _numero;
-        this.descrizione = creaDescrizione();
+        this.descrizione = creaDescrizione();        
     }
 
     public String creaDescrizione() {
@@ -118,6 +118,14 @@ public abstract class StatoReteAbstract {
         return true;
     }
 
+    public void setNome(StatoReteAbstract s){
+        if (s.getNome() == null) {
+            setNome(new String(Integer.toString(s.getNumero())));
+        } else {
+            setNome(s.getNome());
+        }
+    }
+    
     public int getNumero() {
         return numero;
     }
@@ -142,13 +150,15 @@ public abstract class StatoReteAbstract {
         this.decorazione = decorazione;
     }
 
-    public List<String> getOsservabilita() {
+    public String getOsservabilita() {
         return osservabilita;
     }
 
-    public void setOsservabilita(List<String> osservabilita) {
+    public void setOsservabilita(String osservabilita) {
         this.osservabilita = osservabilita;
     }
+
+   
     
     public String getNome() {
         return nome;

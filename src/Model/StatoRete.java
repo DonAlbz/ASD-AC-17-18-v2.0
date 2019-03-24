@@ -26,6 +26,7 @@ public class StatoRete extends StatoReteAbstract {
 
     public StatoRete(StatoReteAbstract statoDaClonare) {
         super(statoDaClonare.getLink().clone(), statoDaClonare.getStati().clone(), statoDaClonare.getNumero());
+        setNome(statoDaClonare);
     }
     
     public void setTransizioneEseguita(Transizione transizioneEseguita) {
