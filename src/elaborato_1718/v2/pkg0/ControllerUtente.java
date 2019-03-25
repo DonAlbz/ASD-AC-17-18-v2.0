@@ -27,24 +27,17 @@ public class ControllerUtente {
     public static Rete start() {
         menuAvvio();
         return rete;
-        //menuRete(rete);
     }
 
     /**
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
-     *
-     * @return ritorna un oggetto di tipo rete
      */
     private static void menuAvvio() {
-        //rete = Import.primoScenario();
         boolean fineProgramma = false;
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
-        do{
-            int selezione = menu.scegli();
-            fineProgramma = selezioneMenuAvvio(selezione);
-        }while(!fineProgramma);
-        //return Import.primoScenario();
+        int selezione = menu.scegli();
+        fineProgramma = selezioneMenuAvvio(selezione);  
     }
     
     private static boolean selezioneMenuAvvio(int selezione){
@@ -76,6 +69,7 @@ public class ControllerUtente {
         int selezione = fileScelto.showDialog(null, "Seleziona il file da aprire");
         if (selezione == JFileChooser.APPROVE_OPTION) {
             String path = fileScelto.getSelectedFile().getPath();
+            System.out.println(Parametri.MESSAGGIO_PATH_FILE_IMPORT);
             System.out.println(fileScelto.getSelectedFile());
             Import nuovoImport = new Import();
             rete = nuovoImport.caricaReteDaFile(path);
@@ -87,11 +81,11 @@ public class ControllerUtente {
         
          // impostazione della directory di partenza
         JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
-        // creazione del filtro txt
+        // creazione del filtro dat
         FileFilter filtroDat = new FileNameExtensionFilter("DAT file", "dat");
-        // inserisco nella scelta del tipo di file un filtro TXT
+        // inserisco nella scelta del tipo di file un filtro dat
         fileScelto.addChoosableFileFilter(filtroDat);
-        // di default filtro solo i file txt (lo aggiunge in automatico alla combo sottostante)
+        // di default filtro solo i file dat (lo aggiunge in automatico alla combo sottostante)
         fileScelto.setFileFilter(filtroDat);
         // imposto di default il nome del file da cercare
         fileScelto.setSelectedFile(new File("salvataggio.dat"));
@@ -137,7 +131,6 @@ public class ControllerUtente {
         }while(!fineProgramma);
         infomazioniRete(rete);
         compiti(rete);
-        //salva(rete);
     }
     
     private static boolean selezioneMenuRete(int selezione){

@@ -19,7 +19,7 @@ public class Main {
         long tempoFine;
         
         Rete rete = ControllerUtente.start();
-        
+        rete = Import.primoScenario();
         ControllerUtente.menuRete(rete);
 //        Import.primoScenario();
 //        Import.caricaReteDaFile();
