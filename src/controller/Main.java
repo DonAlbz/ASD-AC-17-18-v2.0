@@ -5,6 +5,8 @@
  */
 package controller;
 
+import Model.Rete;
+
 
 public class Main {
 
@@ -24,16 +26,19 @@ public class Main {
         */
        long tempoInizio = System.currentTimeMillis();
        long tempoFine;
-        Import.primoScenario();
+//        Import.primoScenario();
 //        Import.caricaReteDaFile();
+
+        Rete rete = ControllerUtente.start();
+        ControllerUtente.menuRete(rete);
         
-        ControllerUtente.start();
-        tempoFine=System.currentTimeMillis();
-        long differenza = tempoFine - tempoInizio;
-        System.out.println("Tempo impiegato:");
-        System.out.print(differenza);
-        System.out.print("ms");
-        System.out.println();
+//        ControllerUtente.start();
+//        tempoFine=System.currentTimeMillis();
+//        long differenza = tempoFine - tempoInizio;
+//        System.out.println("Tempo impiegato:");
+//        System.out.print(differenza);
+//        System.out.print("ms");
+//        System.out.println();
        
         
         

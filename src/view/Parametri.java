@@ -16,9 +16,7 @@ public class Parametri {
         public final static String STATO_DECORATO_PREFISSO = "a";
     public final static String SEPARATORE = "-----------------------";
     public final static String NULL = "null";
-    public final static String INIZIALIZZAZIONE_RETE_1 = " -------------------------- ";
-    public final static String INIZIALIZZAZIONE_RETE_2 = "|   INIZIALIZZAZIONE RETE   |";
-
+    public final static String INIZIALIZZAZIONE_RETE = "********* INIZIALIZZAZIONE RETE *********";
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
@@ -35,6 +33,25 @@ public class Parametri {
     public final static String SPAZIO = " ";
     public final static String VIRGOLA = ",";
     public final static String FRECCIA = "-->";
-    //public static int 
-
+    public final static String TITOLO_MENU_INIZIALE = "AUTOMA A STATI FINITI";
+    public final static String VOCI_MENU_INIZIALE[] = {"Importa una nuova rete",
+                                                        "Carica una nuova rete"};
+    public final static String MESSAGGIO_FINE_PROGRAMMA = "Sei sicuro di voler uscire? ";
+    public final static String TITOLO_MENU_RETE = "AUTOMA";
+    public final static String VOCI_MENU_RETE[] = {"Stampa informazioni della rete",
+                                                    "Esegui compito",
+                                                    "Salva rete",
+                                                    "Cambia rete"};
+    public final static String PATH_FILE_INPUT = "./src/FileInput";
+    public final static String MESSAGGIO_PATH_FILE_IMPORT = "Il file importato risiede nel seguente path:";
+    public final static String OSSERVABILITA = "osservabilita";
+    public final static String RILEVANZA = "rilevanza";
+    
+    public final static int NUMERO_RIGA_NOME_RETE = 0;
+    public final static int NUMERO_RIGA_NOMI_AUTOMI = 3;
+    public final static int NUMERO_RIGA_NOMI_LINK = 6;
+    public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
+    public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
+    public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
+    
 }
