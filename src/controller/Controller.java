@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package elaborato_1718.v2.pkg0;
+package controller;
 
 import view.Parametri;
 import Model.*;
@@ -78,12 +78,12 @@ public class Controller {
 //                System.out.println(statoAttuale.toString());
                 rete.setRete(statoAttuale);
                 if (statoAttuale.isAbilitato(rete.getAutomi())) {
-                    ArrayList<Transizione>[] transizioniAbilitate = new ArrayList[rete.getAutomi().size()];
+                    List<List<Transizione>> transizioniAbilitate =  new ArrayList<List<Transizione>>(rete.getAutomi().size());                  
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < rete.getAutomi().size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
                         rete.getAutomi().get(i).isAbilitato(rete.getLink());
-                        transizioniAbilitate[i] = rete.getAutomi().get(i).getTransizioneAbilitata();//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
-                        numeroTransizioniAbilitate += transizioniAbilitate[i].size();
+                        transizioniAbilitate.add(rete.getAutomi().get(i).getTransizioneAbilitata());//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
+                        numeroTransizioniAbilitate += transizioniAbilitate.get(i).size();
                     }
                     ArrayList<StatoRete> statiDopoLoScatto = new ArrayList<>();
                     Transizione transizioneEseguita;
@@ -103,9 +103,9 @@ public class Controller {
                         copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);//Provare a sostituire con creaStatoCorrente(rete)
 
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
-                            for (int j = 0; j < transizioniAbilitate[i].size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
+                            for (int j = 0; j < transizioniAbilitate.get(i).size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
                                 rete.setRete(statoAttuale);
-                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
+                                Transizione transizioneDaEseguire = transizioniAbilitate.get(i).get(j);
                                 transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
                                 copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
                                 StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
@@ -282,10 +282,7 @@ public class Controller {
                     if (statoCorrenteTraiettoria.getClass() == StatoRete.class) {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
                     }
-                    if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {
-                        if(statoPrecedente.getNome().equals("a23")){
-                            System.out.println("Ciao");
-                        }
+                    if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {                        
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
 //                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
@@ -339,7 +336,7 @@ public class Controller {
 
                     if (verticiAdiacenti.size() == 1) {
                         if (decorazione != null) {
-                            decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                            decorazioneAggiornata = new ArrayList<String>(decorazione);
                         }
                         StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
                         if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
@@ -350,7 +347,7 @@ public class Controller {
                     } else {
                         for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
                             if (decorazione != null) {
-                                decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                                decorazioneAggiornata = new ArrayList<String>(decorazione);
                             } else {
                                 decorazioneAggiornata = null;
                             }
