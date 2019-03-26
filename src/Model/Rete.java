@@ -109,12 +109,12 @@ public class Rete {
 //                System.out.println(statoAttuale.toString());
                 setRete(statoAttuale);
                 if (statoAttuale.isAbilitato(automi)) {
-                    ArrayList<Transizione>[] transizioniAbilitate = new ArrayList[automi.size()];
+                    List<List<Transizione>> transizioniAbilitate =  new ArrayList<List<Transizione>>(automi.size());
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < automi.size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
                         automi.get(i).isAbilitato(link);
-                        transizioniAbilitate[i] = automi.get(i).getTransizioneAbilitata();//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
-                        numeroTransizioniAbilitate += transizioniAbilitate[i].size();
+                        transizioniAbilitate.add(automi.get(i).getTransizioneAbilitata());//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
+                        numeroTransizioniAbilitate += transizioniAbilitate.get(i).size();
                     }
                     ArrayList<StatoRete> statiDopoLoScatto = new ArrayList<>();
                     Transizione transizioneEseguita;
@@ -134,9 +134,9 @@ public class Rete {
                         copiaStatoAttuale = creaStatoCorrente(automi, link);
 
                         for (int i = 0; i < automi.size(); i++) {
-                            for (int j = 0; j < transizioniAbilitate[i].size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
+                            for (int j = 0; j < transizioniAbilitate.get(i).size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
                                 setRete(statoAttuale);
-                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
+                                Transizione transizioneDaEseguire = transizioniAbilitate.get(i).get(j);
                                 transizioneEseguita = automi.get(i).scatta(transizioneDaEseguire, link);//viene fatta scattare la transizione da eseguire
                                 copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
                                 StatoRete statoDopoLoScatto = creaStatoCorrente(automi, link);
@@ -425,7 +425,7 @@ public class Rete {
     }
 
     private SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
-        camminiDecorati = new ArrayList();
+        camminiDecorati = new ArrayList<>();
         SpazioComportamentale spazioComportamentale = _spazioComportamentale;
 
         LinkedList<StatoReteAbstract> statiDecorati = new LinkedList<>();;
@@ -466,7 +466,7 @@ public class Rete {
 
                     if (verticiAdiacenti.size() == 1) {
                         if (decorazione != null) {
-                            decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                            decorazioneAggiornata = new ArrayList<String> (decorazione);
                         }
                         StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
                         if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
@@ -477,7 +477,7 @@ public class Rete {
                     } else {
                         for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
                             if (decorazione != null) {
-                                decorazioneAggiornata = (ArrayList<String>) decorazione.clone();
+                                decorazioneAggiornata = new ArrayList<String> (decorazione);
                             } else {
                                 decorazioneAggiornata = null;
                             }
