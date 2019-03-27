@@ -46,6 +46,10 @@ public class Parametri {
     public final static String MESSAGGIO_PATH_FILE_IMPORT = "Il file importato risiede nel seguente path:";
     public final static String OSSERVABILITA = "osservabilita";
     public final static String RILEVANZA = "rilevanza";
+    public final static String FORMATO_TXT = ".txt";
+    public final static String FORMATO_DAT = ".dat";
+    public final static String IMPORT_SELEZIONE = "SELEZIONA IL FILE INPUT USATO COME SORGENTE";
+    public final static String CARICAMENTO_SELEZIONE = "SELEZIONE IL FILE DA CARICARE";
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;
     public final static int NUMERO_RIGA_NOMI_AUTOMI = 3;
