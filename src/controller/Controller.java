@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -52,7 +53,11 @@ public class Controller {
         spazioComportamentaleDecorato = inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
         spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
         rete.setSpazioComportamentaleDecorato(spazioComportamentaleDecorato);
-        System.out.println(spazioComportamentaleDecorato.toString());      
+        System.out.println(spazioComportamentaleDecorato.toString());
+    }
+
+    static void creaDizionario(Rete rete) {
+        determinizzazione(rete);
     }
 
     private static List<Cammino> trovaCammini(Rete rete, LinkedList<StatoReteAbstract> stati) {
@@ -78,7 +83,7 @@ public class Controller {
 //                System.out.println(statoAttuale.toString());
                 rete.setRete(statoAttuale);
                 if (statoAttuale.isAbilitato(rete.getAutomi())) {
-                    List<List<Transizione>> transizioniAbilitate =  new ArrayList<List<Transizione>>(rete.getAutomi().size());                  
+                    List<List<Transizione>> transizioniAbilitate = new ArrayList<List<Transizione>>(rete.getAutomi().size());
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < rete.getAutomi().size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
                         rete.getAutomi().get(i).isAbilitato(rete.getLink());
@@ -225,7 +230,7 @@ public class Controller {
         }
 
         if (root.getClass() == StatoReteDecorato.class) {
-            
+
             String nomeRoot = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(0);
             root.setNome(nomeRoot);
             root = new StatoReteRidenominato(_stati.get(0));
@@ -239,15 +244,14 @@ public class Controller {
             }
             StatoReteRidenominato statoDaAggiungere = new StatoReteRidenominato(_stati.get(i), null);
             if (_stati.get(i).getClass() == StatoReteDecorato.class) {
-                
-                
+
 //                if(_stati.get(i).getDescrizione().equals("20 31 Ɛ e3")){
 //                    System.out.println("elaborato_1718.v2.pkg0.Controller.inserisciVerticiSpazioComportamentale()");
 //                }
                 String nome = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(i);
 //                _stati.get(i).setNome(nome);
                 statoDaAggiungere.setNome(nome);
-                while(tuttiGliStatiDelleTraiettorie.lastIndexOf(_stati.get(i))!=-1){//Rinomina tutti gli stati delle traiettorie
+                while (tuttiGliStatiDelleTraiettorie.lastIndexOf(_stati.get(i)) != -1) {//Rinomina tutti gli stati delle traiettorie
                     tuttiGliStatiDelleTraiettorie.get(tuttiGliStatiDelleTraiettorie.lastIndexOf(_stati.get(i))).setNome(nome);
                     tuttiGliStatiDelleTraiettorie.remove(tuttiGliStatiDelleTraiettorie.lastIndexOf(_stati.get(i)));
                 }
@@ -282,7 +286,7 @@ public class Controller {
                     if (statoCorrenteTraiettoria.getClass() == StatoRete.class) {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
                     }
-                    if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {                        
+                    if (statoCorrenteTraiettoria.getClass() == StatoReteDecorato.class) {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
 //                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
@@ -410,8 +414,40 @@ public class Controller {
         return daRitornare;
     }
 
-    private static StatoFDA epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoReteAbstract statoSpazio) {
-        StatoFDA statoFDA = null;
+    private static SpazioComportamentale etichettaOsservabilita(SpazioComportamentale spazioComportamentale) {
+
+        Set<StatoReteAbstract> vertici = spazioComportamentale.getVertici();
+        for (StatoReteAbstract v : vertici) {
+            List<StatoReteAbstract> adj = spazioComportamentale.getVerticiAdiacenti(v);
+            for (StatoReteAbstract s : adj) {
+                if (s.getTransizionePrecedente().getOsservabilita() != null) {
+                    s.setOsservabilita(s.getTransizionePrecedente().getOsservabilita());
+                }
+            }
+        }
+
+        return spazioComportamentale;
+    }
+
+    public static void determinizzazione(Rete rete) {
+        SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
+        StatoReteAbstract root = spazioComportamentaleDecorato.getRoot();
+        
+        List<StatoReteRidenominato> statiRaggiunti =
+                epsilon_CLOSURE(rete.getSpazioComportamentaleDecorato(), rete.getSpazioComportamentaleDecorato().getVerticiAdiacenti(rete.getSpazioComportamentaleDecorato().getVerticiAdiacenti(rete.getSpazioComportamentaleDecorato().getRoot()).get(0)).get(0));
+        System.out.println(statiRaggiunti.toString());
+
+    }
+
+    /**
+     * Ritorna l'insieme degli stati del DFA ottenuto applicando
+     * l'epsilon-CLOSURE ad uno stato del NFA
+     *
+     * @param spazioComportamentale
+     * @param statoSpazio
+     * @return
+     */
+    private static List<StatoReteRidenominato> epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoReteAbstract statoSpazio) {
         List<StatoReteRidenominato> insiemeStati = new ArrayList<>();
         Stack<StatoReteAbstract> stack = new Stack<>();
         stack.push(statoSpazio);
@@ -427,38 +463,9 @@ public class Controller {
                         }
                     }
                 }
-
             }
         }
-        statoFDA = new StatoFDA(insiemeStati, statoSpazio.getOsservabilita());
-        if (statoFDA == null) {
-            System.err.println("StatoFDA non creato");
-        }
-        return statoFDA;
-    }
-
-    private static SpazioComportamentale etichettaOsservabilita(SpazioComportamentale spazioComportamentale) {
-        Stack<StatoReteAbstract> stack = new Stack<>();
-        HashSet<StatoReteAbstract> stati = new HashSet<>();
-        stack.push(spazioComportamentale.getRoot());
-        while (!stack.isEmpty()) {
-            StatoReteAbstract statoAnalizzato = stack.pop();
-            if (statoAnalizzato.getTransizionePrecedente() != null && statoAnalizzato.getTransizionePrecedente().getOsservabilita() != null) {
-                statoAnalizzato.setOsservabilita(statoAnalizzato.getTransizionePrecedente().getOsservabilita());
-            }
-            stati.add(statoAnalizzato);
-
-            List<StatoReteAbstract> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
-            if (statiAdiacenti != null) {
-                for (StatoReteAbstract s : statiAdiacenti) {
-                    if (!stati.contains(s)) {
-                        stack.push(s);
-                    }
-                }
-            }
-        }
-
-        return spazioComportamentale;
+        return insiemeStati;
     }
 
 }

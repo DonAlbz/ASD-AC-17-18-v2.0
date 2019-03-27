@@ -20,9 +20,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author alber
  */
 public class ControllerUtente {
-    
+
     public static Rete rete;
-    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT+"/salvataggio.dat");
+    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
 
     public static Rete start() {
         menuAvvio();
@@ -37,24 +37,27 @@ public class ControllerUtente {
         boolean fineProgramma = false;
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
         int selezione = menu.scegli();
-        fineProgramma = selezioneMenuAvvio(selezione);  
+        fineProgramma = selezioneMenuAvvio(selezione);
     }
-    
-    private static boolean selezioneMenuAvvio(int selezione){
+
+    private static boolean selezioneMenuAvvio(int selezione) {
         boolean end = false;
-        switch(selezione){
-            case 1: importa();
-            break;
-            
-            case 2: carica();
-            break;
-            
-            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
+        switch (selezione) {
+            case 1:
+                importa();
+                break;
+
+            case 2:
+                carica();
+                break;
+
+            case 0:
+                end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
-    
-    private static void importa(){
+
+    private static void importa() {
         // impostazione della directory di partenza
         JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
         // creazione del filtro txt
@@ -63,7 +66,7 @@ public class ControllerUtente {
         fileScelto.addChoosableFileFilter(filtroTxt);
         // di default filtro solo i file txt (lo aggiunge in automatico alla combo sottostante)
         fileScelto.setFileFilter(filtroTxt);
-        // imposto di default il nome del file da cercare
+        // imposto di default il nome del file da cercare        
         fileScelto.setSelectedFile(new File("input.txt"));
 
         int selezione = fileScelto.showDialog(null, "Seleziona il file da aprire");
@@ -75,11 +78,11 @@ public class ControllerUtente {
             rete = nuovoImport.caricaReteDaFile(path);
         }
     }
-    
-    private static void carica(){
+
+    private static void carica() {
         File fileSalvataggio = null;
-        
-         // impostazione della directory di partenza
+
+        // impostazione della directory di partenza
         JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
         // creazione del filtro dat
         FileFilter filtroDat = new FileNameExtensionFilter("DAT file", "dat");
@@ -98,7 +101,7 @@ public class ControllerUtente {
 //            rete = nuovoImport.caricaReteDaFile(path);
             fileSalvataggio = new File(path);
         }
-        
+
         if (fileSalvataggio.exists()) {
             try {
                 rete = (Rete) ServizioFile.caricaSingoloOggetto(fileSalvataggio);
@@ -123,32 +126,37 @@ public class ControllerUtente {
      * @param rete
      */
     public static void menuRete(Rete rete) {
-        boolean fineProgramma = false;
-        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
-        do{
-            int selezione = menu.scegli();
-            fineProgramma = selezioneMenuRete(selezione);
-        }while(!fineProgramma);
+//        boolean fineProgramma = false;
+//        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
+//        do {
+//            int selezione = menu.scegli();
+//            fineProgramma = selezioneMenuRete(selezione);
+//        } while (!fineProgramma);
         infomazioniRete(rete);
-        compiti(rete);
+        compiti(rete);        
     }
-    
-    private static boolean selezioneMenuRete(int selezione){
+
+    private static boolean selezioneMenuRete(int selezione) {
         boolean end = false;
-        switch(selezione){
-            case 1: System.out.println("Stampa informazioni sulla rete");
-            break;
-            
-            case 2: System.out.println("Esegui compito");
-            break;
-            
-            case 3: salva();
-            break;
-            
-            case 4: System.out.println("Cambia rete");
-            break;
-            
-            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
+        switch (selezione) {
+            case 1:
+                System.out.println("Stampa informazioni sulla rete");
+                break;
+
+            case 2:
+                System.out.println("Esegui compito");
+                break;
+
+            case 3:
+                salva();
+                break;
+
+            case 4:
+                System.out.println("Cambia rete");
+                break;
+
+            case 0:
+                end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
@@ -169,6 +177,8 @@ public class ControllerUtente {
     private static void compiti(Rete rete) {
         creaSpazioComportamentale(rete);
         creaSpazioComportamentaleDecorato(rete);
+        creaDizionario(rete);
+
     }
 
     /**
@@ -196,6 +206,10 @@ public class ControllerUtente {
      */
     private static void creaSpazioComportamentaleDecorato(Rete rete) {
         Controller.creaSpazioComportamentaleDecorato(rete);
+    }
+
+    private static void creaDizionario(Rete rete) {
+        Controller.creaDizionario(rete);
     }
 
 }
