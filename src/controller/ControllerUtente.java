@@ -6,11 +6,13 @@
 package controller;
 
 import Model.*;
+import view.*;
 import Utilita.InputDati;
 import Utilita.MyMenu;
 import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
+import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -57,26 +59,54 @@ public class ControllerUtente {
         return end;
     }
 
-    private static void importa() {
-        // impostazione della directory di partenza
-        JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
-        // creazione del filtro txt
-        FileFilter filtroTxt = new FileNameExtensionFilter("TXT file", "txt");
-        // inserisco nella scelta del tipo di file un filtro TXT
-        fileScelto.addChoosableFileFilter(filtroTxt);
-        // di default filtro solo i file txt (lo aggiunge in automatico alla combo sottostante)
-        fileScelto.setFileFilter(filtroTxt);
-        // imposto di default il nome del file da cercare        
-        fileScelto.setSelectedFile(new File("input.txt"));
 
-        int selezione = fileScelto.showDialog(null, "Seleziona il file da aprire");
-        if (selezione == JFileChooser.APPROVE_OPTION) {
-            String path = fileScelto.getSelectedFile().getPath();
-            System.out.println(Parametri.MESSAGGIO_PATH_FILE_IMPORT);
-            System.out.println(fileScelto.getSelectedFile());
-            Import nuovoImport = new Import();
-            rete = nuovoImport.caricaReteDaFile(path);
+    
+    /**
+     * Metodo che permette di eseguire delle osservazioni o delle operazioni
+     * sulla rete considerata
+     *
+     * @param rete
+     */
+    public static void menuRete(Rete rete) {
+        boolean fineProgramma = false;
+        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
+        do{
+            int selezione = menu.scegli();
+            fineProgramma = selezioneMenuRete(selezione);
+        }while(!fineProgramma);
+        View.stampaNomeRete(rete);
+        infomazioniRete(rete);
+        compiti(rete);
+    }
+    
+    private static void importa(){
+        File cartella = new File(Parametri.PATH_FILE_INPUT);
+        
+        // inizializzazione della classe che mi permette di filtrare i txt
+        FilenameFilter textFilter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(Parametri.FORMATO_TXT)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+
+        File[] listaFile = cartella.listFiles(textFilter);
+        String[] nomiFile = new String[listaFile.length];
+        for(int i = 0; i < listaFile.length; i++){
+            nomiFile[i] = listaFile[i].getName();
         }
+        
+        MyMenu menuSelezione = new MyMenu(Parametri.IMPORT_SELEZIONE, nomiFile);
+        int selezione = menuSelezione.scegliSenzaUscita();
+        File fileScelto = listaFile[selezione-1];
+        String pathCompletoFile = fileScelto.getAbsolutePath();
+        Import nuovoImport = new Import();
+        rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
     }
 
     private static void carica() {
@@ -119,24 +149,29 @@ public class ControllerUtente {
         }
     }
 
+
     /**
      * Metodo che permette di eseguire delle osservazioni o delle operazioni
      * sulla rete considerata
      *
      * @param rete
      */
-    public static void menuRete(Rete rete) {
+//    public static void menuRete(Rete rete) {
 //        boolean fineProgramma = false;
 //        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
 //        do {
 //            int selezione = menu.scegli();
 //            fineProgramma = selezioneMenuRete(selezione);
 //        } while (!fineProgramma);
-        infomazioniRete(rete);
-        compiti(rete);        
-    }
+//        infomazioniRete(rete);
+//        compiti(rete);        
+  
 
-    private static boolean selezioneMenuRete(int selezione) {
+
+
+    
+    private static boolean selezioneMenuRete(int selezione){
+
         boolean end = false;
         switch (selezione) {
             case 1:

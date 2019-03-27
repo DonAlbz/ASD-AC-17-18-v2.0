@@ -24,15 +24,17 @@ public class Main {
         }
         
         */
-       long tempoInizio = System.currentTimeMillis();
-       long tempoFine;
+//       long tempoInizio = System.currentTimeMillis();
+//       long tempoFine;
 //        Import.primoScenario();
 //        Import.caricaReteDaFile();
-          Rete rete = Import.primoScenario();
-          ControllerUtente.menuRete(rete);
-//        Rete rete = ControllerUtente.start();
-//        ControllerUtente.menuRete(rete);
-//        
+
+
+        Rete rete = ControllerUtente.start();
+//        rete = Import.primoScenario();
+        ControllerUtente.menuRete(rete);
+        
+
 //        ControllerUtente.start();
 //        tempoFine=System.currentTimeMillis();
 //        long differenza = tempoFine - tempoInizio;

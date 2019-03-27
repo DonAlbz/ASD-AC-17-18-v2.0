@@ -47,7 +47,9 @@ public class InputDati {
         char valoreLetto = '\0';
         do {
             System.out.print(messaggio);
-            String lettura = lettore.next();
+            // String lettura = lettore.next();
+            // l'operazione commentata genera problemi in ambienti windows
+            String lettura = lettore.nextLine();
             if (lettura.length() > 0) {
                 valoreLetto = lettura.charAt(0);
                 finito = true;
@@ -79,7 +81,13 @@ public class InputDati {
         do {
             System.out.print(messaggio);
             try {
-                valoreLetto = lettore.nextInt();
+                //valoreLetto = lettore.nextInt();
+                // nuovo metodo perché genera problemi su ambienti windows
+                try{
+                    valoreLetto = Integer.parseInt(lettore.nextLine());
+                } catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
                 finito = true;
             } catch (InputMismatchException e) {
                 System.out.println(ERRORE_FORMATO);
