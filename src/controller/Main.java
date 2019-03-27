@@ -29,10 +29,12 @@ public class Main {
 //        Import.primoScenario();
 //        Import.caricaReteDaFile();
 
+
         Rete rete = ControllerUtente.start();
 //        rete = Import.primoScenario();
         ControllerUtente.menuRete(rete);
         
+
 //        ControllerUtente.start();
 //        tempoFine=System.currentTimeMillis();
 //        long differenza = tempoFine - tempoInizio;

@@ -6,6 +6,7 @@
 package Model;
 
 import java.util.List;
+import view.Parametri;
 
 /**
  *
@@ -18,6 +19,22 @@ public class StatoFDA {
     public StatoFDA(List<StatoReteRidenominato> stato, String osservabilita) {
         this.stato = stato;
         this.osservabilita = osservabilita;
+    }
+    
+    
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(Parametri.PARENTESI_TONDA_A);
+        for(StatoReteRidenominato statoRete: stato){
+            s.append(statoRete.toString());
+        }
+        s.append(Parametri.PARENTESI_TONDA_C);
+        
+        
+        return s.toString();
+        
+        
+        
     }
     
     
