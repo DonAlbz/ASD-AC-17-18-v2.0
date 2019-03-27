@@ -24,12 +24,13 @@ public class Main {
         }
         
         */
-       long tempoInizio = System.currentTimeMillis();
-       long tempoFine;
+//       long tempoInizio = System.currentTimeMillis();
+//       long tempoFine;
 //        Import.primoScenario();
 //        Import.caricaReteDaFile();
 
         Rete rete = ControllerUtente.start();
+//        rete = Import.primoScenario();
         ControllerUtente.menuRete(rete);
         
 //        ControllerUtente.start();

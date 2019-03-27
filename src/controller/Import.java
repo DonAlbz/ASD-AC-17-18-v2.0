@@ -35,7 +35,7 @@ public class Import {
         } catch (IOException ex) {
             Logger.getLogger(Import.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //View.stampaFileTxt(file);
+        View.stampaFileTxt(file);
         return inizializzazioneRete();
     }
 
@@ -60,13 +60,11 @@ public class Import {
             Evento evento = new Evento(eventiString[j]);
             eventi[j] = evento;
         }
-
         // Inizializzazione dizionario osservabilita
         String[] etichettaOsservabilita = getEtichettaOsservabilita(file);
 
         // Inizializzazione dizionario rilevanza
         String[] etichettaRilevanza = getEtichettaRilevanza(file);
-
         // Creazione della rete
         rete = new Rete(nomeRete, link, eventi, etichettaOsservabilita, etichettaRilevanza);
 
@@ -76,7 +74,7 @@ public class Import {
             // aggiunta dell'automa
             Automa automa = new Automa(automa_str);
             rete.addAutoma(automa);
-
+            
             // aggiunta degli stati di automa
             ArrayList<String> statiAutoma = getStatiDaAutoma(automa, file);
             int i = 1;
@@ -94,6 +92,7 @@ public class Import {
         View.stampaStati(rete);
         View.stampaEtichettaOsservabilita(rete);
         View.stampaEtichettaRilevanza(rete);
+        System.out.println("sono quas");
         System.out.println(getOsservabilita(rete.getAutomi().get(0), "t2a", file));
         System.out.println(getRilevanza(rete.getAutomi().get(0), "t2b", file));
 
@@ -136,6 +135,28 @@ public class Import {
                 }
             }
         }
+
+
+//        Evento[] eventoOut = {null,eventi[1]};
+//        Transizione t2a = new Transizione("t2a", rete.getAutomi().get(0).getStato("21"), 0, eventi[0], eventoOut, null, etichettaOsservabilita[0]);
+//        rete.getAutomi().get(0).getStato("20").addTransazione(t2a);
+//        
+//        Evento[] eventot2b = {null, eventi[1]};
+//        Transizione t2b = new Transizione("t2b", rete.getAutomi().get(0).getStato("20"), -1, null, eventot2b, etichettaRilevanza[0], null);
+//        rete.getAutomi().get(0).getStato("21").addTransazione(t2b);
+//        
+//        Evento[] eventit3a = {eventi[0], null};
+//        Transizione t3a = new Transizione("t3a", rete.getAutomi().get(1).getStato("31"), -1, null, eventit3a, null, etichettaOsservabilita[1]);
+//        rete.getAutomi().get(1).getStato("30").addTransazione(t3a);
+//        
+//        Transizione t3b = new Transizione("t3b", rete.getAutomi().get(1).getStato("30"), 1, eventi[1], null, null, null);
+//        rete.getAutomi().get(1).getStato("31").addTransazione(t3b);
+//        
+//        Transizione t3c = new Transizione("t3c", rete.getAutomi().get(1).getStato("31"), 1, eventi[1], null, etichettaRilevanza[1], null);
+//        rete.getAutomi().get(1).getStato("31").addTransazione(t3c);
+        
+        
+        
         return rete;
 
     }
@@ -258,6 +279,7 @@ public class Import {
         return dizionario;
     }
 
+    // metodo da controllare perché genera in maniera sbagliata le cose
     private ArrayList<String> getStatiDaAutoma(Automa automa, List<String> fileInput) {
         ArrayList<String> statiDiAutoma = new ArrayList<>();
         for (int i = 0; i < fileInput.size(); i++) {

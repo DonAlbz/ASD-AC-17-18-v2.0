@@ -24,11 +24,13 @@ C2
 t2a: e2(L2)/{e3(L3)}
 t2b: /{e3(L3)}
 
-t2a_osservabilita: o2
-t2b_osservabilita: null
+OSSERVABILITA
+t2a: o2
+t2b: null
 
-t2a_rilevanza: null
-t2b_rilevanza: r
+RILEVANZA
+t2a: null
+t2b: r
 -----------------------
 C3
 30	31
@@ -41,11 +43,13 @@ t3a: /{e2(L2)}
 t3b: e3(L3)
 t3c: e3(L3)
 
-t3a_osservabilita: o3
-t3b_osservabilita: null
-t3c_osservabilita: null
+OSSERVABILITA
+t3a: o3
+t3b: null
+t3c: null
 
-t3a_rilevanza: null
-t3b_rilevanza: null
-t3c_rilevanza: f
+RILEVANZA
+t3a: null
+t3b: null
+t3c: f
 -----------------------
