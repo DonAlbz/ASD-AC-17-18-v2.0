@@ -541,7 +541,7 @@ public class Import {
                             String transizione = fileInput.get(i).substring(0, 3);
                             if(transizione.equalsIgnoreCase(nomeTransizione)){
                                 if(fileInput.get(i).contains(Parametri.NULL)){
-                                    osservabilita = Parametri.NULL;
+                                    osservabilita = null;
                                 }
                                 else{
                                     osservabilita = fileInput.get(i).substring(5,7);
