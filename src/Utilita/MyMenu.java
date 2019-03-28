@@ -10,6 +10,7 @@ public class MyMenu {
 
     final private static String CORNICE = "--------------------------------";
     final private static String VOCE_USCITA = "0\tEsci";
+    final private static String VOCE_MENU_PRINCIPALE = "Ritorna al menù principale";
     final private static String RICHIESTA_INSERIMENTO = "Digita il numero dell'opzione desiderata > ";
 
     private String titolo;
@@ -25,7 +26,7 @@ public class MyMenu {
         return InputDati.leggiIntero(RICHIESTA_INSERIMENTO, 0, voci.length);
     }
 
-    public void stampaMenu() {
+    private void stampaMenu() {
         System.out.println(CORNICE);
         System.out.println(titolo);
         System.out.println(CORNICE);
@@ -37,13 +38,31 @@ public class MyMenu {
         System.out.println();
     }
     
-    public void stampaMenuSenzaUscita() {
+    private void stampaMenuSenzaUscita() {
         System.out.println(CORNICE);
         System.out.println(titolo);
         System.out.println(CORNICE);
         for (int i = 0; i < voci.length; i++) {
             System.out.println((i + 1) + "\t" + voci[i]);
         }
+    }
+    
+    public int scegliMenuInterno() {
+        stampaMenuInterno();
+        return InputDati.leggiIntero(RICHIESTA_INSERIMENTO, 0, voci.length);
+    }
+    
+    private void stampaMenuInterno() {
+        System.out.println(CORNICE);
+        System.out.println(titolo);
+        System.out.println(CORNICE);
+        for (int i = 0; i < voci.length; i++) {
+            System.out.println((i + 1) + "\t" + voci[i]);
+        }
+        System.out.println();
+        System.out.println((voci.length+1) + "\t" + VOCE_MENU_PRINCIPALE);
+        System.out.println(VOCE_USCITA);
+        System.out.println();
     }
     
     public int scegliSenzaUscita(){

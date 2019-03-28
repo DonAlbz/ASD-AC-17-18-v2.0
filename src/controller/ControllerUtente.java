@@ -69,8 +69,6 @@ public class ControllerUtente {
             int selezione = menu.scegli();
             fineProgramma = selezioneMenuRete(selezione);
         }while(!fineProgramma);
-        View.stampaNomeRete(rete);
-        infomazioniRete(rete);
         compiti(rete);
     }
     
@@ -101,6 +99,8 @@ public class ControllerUtente {
         String pathCompletoFile = fileScelto.getAbsolutePath();
         Import nuovoImport = new Import();
         rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
+        
+        View.messaggioImportCorretto(rete);
     }
     
     private static void carica(){
@@ -146,7 +146,7 @@ public class ControllerUtente {
     private static boolean selezioneMenuRete(int selezione){
         boolean end = false;
         switch(selezione){
-            case 1: System.out.println("Stampa informazioni sulla rete");
+            case 1: menuInformazioniRete(rete);
             break;
             
             case 2: System.out.println("Esegui compito");
@@ -168,7 +168,25 @@ public class ControllerUtente {
      *
      * @param rete
      */
-    private static void infomazioniRete(Rete rete) {
+    private static void menuInformazioniRete(Rete rete) {
+        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INFORMAZIONI_RETE, Parametri.VOCI_MENU_INFORMAZIONI_RETE);
+        int selezione = menu.scegliMenuInterno();
+        switch (selezione) {
+            case 1:
+                View.stampaNomeRete(rete);
+                break;
+
+            case 2:
+                View.stampaAutomi(rete);
+                break;
+
+            case 3:
+                View.stampaStati(rete);
+                break;
+                
+
+            // ecc ecc
+        }
     }
 
     /**

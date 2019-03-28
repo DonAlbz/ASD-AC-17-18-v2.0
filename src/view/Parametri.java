@@ -50,6 +50,12 @@ public class Parametri {
     public final static String FORMATO_DAT = ".dat";
     public final static String IMPORT_SELEZIONE = "SELEZIONA IL FILE INPUT USATO COME SORGENTE";
     public final static String CARICAMENTO_SELEZIONE = "SELEZIONE IL FILE DA CARICARE";
+    public final static String TITOLO_MENU_INFORMAZIONI_RETE = "INFORMAZIONI DELLA RETE";
+    public final static String VOCI_MENU_INFORMAZIONI_RETE [] = {"Stampa nome della rete",
+                                                                "Stampa automi che compongono la rete",
+                                                                "Stampa stati che compongono la rete",
+                                                                "Stampa transizioni che compongono la rete",
+                                                                "Stampa globale delle informazioni della rete"};
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;
     public final static int NUMERO_RIGA_NOMI_AUTOMI = 3;
