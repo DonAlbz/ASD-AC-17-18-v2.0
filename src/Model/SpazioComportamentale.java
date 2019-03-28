@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -129,4 +130,8 @@ public class SpazioComportamentale {
         return s.toString();
     }
 
+    public Set<StatoReteAbstract> getVertici(){
+       return verticiAdiacenti.keySet();
+    }
+    
 }

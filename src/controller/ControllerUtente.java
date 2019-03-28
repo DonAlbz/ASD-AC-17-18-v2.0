@@ -197,6 +197,7 @@ public class ControllerUtente {
     private static void compiti(Rete rete) {
         creaSpazioComportamentale(rete);
         creaSpazioComportamentaleDecorato(rete);
+        creaDizionario(rete);
     }
 
     /**
@@ -226,4 +227,8 @@ public class ControllerUtente {
         Controller.creaSpazioComportamentaleDecorato(rete);
     }
 
+   private static void creaDizionario(Rete rete) {
+        Controller.creaDizionario(rete);
+    }
+  
 }
