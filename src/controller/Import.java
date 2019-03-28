@@ -92,9 +92,9 @@ public class Import {
         View.stampaStati(rete);
         View.stampaEtichettaOsservabilita(rete);
         View.stampaEtichettaRilevanza(rete);
-        System.out.println("sono quas");
-        System.out.println(getOsservabilita(rete.getAutomi().get(0), "t2a", file));
-        System.out.println(getRilevanza(rete.getAutomi().get(0), "t2b", file));
+//        System.out.println("sono quas");
+//        System.out.println(getOsservabilita_old(rete.getAutomi().get(0), "t2a", file));
+//        System.out.println(getRilevanza_old(rete.getAutomi().get(0), "t2b", file));
 
         // Ciclo inizializzazione delle transizioni
         for (Automa automa : rete.getAutomi()) {
@@ -135,30 +135,8 @@ public class Import {
                 }
             }
         }
-
-
-//        Evento[] eventoOut = {null,eventi[1]};
-//        Transizione t2a = new Transizione("t2a", rete.getAutomi().get(0).getStato("21"), 0, eventi[0], eventoOut, null, etichettaOsservabilita[0]);
-//        rete.getAutomi().get(0).getStato("20").addTransazione(t2a);
-//        
-//        Evento[] eventot2b = {null, eventi[1]};
-//        Transizione t2b = new Transizione("t2b", rete.getAutomi().get(0).getStato("20"), -1, null, eventot2b, etichettaRilevanza[0], null);
-//        rete.getAutomi().get(0).getStato("21").addTransazione(t2b);
-//        
-//        Evento[] eventit3a = {eventi[0], null};
-//        Transizione t3a = new Transizione("t3a", rete.getAutomi().get(1).getStato("31"), -1, null, eventit3a, null, etichettaOsservabilita[1]);
-//        rete.getAutomi().get(1).getStato("30").addTransazione(t3a);
-//        
-//        Transizione t3b = new Transizione("t3b", rete.getAutomi().get(1).getStato("30"), 1, eventi[1], null, null, null);
-//        rete.getAutomi().get(1).getStato("31").addTransazione(t3b);
-//        
-//        Transizione t3c = new Transizione("t3c", rete.getAutomi().get(1).getStato("31"), 1, eventi[1], null, etichettaRilevanza[1], null);
-//        rete.getAutomi().get(1).getStato("31").addTransazione(t3c);
-        
-        
         
         return rete;
-
     }
 
     static Rete primoScenario() {
@@ -482,7 +460,7 @@ public class Import {
         int posizioneLink = -1;
         for (int i = 0; i < fileInput.size(); i++) {
             if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
-                while (!fileInput.get(i).equals(Parametri.SEPARATORE)) {
+                while (!fileInput.get(i).equalsIgnoreCase(Parametri.OSSERVABILITA)) {
                     if (fileInput.get(i).length() != 0 && fileInput.get(i).contains("t")) {
                         String transizioneIntera = fileInput.get(i);
                         String transizione = transizioneIntera.substring(0, 3);
@@ -491,6 +469,7 @@ public class Import {
                             String separatore = transizioneIntera.substring(5, 6);
                             if (!separatore.equalsIgnoreCase("/")) {
                                 // cerco il linkIn della transizione nella posizione 8-10
+                                System.out.println(i);
                                 String linkIn = transizioneIntera.substring(8, 10);
                                 // controllo nel vettore Link in che posizione sia e modifico posizioneLink
                                 for (int j = 0; j < elencoLink.length; j++) {
@@ -535,7 +514,7 @@ public class Import {
         return transizioniUscenti;
     }
     
-    private String getOsservabilita(Automa automa, String nomeTransizione, List<String> fileInput) {
+    private String getOsservabilita_old(Automa automa, String nomeTransizione, List<String> fileInput) {
         String osservabilita = null;
         for (int i = 0; i < fileInput.size(); i++) {
             if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
@@ -551,16 +530,52 @@ public class Import {
         return osservabilita;
     }
     
-    private String getRilevanza(Automa automa, String nomeTransizione, List<String> fileInput){
-        String rilevanza = null;
-        for (int i = 0; i < fileInput.size(); i++) {
-            if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
-                while (!fileInput.get(i).equals(Parametri.SEPARATORE)) {
-                    if (fileInput.get(i).contains(nomeTransizione) && fileInput.get(i).contains(Parametri.RILEVANZA)) {
-                        int j = fileInput.get(i).indexOf(":");
-                        rilevanza = fileInput.get(i).substring(j + 2, fileInput.get(i).length());
+    private String getOsservabilita(Automa automa, String nomeTransizione, List<String> fileInput){
+        String osservabilita = null;
+        for(int i = 0; i < fileInput.size(); i++){
+            if(fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())){
+                while(!fileInput.get(i).equals(Parametri.SEPARATORE)){
+                    if(fileInput.get(i).equalsIgnoreCase(Parametri.OSSERVABILITA)){
+                        i++;
+                        while(!fileInput.get(i).isEmpty()){
+                            String transizione = fileInput.get(i).substring(0, 3);
+                            if(transizione.equalsIgnoreCase(nomeTransizione)){
+                                if(fileInput.get(i).contains(Parametri.NULL)){
+                                    osservabilita = null;
+                                }
+                                else{
+                                    osservabilita = fileInput.get(i).substring(5,7);
+                                }
+                            }
+                            i++;
+                        }
                     }
                     i++;
+                }
+            }
+        }
+        return osservabilita;
+    }
+    
+    private String getRilevanza(Automa automa, String nomeTransizione, List<String> fileInput){
+        String rilevanza = null;
+        for(int i = 0; i < fileInput.size(); i++){
+            if(fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())){
+                i++;
+                while(!fileInput.get(i).equalsIgnoreCase(Parametri.RILEVANZA)){
+                    i++;
+                }
+                i++;
+                while(!fileInput.get(i).contains(nomeTransizione)){
+                    i++;
+                }
+                if(fileInput.get(i).contains(Parametri.NULL)){
+                    rilevanza = null;
+                    System.out.println(fileInput.get(i));
+                }
+                else {
+                    rilevanza = fileInput.get(i).substring(5,6);
+                    System.out.println(fileInput.get(i));
                 }
             }
         }
