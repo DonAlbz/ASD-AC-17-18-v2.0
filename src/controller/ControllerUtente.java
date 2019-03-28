@@ -22,9 +22,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author alber
  */
 public class ControllerUtente {
-
+    
     public static Rete rete;
-    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
+    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT+"/salvataggio.dat");
 
     public static Rete start() {
         menuAvvio();
@@ -39,27 +39,22 @@ public class ControllerUtente {
         boolean fineProgramma = false;
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
         int selezione = menu.scegli();
-        fineProgramma = selezioneMenuAvvio(selezione);
+        fineProgramma = selezioneMenuAvvio(selezione);  
     }
-
-    private static boolean selezioneMenuAvvio(int selezione) {
+    
+    private static boolean selezioneMenuAvvio(int selezione){
         boolean end = false;
-        switch (selezione) {
-            case 1:
-                importa();
-                break;
-
-            case 2:
-                carica();
-                break;
-
-            case 0:
-                end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
+        switch(selezione){
+            case 1: importa();
+            break;
+            
+            case 2: carica();
+            break;
+            
+            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
-
-
     
     /**
      * Metodo che permette di eseguire delle osservazioni o delle operazioni
@@ -74,8 +69,6 @@ public class ControllerUtente {
             int selezione = menu.scegli();
             fineProgramma = selezioneMenuRete(selezione);
         }while(!fineProgramma);
-        View.stampaNomeRete(rete);
-        infomazioniRete(rete);
         compiti(rete);
     }
     
@@ -94,7 +87,6 @@ public class ControllerUtente {
             }
         };
 
-
         File[] listaFile = cartella.listFiles(textFilter);
         String[] nomiFile = new String[listaFile.length];
         for(int i = 0; i < listaFile.length; i++){
@@ -107,12 +99,14 @@ public class ControllerUtente {
         String pathCompletoFile = fileScelto.getAbsolutePath();
         Import nuovoImport = new Import();
         rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
+        
+        View.messaggioImportCorretto(rete);
     }
-
-    private static void carica() {
+    
+    private static void carica(){
         File fileSalvataggio = null;
-
-        // impostazione della directory di partenza
+        
+         // impostazione della directory di partenza
         JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
         // creazione del filtro dat
         FileFilter filtroDat = new FileNameExtensionFilter("DAT file", "dat");
@@ -131,7 +125,7 @@ public class ControllerUtente {
 //            rete = nuovoImport.caricaReteDaFile(path);
             fileSalvataggio = new File(path);
         }
-
+        
         if (fileSalvataggio.exists()) {
             try {
                 rete = (Rete) ServizioFile.caricaSingoloOggetto(fileSalvataggio);
@@ -148,50 +142,23 @@ public class ControllerUtente {
             System.out.println("Problemi con il file");
         }
     }
-
-
-    /**
-     * Metodo che permette di eseguire delle osservazioni o delle operazioni
-     * sulla rete considerata
-     *
-     * @param rete
-     */
-//    public static void menuRete(Rete rete) {
-//        boolean fineProgramma = false;
-//        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
-//        do {
-//            int selezione = menu.scegli();
-//            fineProgramma = selezioneMenuRete(selezione);
-//        } while (!fineProgramma);
-//        infomazioniRete(rete);
-//        compiti(rete);        
-  
-
-
-
     
     private static boolean selezioneMenuRete(int selezione){
-
         boolean end = false;
-        switch (selezione) {
-            case 1:
-                System.out.println("Stampa informazioni sulla rete");
-                break;
-
-            case 2:
-                System.out.println("Esegui compito");
-                break;
-
-            case 3:
-                salva();
-                break;
-
-            case 4:
-                System.out.println("Cambia rete");
-                break;
-
-            case 0:
-                end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
+        switch(selezione){
+            case 1: menuInformazioniRete(rete);
+            break;
+            
+            case 2: System.out.println("Esegui compito");
+            break;
+            
+            case 3: salva();
+            break;
+            
+            case 4: System.out.println("Cambia rete");
+            break;
+            
+            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
@@ -201,7 +168,25 @@ public class ControllerUtente {
      *
      * @param rete
      */
-    private static void infomazioniRete(Rete rete) {
+    private static void menuInformazioniRete(Rete rete) {
+        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INFORMAZIONI_RETE, Parametri.VOCI_MENU_INFORMAZIONI_RETE);
+        int selezione = menu.scegliMenuInterno();
+        switch (selezione) {
+            case 1:
+                View.stampaNomeRete(rete);
+                break;
+
+            case 2:
+                View.stampaAutomi(rete);
+                break;
+
+            case 3:
+                View.stampaStati(rete);
+                break;
+                
+
+            // ecc ecc
+        }
     }
 
     /**
@@ -213,7 +198,6 @@ public class ControllerUtente {
         creaSpazioComportamentale(rete);
         creaSpazioComportamentaleDecorato(rete);
         creaDizionario(rete);
-
     }
 
     /**
@@ -243,8 +227,8 @@ public class ControllerUtente {
         Controller.creaSpazioComportamentaleDecorato(rete);
     }
 
-    private static void creaDizionario(Rete rete) {
+   private static void creaDizionario(Rete rete) {
         Controller.creaDizionario(rete);
     }
-
+  
 }

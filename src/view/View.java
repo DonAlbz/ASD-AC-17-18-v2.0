@@ -27,12 +27,11 @@ public class View {
     }
 
     public static void stampaTraiettorie(List<Cammino> traiettorie) {
-
         System.out.println(Parametri.TRAIETTORIE_ETICHETTA);
         System.out.println();
         for (int i = 0; i < traiettorie.size(); i++) {
             int numeroCammino = i + 1;
-            System.out.println(Parametri.TRAIETTORIA_NUMERO_ETICHETTA+ numeroCammino);
+            System.out.println(Parametri.TRAIETTORIA_NUMERO_ETICHETTA + numeroCammino);
             System.out.println();
             System.out.println(traiettorie.get(i).toString());
             System.out.println();
@@ -48,24 +47,35 @@ public class View {
     
     public static String stampaNomeRete(Rete rete){
         String nomeRete = rete.getDescrizione();
+        System.out.println("");
         System.out.println("Il nome della rete è: " + nomeRete);
+        System.out.println("");
         return nomeRete;
     }
     
     public static void stampaAutomi(Rete rete){
         List<Automa> automi = rete.getAutomi();
+        System.out.println("");
+        int i = 1;
         for(Automa aut : automi){
-            System.out.println(aut.getDescrizione());
+            System.out.println("Automa "+ i + " nella rete è: " + aut.getDescrizione());
+            i++;
         }
+        System.out.println("");
     }
     
     public static void stampaStati(Rete rete){
         List<Automa> automi = rete.getAutomi();
+        System.out.println("");
         for(Automa aut : automi){
             List<Stato> stati = aut.getStati();
+            System.out.println("L'automa " + aut.getDescrizione() + " è composto dei seguenti stati:");
+            int i = 1;
             for(Stato st : stati){
-                System.out.println(st.getDescrizione());
+                System.out.println("Stato " + i + " " + st.getDescrizione());
+                i++;
             }
+            System.out.println("");
         }
     }
     
@@ -83,5 +93,11 @@ public class View {
         for(String str : etichette){
             System.out.println(str);
         }
+    }
+    
+    public static void messaggioImportCorretto(Rete rete){
+        System.out.println("");
+        System.out.println("L'import della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
+        System.out.println("");
     }
 }

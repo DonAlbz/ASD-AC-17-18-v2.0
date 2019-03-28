@@ -35,7 +35,6 @@ public class Import {
         } catch (IOException ex) {
             Logger.getLogger(Import.class.getName()).log(Level.SEVERE, null, ex);
         }
-        View.stampaFileTxt(file);
         return inizializzazioneRete();
     }
 
@@ -84,54 +83,43 @@ public class Import {
                 i++;
             }
         }
-        
-        // stampa delle caratteristiche
-        System.out.println(Parametri.INIZIALIZZAZIONE_RETE);
-        View.stampaNomeRete(rete);
-        View.stampaAutomi(rete);
-        View.stampaStati(rete);
-        View.stampaEtichettaOsservabilita(rete);
-        View.stampaEtichettaRilevanza(rete);
-//        System.out.println("sono quas");
-//        System.out.println(getOsservabilita_old(rete.getAutomi().get(0), "t2a", file));
-//        System.out.println(getRilevanza_old(rete.getAutomi().get(0), "t2b", file));
 
         // Ciclo inizializzazione delle transizioni
         for (Automa automa : rete.getAutomi()) {
             for (Stato stato : automa.getStati()) {
                 ArrayList<String> transizioniUscenti = getStatiDiPartenza(stato, automa, file);
                 for (String transizione : transizioniUscenti) {
-                    System.out.println("Automa " + automa.getDescrizione() + " - dallo stato " + stato.getDescrizione() + " la transazione uscente è: " + transizione);
+//                    System.out.println("Automa " + automa.getDescrizione() + " - dallo stato " + stato.getDescrizione() + " la transazione uscente è: " + transizione);
                     String nomeTransizione = transizione;
                     String nomeStatoDestinazione = getStatoDestinazioneDiTransizione(automa, transizione, file);
-                    System.out.println("Lo stato di destinazione è: " + nomeStatoDestinazione);
+//                    System.out.println("Lo stato di destinazione è: " + nomeStatoDestinazione);
                     Stato statoDestinazione = automa.getStato(nomeStatoDestinazione);
                     int posizioneLinkIn = getLinkInDiTransizione(automa, transizione, linkString, file);
-                    System.out.println("Posizione link in: " + posizioneLinkIn);
+//                    System.out.println("Posizione link in: " + posizioneLinkIn);
                     int indiceEventoRichiesto = getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file);
                     if (indiceEventoRichiesto == -1) {
-                        System.out.println("Nessun evento richiesto");
+//                        System.out.println("Nessun evento richiesto");
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         String rilevanza = getRilevanza(automa, nomeTransizione, file);
-                        System.out.println("La sua rilevanza è: " + rilevanza);
+//                        System.out.println("La sua rilevanza è: " + rilevanza);
                         String osservabilita = getOsservabilita(automa, nomeTransizione, file);
-                        System.out.println("La sua osservabilita è: " + osservabilita);
+//                        System.out.println("La sua osservabilita è: " + osservabilita);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, null, eventiInUscita, rilevanza, osservabilita);
                         stato.addTransazione(transizioneDaInserire);
                     } else {
                         Evento eventoRichiesto = eventi[getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file)];
-                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
+//                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
                         String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         String rilevanza = getRilevanza(automa, nomeTransizione, file);
-                        System.out.println("La sua rilevanza è: " + rilevanza);
+//                        System.out.println("La sua rilevanza è: " + rilevanza);
                         String osservabilita = getOsservabilita(automa, nomeTransizione, file);
-                        System.out.println("La sua osservabilita è: " + osservabilita);
+//                        System.out.println("La sua osservabilita è: " + osservabilita);
                         Transizione transizioneDaInserire = new Transizione(nomeTransizione, statoDestinazione, posizioneLinkIn, eventoRichiesto, eventiInUscita, rilevanza, osservabilita);
                         stato.addTransazione(transizioneDaInserire);
                     }
-                    System.out.println("");
+//                    System.out.println("");
                 }
             }
         }
@@ -469,7 +457,6 @@ public class Import {
                             String separatore = transizioneIntera.substring(5, 6);
                             if (!separatore.equalsIgnoreCase("/")) {
                                 // cerco il linkIn della transizione nella posizione 8-10
-                                System.out.println(i);
                                 String linkIn = transizioneIntera.substring(8, 10);
                                 // controllo nel vettore Link in che posizione sia e modifico posizioneLink
                                 for (int j = 0; j < elencoLink.length; j++) {
@@ -514,22 +501,6 @@ public class Import {
         return transizioniUscenti;
     }
     
-    private String getOsservabilita_old(Automa automa, String nomeTransizione, List<String> fileInput) {
-        String osservabilita = null;
-        for (int i = 0; i < fileInput.size(); i++) {
-            if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
-                while (!fileInput.get(i).equals(Parametri.SEPARATORE)) {
-                    if (fileInput.get(i).contains(nomeTransizione) && fileInput.get(i).contains(Parametri.OSSERVABILITA)) {
-                        int j = fileInput.get(i).indexOf(":");
-                        osservabilita = fileInput.get(i).substring(j + 2, fileInput.get(i).length());
-                    }
-                    i++;
-                }
-            }
-        }
-        return osservabilita;
-    }
-    
     private String getOsservabilita(Automa automa, String nomeTransizione, List<String> fileInput){
         String osservabilita = null;
         for(int i = 0; i < fileInput.size(); i++){
@@ -571,11 +542,9 @@ public class Import {
                 }
                 if(fileInput.get(i).contains(Parametri.NULL)){
                     rilevanza = null;
-                    System.out.println(fileInput.get(i));
                 }
                 else {
                     rilevanza = fileInput.get(i).substring(5,6);
-                    System.out.println(fileInput.get(i));
                 }
             }
         }
