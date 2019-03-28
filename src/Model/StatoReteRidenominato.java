@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoReteRidenominato extends StatoReteAbstract {
+public class StatoReteRidenominato extends StatoReteAbstract implements Comparable<StatoReteRidenominato>{
 
     /**
      * Crea uno StatoRete ridenominato
@@ -85,6 +85,11 @@ public class StatoReteRidenominato extends StatoReteAbstract {
     public int hashCode() {
         int hash = Objects.hash(getNome());
         return hash;
+    }
+
+    @Override
+    public int compareTo(StatoReteRidenominato t) {
+       return this.getNome().compareTo(t.getNome());
     }
 
     
