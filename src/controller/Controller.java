@@ -451,9 +451,13 @@ public class Controller {
         stack.push(new StatoFDA(statiRaggiunti, null));//creazione dello stato statoFDA root a partire dall'epsilon-CLOSURE
         //dello stato root NDA
         //fintanto che la stack e' vuota
-        while (!stack.isEmpty()) { 
+        while (!stack.isEmpty()) {
             StatoFDA statoAnalizzato = stack.pop();
+//            System.out.println(statoAnalizzato.getNome());
+            System.out.printf(statoAnalizzato.toString() + " ");
             if (!verticiSpazio.contains(statoAnalizzato)) {
+                System.out.println("non contenuto");
+                verticiSpazio.add(statoAnalizzato);
                 //rimuovi dalla pila il primo stato FDA e prendi tutti gli stati NDA
                 statiRaggiunti = statoAnalizzato.getStati();
                 for (StatoReteRidenominato statoRaggiunto : statiRaggiunti) {//per ogni stato NDA
@@ -461,32 +465,31 @@ public class Controller {
                     List<StatoReteAbstract> statiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(statoRaggiunto);
                     //per ogni stato adiacente
                     for (StatoReteAbstract statoAdiacente : statiAdiacenti) {
-                        //se lo stato raggiunto con una transizione osservabile
+                        //se lo stato raggiunto ha una transizione osservabile
                         if (statoAdiacente.getOsservabilita() != null) {
                             int posizioneOsservabilita = etichetteOsservabilita.indexOf(statoAdiacente.getOsservabilita());
-                            if(posizioneOsservabilita==-1){
-                                System.out.println("-1");
-                            }
                             statiReggiuntiDaOsservabilita.get(posizioneOsservabilita).add((StatoReteRidenominato) statoAdiacente);
-                            for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {   
-                                if(!statiReggiuntiDaOsservabilita.get(i).isEmpty()){
-                                statiRaggiunti = statiReggiuntiDaOsservabilita.get(i);
-                                statiRaggiunti = epsilon_CLOSURE(spazioComportamentaleDecorato, statiRaggiunti);
-                                StatoFDA nuovoStato = new StatoFDA(new ArrayList(statiRaggiunti), etichetteOsservabilita.get(posizioneOsservabilita));
-                                stack.push(nuovoStato);
-                                statiReggiuntiDaOsservabilita.get(i).clear();                                }                                
-                            }
                         }
+                    }
+                }
+                List<StatoReteRidenominato> statiTemporanei;
+                //Per ogni stato raggiunto da una etichetta di osservabilita'
+                for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {
+                    if (!statiReggiuntiDaOsservabilita.get(i).isEmpty()) {
+                        statiTemporanei = statiReggiuntiDaOsservabilita.get(i);
+                        statiTemporanei = epsilon_CLOSURE(spazioComportamentaleDecorato, statiTemporanei);
+                        StatoFDA nuovoStato = new StatoFDA(new ArrayList<StatoReteRidenominato>(statiTemporanei), etichetteOsservabilita.get(i));
+                        stack.push(nuovoStato);
+                        
+                        statiReggiuntiDaOsservabilita.get(i).clear();
                     }
 
                 }
             }
         }
-
-        statiRaggiunti
-                = epsilon_CLOSURE(rete.getSpazioComportamentaleDecorato(), rete.getSpazioComportamentaleDecorato().getVerticiAdiacenti(rete.getSpazioComportamentaleDecorato().getVerticiAdiacenti(rete.getSpazioComportamentaleDecorato().getRoot()).get(0)).get(0));
-        System.out.println(statiRaggiunti.toString());
-
+//        for(StatoFDA s :verticiSpazio){
+//            System.out.println(s.getNome());
+//        }
     }
 
     /**
@@ -515,6 +518,7 @@ public class Controller {
                 }
             }
         }
+        
         return insiemeStati;
     }
 
@@ -530,7 +534,7 @@ public class Controller {
         List<StatoReteRidenominato> epsilonStati = new ArrayList<StatoReteRidenominato>();
         for (StatoReteRidenominato stato : statiRaggiunti) {
             epsilonStati = epsilon_CLOSURE(spazioComportamentaleDecorato, stato);
-            epsilonStati.retainAll(statiDaRitornare);
+            epsilonStati.removeAll(statiDaRitornare);
             statiDaRitornare.addAll(epsilonStati);
         }
 

@@ -27,15 +27,15 @@ public class StatoFDA {
     }
     
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(Parametri.PARENTESI_TONDA_A);
-        for (StatoReteRidenominato statoRete : stati) {
-            s.append(statoRete.toString());
-        }
-        s.append(Parametri.PARENTESI_TONDA_C);
-        
-        return s.toString();
-        
+//        StringBuilder s = new StringBuilder();
+//        s.append(Parametri.PARENTESI_TONDA_A);
+//        for (StatoReteRidenominato statoRete : stati) {
+//            s.append(statoRete.toString());
+//        }
+//        s.append(Parametri.PARENTESI_TONDA_C);
+//        
+//        return s.toString();
+        return nome;
     }
     
     public List<StatoReteRidenominato> getStati() {
@@ -79,12 +79,12 @@ public class StatoFDA {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof StatoReteAbstract)) {
+        if (!(o instanceof StatoFDA)) {
             return false;
         }
-        StatoReteRidenominato stato2 = (StatoReteRidenominato) o;
+        StatoFDA stato2 = (StatoFDA) o;
 
-        if (getNome().equals(stato2.getNome())) {
+        if (this.getNome().equals(stato2.getNome())) {
             return true;
         }
         return false;
@@ -95,5 +95,7 @@ public class StatoFDA {
         int hash = Objects.hash(getNome());
         return hash;
     }
+    
+    
     
 }
