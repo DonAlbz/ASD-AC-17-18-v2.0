@@ -37,6 +37,7 @@ public class StatoReteRidenominato extends StatoReteAbstract implements Comparab
     public StatoReteRidenominato(StatoReteAbstract s) {
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(s.getTransizionePrecedente());
+        setDecorazione(s.getDecorazione());
         setNome(s);
     }
 

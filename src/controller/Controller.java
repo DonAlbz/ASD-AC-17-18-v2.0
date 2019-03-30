@@ -41,7 +41,7 @@ public class Controller {
 //        stampaCammini(camminiDecorati);
         System.out.println(spazioC.toString());
     }
-
+    
     public static void creaSpazioComportamentaleDecorato(Rete rete) {
         List<Cammino> camminiDecorati;
         LinkedList<StatoReteAbstract> statiDecoratiSpazioC = new LinkedList<>();
@@ -54,11 +54,11 @@ public class Controller {
         rete.setSpazioComportamentaleDecorato(spazioComportamentaleDecorato);
         System.out.println(spazioComportamentaleDecorato.toString());
     }
-
+    
     static void creaDizionario(Rete rete) {
         determinizzazione(rete);
     }
-
+    
     private static List<Cammino> trovaCammini(Rete rete, LinkedList<StatoReteAbstract> stati) {
         List<Cammino> cammini = new ArrayList<>();
         Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
@@ -66,10 +66,10 @@ public class Controller {
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
-
+        
         StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
         pilaStato.push(statoRadice);
-
+        
         while (!pilaStato.isEmpty()) {
             StatoRete statoAttuale = pilaStato.pop();
 //            
@@ -120,7 +120,7 @@ public class Controller {
                         }
                         pilaDiramazioni.pop();
                     }
-
+                    
                     for (StatoRete s : statiDopoLoScatto) {
                         pilaStato.push(s);
 //                       
@@ -145,13 +145,13 @@ public class Controller {
                 if (!pilaDiramazioni.isEmpty()) {
                     camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
                 }
-
+                
             }
         }
         rete.setCammini(cammini);
         return cammini;
     }
-
+    
     private static ArrayList<Cammino> potatura(List<Cammino> cammini) {
         ArrayList<Cammino> traiettorie = new ArrayList<>();
         ArrayList<Cammino> notTraiettorie = new ArrayList<>();
@@ -174,7 +174,7 @@ public class Controller {
         }
         return traiettorie;
     }
-
+    
     private static StatoRete creaStatoCorrente(Rete rete, int numeroStati) {
         Stato[] statoAutomi = new Stato[rete.getAutomi().size()];
         for (int i = 0; i < statoAutomi.length; i++) {
@@ -182,7 +182,7 @@ public class Controller {
         }
         return new StatoRete(rete.getLink().clone(), statoAutomi, numeroStati);
     }
-
+    
     private static StatoRete creaStatoCorrente(List<Automa> _automi, Evento[] _link, int numeroStati) {
         Stato[] statoAutomi = new Stato[_automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
@@ -190,13 +190,13 @@ public class Controller {
         }
         return new StatoRete(_link.clone(), statoAutomi, numeroStati);
     }
-
+    
     private static Cammino creaNuovoCammino(Rete rete) {
         Cammino nuovoCammino = new Cammino();
         rete.impostaStatiIniziali();
         return nuovoCammino;
     }
-
+    
     private static List<Cammino> ridenominazione(List<Cammino> traiettorie, LinkedList<StatoReteAbstract> stati) {
         for (Cammino traiettoria : traiettorie) {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
@@ -227,14 +227,14 @@ public class Controller {
             root.setNumero(0);
             root = new StatoReteRidenominato(_stati.get(0));
         }
-
+        
         if (root.getClass() == StatoReteDecorato.class) {
-
+            
             String nomeRoot = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(0);
             root.setNome(nomeRoot);
             root = new StatoReteRidenominato(_stati.get(0));
         }
-
+        
         _spazioC.aggiungiVertice(root);
         _spazioC.setRoot(root);
         for (int i = 1; i < _stati.size(); i++) {
@@ -270,7 +270,7 @@ public class Controller {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
-
+                    
                     StatoReteAbstract statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);
                     StatoReteAbstract statoPrecedente = null;
                     if (statoPrecedenteTraiettoria.getClass() == StatoRete.class) {
@@ -279,7 +279,7 @@ public class Controller {
                     if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
-
+                    
                     StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
                     StatoReteAbstract statoCorrente = null;
                     if (statoCorrenteTraiettoria.getClass() == StatoRete.class) {
@@ -289,14 +289,14 @@ public class Controller {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
 //                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
-
+                    
                     spazioComportamentale.aggiungiLato(statoPrecedente, statoCorrente);
                 }
             }
         }
         return spazioComportamentale;
     }
-
+    
     private static List<Cammino> trovaCamminiDecorati(SpazioComportamentale _spazioComportamentale, LinkedList<StatoReteAbstract> statiDecorati) {
         List<Cammino> camminiDecorati = new ArrayList<>();
         SpazioComportamentale spazioComportamentale = _spazioComportamentale;
@@ -306,21 +306,21 @@ public class Controller {
         Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = new Cammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
-        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot(), null);
+        StatoReteDecorato root = new StatoReteDecorato((StatoReteAbstract) spazioComportamentale.getRoot(), null);
         root.setTransizionePrecedente(null);
         //spazioComportamentaleDecorato.setRoot(root);
 //        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
 //        spazioComportamentaleDecorato.setRoot(rootDecorata);
         ArrayList<String> decorazione = new ArrayList<>();
-
+        
         pilaStato.push(root);
-
+        
         while (!pilaStato.isEmpty()) {
             StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
             StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
             statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
             decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
-
+            
             if (!statiDecorati.contains(statoAttualeDecorato)) {//se è uno stato nuovo
 //                StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
 //                verticeDaInserire.setTransizionePrecedente(null);
@@ -332,11 +332,11 @@ public class Controller {
                 //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
 //                System.out.println(statoAttuale.toString());
 //                setRete(statoAttuale);
-                List<StatoReteAbstract> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
+                List<StatoInterface> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
                 if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
                     ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
                     List<String> decorazioneAggiornata = null;
-
+                    
                     if (verticiAdiacenti.size() == 1) {
                         if (decorazione != null) {
                             decorazioneAggiornata = new ArrayList<String>(decorazione);
@@ -346,7 +346,7 @@ public class Controller {
                             decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
                         }
                         statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
-
+                        
                     } else {
                         for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
                             if (decorazione != null) {
@@ -366,7 +366,7 @@ public class Controller {
                         }
                         pilaDiramazioni.pop();
                     }
-
+                    
                     for (StatoReteDecorato s : statiSuccessivi) {
                         pilaStato.push(s);//                       
                     }
@@ -388,13 +388,13 @@ public class Controller {
                 if (!pilaDiramazioni.isEmpty()) {
                     camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
                 }
-
+                
             }
         }
-
+        
         return camminiDecorati;
     }
-
+    
     private static List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
         List<String> daRitornare = new ArrayList<>();
         if (decorazioneAggiornata != null) {
@@ -412,28 +412,36 @@ public class Controller {
         }
         return daRitornare;
     }
-
+    
     private static SpazioComportamentale etichettaOsservabilita(SpazioComportamentale spazioComportamentale) {
-
-        Set<StatoReteAbstract> vertici = spazioComportamentale.getVertici();
-        for (StatoReteAbstract v : vertici) {
-            List<StatoReteAbstract> adj = spazioComportamentale.getVerticiAdiacenti(v);
-            for (StatoReteAbstract s : adj) {
-                if (s.getTransizionePrecedente().getOsservabilita() != null) {
-                    s.setOsservabilita(s.getTransizionePrecedente().getOsservabilita());
+        
+        Set<StatoInterface> vertici = spazioComportamentale.getVertici();
+        for (StatoInterface v : vertici) {
+            List<StatoInterface> adj = spazioComportamentale.getVerticiAdiacenti(v);
+            for (StatoInterface s : adj) {
+                if (((StatoReteAbstract) s).getTransizionePrecedente().getOsservabilita() != null) {
+                    ((StatoReteAbstract) s).setOsservabilita(((StatoReteAbstract) s).getTransizionePrecedente().getOsservabilita());
                 }
             }
         }
-
+        
         return spazioComportamentale;
     }
-
-    public static void determinizzazione(Rete rete) {
+    
+    /**Determinata il DFA dello spazio NFA
+     * La struttura dati del DFA e' SpazioComportamentale
+     * Il DFA trovato viene salvato nella rete considerata
+     *
+     * @param rete
+     * @return spazioDFA
+     */
+    public static SpazioComportamentale determinizzazione(Rete rete) {
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
+        SpazioComportamentale spazioDFA = new SpazioComportamentale();
         Stack<StatoFDA> stack = new Stack<>();
         List<StatoFDA> verticiSpazio = new ArrayList<>();
         List<StatoReteRidenominato> statiRaggiunti;
-        StatoReteAbstract root = spazioComportamentaleDecorato.getRoot();
+        StatoInterface root = spazioComportamentaleDecorato.getRoot();
         List<String> etichetteOsservabilita = Arrays.asList(rete.getEtichettaOsservabilita());
         //statiRaggiuntiDaOsservabilita e' una lista di liste, contiene, per ogni etichetta di osservabilita contenuta nella rete,
         //la lista degli stati NFA raggiunti attraverso quella etichetta
@@ -446,28 +454,32 @@ public class Controller {
         for (String etichettaOsservabilita : etichetteOsservabilita) {
             statiReggiuntiDaOsservabilita.add(new ArrayList<StatoReteRidenominato>());
         }
+        //creazione dello stato statoFDA root a partire dall'epsilon-CLOSURE
         statiRaggiunti = epsilon_CLOSURE(spazioComportamentaleDecorato, root);
-
-        stack.push(new StatoFDA(statiRaggiunti, null));//creazione dello stato statoFDA root a partire dall'epsilon-CLOSURE
+        root = new StatoFDA(statiRaggiunti, null);
+        spazioDFA.aggiungiVertice(root);
+        spazioDFA.setRoot(root);
+        stack.push((StatoFDA) root);
         //dello stato root NDA
         //fintanto che la stack e' vuota
         while (!stack.isEmpty()) {
             StatoFDA statoAnalizzato = stack.pop();
 //            System.out.println(statoAnalizzato.getNome());
-            System.out.printf(statoAnalizzato.toString() + " ");
+//            System.out.printf(statoAnalizzato.toString() + " ");
             if (!verticiSpazio.contains(statoAnalizzato)) {
-                System.out.println("non contenuto");
+                spazioDFA.aggiungiVertice(statoAnalizzato);
+//                System.out.println("non contenuto");
                 verticiSpazio.add(statoAnalizzato);
                 //rimuovi dalla pila il primo stato FDA e prendi tutti gli stati NDA
                 statiRaggiunti = statoAnalizzato.getStati();
                 for (StatoReteRidenominato statoRaggiunto : statiRaggiunti) {//per ogni stato NDA
                     //controlla nello spazio doppiamente decorato gli stati adiacenti
-                    List<StatoReteAbstract> statiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(statoRaggiunto);
+                    List<StatoInterface> statiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(statoRaggiunto);
                     //per ogni stato adiacente
-                    for (StatoReteAbstract statoAdiacente : statiAdiacenti) {
+                    for (StatoInterface statoAdiacente : statiAdiacenti) {
                         //se lo stato raggiunto ha una transizione osservabile
-                        if (statoAdiacente.getOsservabilita() != null) {
-                            int posizioneOsservabilita = etichetteOsservabilita.indexOf(statoAdiacente.getOsservabilita());
+                        if (((StatoReteAbstract) statoAdiacente).getOsservabilita() != null) {
+                            int posizioneOsservabilita = etichetteOsservabilita.indexOf(((StatoReteAbstract) statoAdiacente).getOsservabilita());
                             statiReggiuntiDaOsservabilita.get(posizioneOsservabilita).add((StatoReteRidenominato) statoAdiacente);
                         }
                     }
@@ -476,20 +488,29 @@ public class Controller {
                 //Per ogni stato raggiunto da una etichetta di osservabilita'
                 for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {
                     if (!statiReggiuntiDaOsservabilita.get(i).isEmpty()) {
+                        //prendi l'insieme degli stati FDA raggiunti dall'osservabilita' i 
                         statiTemporanei = statiReggiuntiDaOsservabilita.get(i);
+                        //Esegui l'epsilon-CLOSURE sull'insieme di stati considerato
                         statiTemporanei = epsilon_CLOSURE(spazioComportamentaleDecorato, statiTemporanei);
+                        //Il nuovo stato FDA e' l'epsilon-CLOSURE CALCOLATO
                         StatoFDA nuovoStato = new StatoFDA(new ArrayList<StatoReteRidenominato>(statiTemporanei), etichetteOsservabilita.get(i));
+                        //Il nuovo statoFDA viene insierito nella pila
                         stack.push(nuovoStato);
-                        
+                        //Aggiunta del lato nello spazioDFA
+                        spazioDFA.aggiungiLato(statoAnalizzato, nuovoStato);
+                        //si svuota l'insieme degli stati raggiunti dall'osservabilita' i
                         statiReggiuntiDaOsservabilita.get(i).clear();
                     }
-
+                    
                 }
             }
         }
+
 //        for(StatoFDA s :verticiSpazio){
 //            System.out.println(s.getNome());
 //        }
+        rete.setSpazioDFA(spazioDFA);
+        return spazioDFA;
     }
 
     /**
@@ -500,18 +521,18 @@ public class Controller {
      * @param statoSpazio
      * @return
      */
-    private static List<StatoReteRidenominato> epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoReteAbstract statoSpazio) {
+    private static List<StatoReteRidenominato> epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoInterface statoSpazio) {
         List<StatoReteRidenominato> insiemeStati = new ArrayList<>();
-        Stack<StatoReteAbstract> stack = new Stack<>();
+        Stack<StatoInterface> stack = new Stack<>();
         stack.push(statoSpazio);
         while (!stack.isEmpty()) {
-            StatoReteAbstract statoAnalizzato = stack.pop();
+            StatoInterface statoAnalizzato = stack.pop();
             if (statoAnalizzato.getClass() == StatoReteRidenominato.class) {
                 insiemeStati.add((StatoReteRidenominato) statoAnalizzato);
-                List<StatoReteAbstract> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
-                for (StatoReteAbstract s : statiAdiacenti) {
+                List<StatoInterface> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
+                for (StatoInterface s : statiAdiacenti) {
                     if (s.getClass() == StatoReteRidenominato.class) {
-                        if (s.getOsservabilita() == null && !insiemeStati.contains(s)) {
+                        if (((StatoReteAbstract) s).getOsservabilita() == null && !insiemeStati.contains(s)) {
                             stack.push((StatoReteRidenominato) s);
                         }
                     }
@@ -537,9 +558,9 @@ public class Controller {
             epsilonStati.removeAll(statiDaRitornare);
             statiDaRitornare.addAll(epsilonStati);
         }
-
-        return statiDaRitornare;
-
+        
+        return statiDaRitornare;        
     }
-
+    
+    
 }

@@ -19,18 +19,18 @@ import java.util.stream.Collectors;
  */
 public class SpazioComportamentale {
 
-    private StatoReteAbstract root;
-    private Map<StatoReteAbstract, List<StatoReteAbstract>> verticiAdiacenti;
+    private StatoInterface root;
+    private Map<StatoInterface, List<StatoInterface>> verticiAdiacenti;
 
     public SpazioComportamentale() {
         verticiAdiacenti = new HashMap<>();
     }
 
-    public void aggiungiVertice(StatoReteAbstract vertice) {
+    public void aggiungiVertice(StatoInterface vertice) {
         verticiAdiacenti.putIfAbsent(vertice, new ArrayList<>());
     }
 
-    public void rimuoviVertice(StatoReteAbstract statoDaRimuovere) {
+    public void rimuoviVertice(StatoInterface statoDaRimuovere) {
         verticiAdiacenti.values()
                 .stream()
                 .map(e -> e.remove(statoDaRimuovere))
@@ -38,20 +38,20 @@ public class SpazioComportamentale {
         verticiAdiacenti.remove(statoDaRimuovere);
     }
 
-    public void aggiungiLato(StatoReteAbstract partenza, StatoReteAbstract arrivo) {
+    public void aggiungiLato(StatoInterface partenza, StatoInterface arrivo) {
         if (partenza.getClass() == StatoReteDecorato.class && arrivo.getClass() == StatoReteDecorato.class) {
             partenza = (StatoReteDecorato) partenza;
             arrivo = (StatoReteDecorato) arrivo;
         }
-        ArrayList<StatoReteAbstract> listaDiAdiacenza;
-        listaDiAdiacenza = (ArrayList<StatoReteAbstract>) verticiAdiacenti.get(partenza);
+        ArrayList<StatoInterface> listaDiAdiacenza;
+        listaDiAdiacenza = (ArrayList<StatoInterface>) verticiAdiacenti.get(partenza);
         if (!listaDiAdiacenza.contains(arrivo)) {
             listaDiAdiacenza.add(arrivo);
         }
     }
 
-    public void rimuoviLato(StatoReteAbstract partenza, StatoReteAbstract arrivo) {
-        List<StatoReteAbstract> statiArrivo = verticiAdiacenti.get(partenza);
+    public void rimuoviLato(StatoInterface partenza, StatoInterface arrivo) {
+        List<StatoInterface> statiArrivo = verticiAdiacenti.get(partenza);
         if (statiArrivo != null) {
             statiArrivo.remove(arrivo);
         }
@@ -75,11 +75,11 @@ public class SpazioComportamentale {
         return verticiAdiacenti.get(statoAttuale).size() > 0;
     }
 
-    public StatoReteAbstract getRoot() {
+    public StatoInterface getRoot() {
         return root;
     }
 
-    public void setRoot(StatoReteAbstract root) {
+    public void setRoot(StatoInterface root) {
         this.root = root;
     }
 
@@ -87,7 +87,7 @@ public class SpazioComportamentale {
         return verticiAdiacenti.containsKey(stato);
     }
 
-    public List<StatoReteAbstract> getVerticiAdiacenti(StatoReteAbstract s) {
+    public List<StatoInterface> getVerticiAdiacenti(StatoInterface s) {
         return verticiAdiacenti.get(s);
     }
 
@@ -100,13 +100,13 @@ public class SpazioComportamentale {
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
         s.append(Parametri.A_CAPO);
-        for (StatoReteAbstract statoPartenza : verticiAdiacenti.keySet()) {
+        for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
             s.append(statoPartenza.toString());
             s.append(Parametri.TAB);
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
             int i = 0;
-            for (StatoReteAbstract statoArrivo : verticiAdiacenti.get(statoPartenza)) {
+            for (StatoInterface statoArrivo : verticiAdiacenti.get(statoPartenza)) {
                 if (i > 0) {
                     s.append(Parametri.VIRGOLA);
                     s.append(Parametri.SPAZIO);
@@ -115,13 +115,14 @@ public class SpazioComportamentale {
                     statoArrivo = (StatoReteDecorato) statoArrivo;
                 }
                 s.append(Parametri.PARENTESI_TONDA_A);
-                if (statoArrivo.getOsservabilita() != null) {
-                    s.append(statoArrivo.getOsservabilita());
-                } else {
-                    s.append(Parametri.EVENTO_NULLO);
-                }
-                    s.append(Parametri.SPAZIO);
-                s.append(statoArrivo.toStringShort());//                
+//                if (((StatoReteAbstract) statoArrivo).getOsservabilita() != null) {
+//                    s.append(((StatoReteAbstract) statoArrivo).getOsservabilita());
+//                } else {
+//                    s.append(Parametri.EVENTO_NULLO);
+//                }
+//                    s.append(Parametri.SPAZIO);
+                    s.append(statoArrivo.getNome());
+//                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
             }
@@ -130,7 +131,7 @@ public class SpazioComportamentale {
         return s.toString();
     }
 
-    public Set<StatoReteAbstract> getVertici(){
+    public Set<StatoInterface> getVertici(){
        return verticiAdiacenti.keySet();
     }
     

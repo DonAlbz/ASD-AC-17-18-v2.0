@@ -29,6 +29,7 @@ public class Rete {
     private  int numeroStati;
     private  SpazioComportamentale spazioC;
     private  SpazioComportamentale spazioComportamentaleDecorato;
+     private  SpazioComportamentale spazioDFA;
     private  LinkedList<StatoReteAbstract> stati;
     private  String[] etichettaOsservabilita;
     private  String[] etichettaRilevanza;
@@ -64,22 +65,22 @@ public class Rete {
         etichettaRilevanza = rilevanza;
     }
 
-    public void start2() {
-        scatta2();
-        stampaCammini(cammini);
-        ArrayList<Cammino> traiettorie = potatura();
-        traiettorie = ridenominazione(traiettorie);
-        stampaTraiettorie(traiettorie);
-        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, stati);
-        inserisciLatiSpazioComportamentale(spazioC, traiettorie);
-        System.out.println(spazioC.toString());
-        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
-        stampaCammini(camminiDecorati);
-        System.out.println(spazioComportamentaleDecorato.toString());
-       
-//        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
-//        System.out.println(spazioComportamentaleDecorato);
-    }
+//    public void start2() {
+//        scatta2();
+//        stampaCammini(cammini);
+//        ArrayList<Cammino> traiettorie = potatura();
+//        traiettorie = ridenominazione(traiettorie);
+//        stampaTraiettorie(traiettorie);
+//        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, stati);
+//        inserisciLatiSpazioComportamentale(spazioC, traiettorie);
+//        System.out.println(spazioC.toString());
+//        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
+//        stampaCammini(camminiDecorati);
+//        System.out.println(spazioComportamentaleDecorato.toString());
+//       
+////        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+////        System.out.println(spazioComportamentaleDecorato);
+//    }
 
     /**
      * Creazione dei cammini e dello spazio comportamentale
@@ -424,104 +425,104 @@ public class Rete {
         return traiettorie;
     }
 
-    private SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
-        camminiDecorati = new ArrayList<>();
-        SpazioComportamentale spazioComportamentale = _spazioComportamentale;
-
-        LinkedList<StatoReteAbstract> statiDecorati = new LinkedList<>();;
-        Stack<StatoReteDecorato> pilaStato = new Stack<>();//pila dei nuovi stati
-        Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
-        //Stack<Cammino> pilaCammino = new Stack<>();
-        Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
-        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot(), null);
-        root.setTransizionePrecedente(null);
-        //spazioComportamentaleDecorato.setRoot(root);
-//        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
-//        spazioComportamentaleDecorato.setRoot(rootDecorata);
-        ArrayList<String> decorazione = new ArrayList<>();
-
-        pilaStato.push(root);
-
-        while (!pilaStato.isEmpty()) {
-            StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
-            StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
-            statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
-            decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
-
-            if (!statiDecorati.contains(statoAttualeDecorato)) {//se è uno stato nuovo
-                StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
-                verticeDaInserire.setTransizionePrecedente(null);
-                statiDecorati.add(statoAttualeDecorato);//TODO: sostituito, prima era passato verticeDaInserire
-//                spazioComportamentaleDecorato.aggiungiVertice(verticeDaInserire);
-                //statoAttuale.setNumero(stati.size());
-//                statiDecorati.add(statoAttualeDecorato);
-                camminoAttuale.add(statoAttualeDecorato);
-                //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
-//                System.out.println(statoAttuale.toString());
-//                setRete(statoAttuale);
-                List<StatoReteAbstract> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
-                if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
-                    ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
-                    List<String> decorazioneAggiornata = null;
-
-                    if (verticiAdiacenti.size() == 1) {
-                        if (decorazione != null) {
-                            decorazioneAggiornata = new ArrayList<String> (decorazione);
-                        }
-                        StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
-                        if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
-                            decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
-                        }
-                        statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
-
-                    } else {
-                        for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
-                            if (decorazione != null) {
-                                decorazioneAggiornata = new ArrayList<String> (decorazione);
-                            } else {
-                                decorazioneAggiornata = null;
-                            }
-//                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
-//                                transizioneEseguita = automi.get(i).scatta(transizioneDaEseguire, link);//viene fatta scattare la transizione da eseguire
-//                                copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
-                            StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(j);
-                            if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
-                                decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
-                            }
-                            statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
-                            pilaDiramazioni.add(statoAttualeDecorato);
-                        }
-                        pilaDiramazioni.pop();
-                    }
-
-                    for (StatoReteDecorato s : statiSuccessivi) {
-                        pilaStato.push(s);//                       
-                    }
-                } else {
-                    //stato senza transizioni abilitate
-                    Cammino nuovoCammino = new Cammino();
-                    nuovoCammino.copiaCammino(camminoAttuale);
-                    camminiDecorati.add(nuovoCammino);
-                    if (!pilaDiramazioni.isEmpty()) {
-                        camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
-                    }
-                }
-            } else {
-                Cammino nuovoCammino = new Cammino();
-                camminoAttuale.add(statoAttualeDecorato);//                
-                nuovoCammino.copiaCammino(camminoAttuale);
-                camminiDecorati.add(nuovoCammino);
-                if (!pilaDiramazioni.isEmpty()) {
-                    camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
-                }
-
-            }
-        }
-        SpazioComportamentale spazioComportamentaleDecorato = new SpazioComportamentale();
-        spazioComportamentaleDecorato=inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecorati);
-        spazioComportamentaleDecorato=inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
-        return spazioComportamentaleDecorato;
-    }
+//    private SpazioComportamentale creaSpazioComportamentaleDecorato(SpazioComportamentale _spazioComportamentale) {
+//        camminiDecorati = new ArrayList<>();
+//        SpazioComportamentale spazioComportamentale = _spazioComportamentale;
+//
+//        LinkedList<StatoReteAbstract> statiDecorati = new LinkedList<>();;
+//        Stack<StatoReteDecorato> pilaStato = new Stack<>();//pila dei nuovi stati
+//        Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
+//        //Stack<Cammino> pilaCammino = new Stack<>();
+//        Cammino camminoAttuale = creaNuovoCammino();//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
+//        StatoReteDecorato root = new StatoReteDecorato(spazioComportamentale.getRoot(), null);
+//        root.setTransizionePrecedente(null);
+//        //spazioComportamentaleDecorato.setRoot(root);
+////        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
+////        spazioComportamentaleDecorato.setRoot(rootDecorata);
+//        ArrayList<String> decorazione = new ArrayList<>();
+//
+//        pilaStato.push(root);
+//
+//        while (!pilaStato.isEmpty()) {
+//            StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
+//            StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
+//            statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
+//            decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
+//
+//            if (!statiDecorati.contains(statoAttualeDecorato)) {//se è uno stato nuovo
+//                StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
+//                verticeDaInserire.setTransizionePrecedente(null);
+//                statiDecorati.add(statoAttualeDecorato);//TODO: sostituito, prima era passato verticeDaInserire
+////                spazioComportamentaleDecorato.aggiungiVertice(verticeDaInserire);
+//                //statoAttuale.setNumero(stati.size());
+////                statiDecorati.add(statoAttualeDecorato);
+//                camminoAttuale.add(statoAttualeDecorato);
+//                //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
+////                System.out.println(statoAttuale.toString());
+////                setRete(statoAttuale);
+//                List<StatoReteAbstract> verticiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAttuale);
+//                if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
+//                    ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
+//                    List<String> decorazioneAggiornata = null;
+//
+//                    if (verticiAdiacenti.size() == 1) {
+//                        if (decorazione != null) {
+//                            decorazioneAggiornata = new ArrayList<String> (decorazione);
+//                        }
+//                        StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(0);
+//                        if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
+//                            decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
+//                        }
+//                        statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
+//
+//                    } else {
+//                        for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
+//                            if (decorazione != null) {
+//                                decorazioneAggiornata = new ArrayList<String> (decorazione);
+//                            } else {
+//                                decorazioneAggiornata = null;
+//                            }
+////                                Transizione transizioneDaEseguire = transizioniAbilitate[i].get(j);
+////                                transizioneEseguita = automi.get(i).scatta(transizioneDaEseguire, link);//viene fatta scattare la transizione da eseguire
+////                                copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
+//                            StatoReteRidenominato statoDopoLoScatto = (StatoReteRidenominato) spazioComportamentale.getVerticiAdiacenti(statoAttuale).get(j);
+//                            if (statoDopoLoScatto.getTransizionePrecedente().getRilevanza() != null) {
+//                                decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
+//                            }
+//                            statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
+//                            pilaDiramazioni.add(statoAttualeDecorato);
+//                        }
+//                        pilaDiramazioni.pop();
+//                    }
+//
+//                    for (StatoReteDecorato s : statiSuccessivi) {
+//                        pilaStato.push(s);//                       
+//                    }
+//                } else {
+//                    //stato senza transizioni abilitate
+//                    Cammino nuovoCammino = new Cammino();
+//                    nuovoCammino.copiaCammino(camminoAttuale);
+//                    camminiDecorati.add(nuovoCammino);
+//                    if (!pilaDiramazioni.isEmpty()) {
+//                        camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+//                    }
+//                }
+//            } else {
+//                Cammino nuovoCammino = new Cammino();
+//                camminoAttuale.add(statoAttualeDecorato);//                
+//                nuovoCammino.copiaCammino(camminoAttuale);
+//                camminiDecorati.add(nuovoCammino);
+//                if (!pilaDiramazioni.isEmpty()) {
+//                    camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+//                }
+//
+//            }
+//        }
+//        SpazioComportamentale spazioComportamentaleDecorato = new SpazioComportamentale();
+//        spazioComportamentaleDecorato=inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecorati);
+//        spazioComportamentaleDecorato=inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+//        return spazioComportamentaleDecorato;
+//    }
 
     private void stampaTraiettorie(ArrayList<Cammino> traiettorie) {
 
@@ -621,6 +622,14 @@ public class Rete {
 
     public void setSpazioComportamentaleDecorato(SpazioComportamentale spazioComportamentaleDecorato) {
         this.spazioComportamentaleDecorato = spazioComportamentaleDecorato;
+    }
+
+    public SpazioComportamentale getSpazioDFA() {
+        return spazioDFA;
+    }
+
+    public void setSpazioDFA(SpazioComportamentale spazioDFA) {
+        this.spazioDFA = spazioDFA;
     }
     
     
