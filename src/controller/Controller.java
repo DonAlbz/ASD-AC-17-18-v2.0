@@ -571,6 +571,7 @@ public class Controller {
         listaStatiPartenza.add(spazioDFA.getRoot());
         while (!osservazioni.isEmpty()) {
             String osservazione = osservazioni.poll();
+            listaStatiRaggiuntiOsservabili.clear();
             for (StatoInterface statoPartenza : listaStatiPartenza) {
                 listaStatiRaggiuntiTutti = spazioDFA.getVerticiAdiacenti(statoPartenza);
                 for (StatoInterface s : listaStatiRaggiuntiTutti) {
@@ -578,7 +579,7 @@ public class Controller {
                         listaStatiRaggiuntiOsservabili.add(s);
                     }
                 }
-            }
+            }            
             listaStatiPartenza = new ArrayList<>(listaStatiRaggiuntiOsservabili);
         }
         if (listaStatiRaggiuntiOsservabili.size() == 1) {
