@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -41,7 +42,7 @@ public class Controller {
 //        stampaCammini(camminiDecorati);
         System.out.println(spazioC.toString());
     }
-    
+
     public static void creaSpazioComportamentaleDecorato(Rete rete) {
         List<Cammino> camminiDecorati;
         LinkedList<StatoReteAbstract> statiDecoratiSpazioC = new LinkedList<>();
@@ -54,11 +55,11 @@ public class Controller {
         rete.setSpazioComportamentaleDecorato(spazioComportamentaleDecorato);
         System.out.println(spazioComportamentaleDecorato.toString());
     }
-    
+
     static void creaDizionario(Rete rete) {
         determinizzazione(rete);
     }
-    
+
     private static List<Cammino> trovaCammini(Rete rete, LinkedList<StatoReteAbstract> stati) {
         List<Cammino> cammini = new ArrayList<>();
         Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
@@ -66,10 +67,10 @@ public class Controller {
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
-        
+
         StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
         pilaStato.push(statoRadice);
-        
+
         while (!pilaStato.isEmpty()) {
             StatoRete statoAttuale = pilaStato.pop();
 //            
@@ -120,7 +121,7 @@ public class Controller {
                         }
                         pilaDiramazioni.pop();
                     }
-                    
+
                     for (StatoRete s : statiDopoLoScatto) {
                         pilaStato.push(s);
 //                       
@@ -145,13 +146,13 @@ public class Controller {
                 if (!pilaDiramazioni.isEmpty()) {
                     camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
                 }
-                
+
             }
         }
         rete.setCammini(cammini);
         return cammini;
     }
-    
+
     private static ArrayList<Cammino> potatura(List<Cammino> cammini) {
         ArrayList<Cammino> traiettorie = new ArrayList<>();
         ArrayList<Cammino> notTraiettorie = new ArrayList<>();
@@ -174,7 +175,7 @@ public class Controller {
         }
         return traiettorie;
     }
-    
+
     private static StatoRete creaStatoCorrente(Rete rete, int numeroStati) {
         Stato[] statoAutomi = new Stato[rete.getAutomi().size()];
         for (int i = 0; i < statoAutomi.length; i++) {
@@ -182,7 +183,7 @@ public class Controller {
         }
         return new StatoRete(rete.getLink().clone(), statoAutomi, numeroStati);
     }
-    
+
     private static StatoRete creaStatoCorrente(List<Automa> _automi, Evento[] _link, int numeroStati) {
         Stato[] statoAutomi = new Stato[_automi.size()];
         for (int i = 0; i < statoAutomi.length; i++) {
@@ -190,13 +191,13 @@ public class Controller {
         }
         return new StatoRete(_link.clone(), statoAutomi, numeroStati);
     }
-    
+
     private static Cammino creaNuovoCammino(Rete rete) {
         Cammino nuovoCammino = new Cammino();
         rete.impostaStatiIniziali();
         return nuovoCammino;
     }
-    
+
     private static List<Cammino> ridenominazione(List<Cammino> traiettorie, LinkedList<StatoReteAbstract> stati) {
         for (Cammino traiettoria : traiettorie) {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
@@ -227,14 +228,14 @@ public class Controller {
             root.setNumero(0);
             root = new StatoReteRidenominato(_stati.get(0));
         }
-        
+
         if (root.getClass() == StatoReteDecorato.class) {
-            
+
             String nomeRoot = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(0);
             root.setNome(nomeRoot);
             root = new StatoReteRidenominato(_stati.get(0));
         }
-        
+
         _spazioC.aggiungiVertice(root);
         _spazioC.setRoot(root);
         for (int i = 1; i < _stati.size(); i++) {
@@ -270,7 +271,7 @@ public class Controller {
             ArrayList<StatoReteAbstract> statiTraiettoria = traiettoria.getCammino();
             if (statiTraiettoria.size() > 1) {
                 for (int i = 1; i < statiTraiettoria.size(); i++) {
-                    
+
                     StatoReteAbstract statoPrecedenteTraiettoria = statiTraiettoria.get(i - 1);
                     StatoReteAbstract statoPrecedente = null;
                     if (statoPrecedenteTraiettoria.getClass() == StatoRete.class) {
@@ -279,7 +280,7 @@ public class Controller {
                     if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
-                    
+
                     StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
                     StatoReteAbstract statoCorrente = null;
                     if (statoCorrenteTraiettoria.getClass() == StatoRete.class) {
@@ -289,14 +290,14 @@ public class Controller {
                         statoCorrente = new StatoReteRidenominato(statoCorrenteTraiettoria);
 //                        statoCorrente.setTransizionePrecedente(statoCorrenteTraiettoria.getTransizionePrecedente());
                     }
-                    
+
                     spazioComportamentale.aggiungiLato(statoPrecedente, statoCorrente);
                 }
             }
         }
         return spazioComportamentale;
     }
-    
+
     private static List<Cammino> trovaCamminiDecorati(SpazioComportamentale _spazioComportamentale, LinkedList<StatoReteAbstract> statiDecorati) {
         List<Cammino> camminiDecorati = new ArrayList<>();
         SpazioComportamentale spazioComportamentale = _spazioComportamentale;
@@ -312,15 +313,15 @@ public class Controller {
 //        spazioComportamentaleDecorato.aggiungiVertice(rootDecorata);
 //        spazioComportamentaleDecorato.setRoot(rootDecorata);
         ArrayList<String> decorazione = new ArrayList<>();
-        
+
         pilaStato.push(root);
-        
+
         while (!pilaStato.isEmpty()) {
             StatoReteDecorato statoAttualeDecorato = pilaStato.pop();
             StatoReteRidenominato statoAttuale = new StatoReteRidenominato(statoAttualeDecorato);
             statoAttuale.setTransizionePrecedente(statoAttualeDecorato.getTransizionePrecedente());
             decorazione = (ArrayList<String>) statoAttualeDecorato.getDecorazione();
-            
+
             if (!statiDecorati.contains(statoAttualeDecorato)) {//se è uno stato nuovo
 //                StatoReteDecorato verticeDaInserire = new StatoReteDecorato(statoAttualeDecorato);
 //                verticeDaInserire.setTransizionePrecedente(null);
@@ -336,7 +337,7 @@ public class Controller {
                 if (verticiAdiacenti != null && verticiAdiacenti.size() > 0) {//se lo StatoRete non è uno stato finale            
                     ArrayList<StatoReteDecorato> statiSuccessivi = new ArrayList<>();
                     List<String> decorazioneAggiornata = null;
-                    
+
                     if (verticiAdiacenti.size() == 1) {
                         if (decorazione != null) {
                             decorazioneAggiornata = new ArrayList<String>(decorazione);
@@ -346,7 +347,7 @@ public class Controller {
                             decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(statoDopoLoScatto.getTransizionePrecedente().getRilevanza()));
                         }
                         statiSuccessivi.add(new StatoReteDecorato(statoDopoLoScatto, decorazioneAggiornata));
-                        
+
                     } else {
                         for (int j = 0; j < verticiAdiacenti.size(); j++) {//viene selezionato ogni StatoRete successivo
                             if (decorazione != null) {
@@ -366,7 +367,7 @@ public class Controller {
                         }
                         pilaDiramazioni.pop();
                     }
-                    
+
                     for (StatoReteDecorato s : statiSuccessivi) {
                         pilaStato.push(s);//                       
                     }
@@ -388,13 +389,13 @@ public class Controller {
                 if (!pilaDiramazioni.isEmpty()) {
                     camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
                 }
-                
+
             }
         }
-        
+
         return camminiDecorati;
     }
-    
+
     private static List<String> aggiornaDecorazione(List<String> decorazioneAggiornata, List<String> asList) {
         List<String> daRitornare = new ArrayList<>();
         if (decorazioneAggiornata != null) {
@@ -412,9 +413,9 @@ public class Controller {
         }
         return daRitornare;
     }
-    
+
     private static SpazioComportamentale etichettaOsservabilita(SpazioComportamentale spazioComportamentale) {
-        
+
         Set<StatoInterface> vertici = spazioComportamentale.getVertici();
         for (StatoInterface v : vertici) {
             List<StatoInterface> adj = spazioComportamentale.getVerticiAdiacenti(v);
@@ -424,13 +425,13 @@ public class Controller {
                 }
             }
         }
-        
+
         return spazioComportamentale;
     }
-    
-    /**Determinata il DFA dello spazio NFA
-     * La struttura dati del DFA e' SpazioComportamentale
-     * Il DFA trovato viene salvato nella rete considerata
+
+    /**
+     * Determinata il DFA dello spazio NFA La struttura dati del DFA e'
+     * SpazioComportamentale Il DFA trovato viene salvato nella rete considerata
      *
      * @param rete
      * @return spazioDFA
@@ -501,7 +502,7 @@ public class Controller {
                         //si svuota l'insieme degli stati raggiunti dall'osservabilita' i
                         statiReggiuntiDaOsservabilita.get(i).clear();
                     }
-                    
+
                 }
             }
         }
@@ -539,7 +540,7 @@ public class Controller {
                 }
             }
         }
-        
+
         return insiemeStati;
     }
 
@@ -558,9 +559,33 @@ public class Controller {
             epsilonStati.removeAll(statiDaRitornare);
             statiDaRitornare.addAll(epsilonStati);
         }
-        
-        return statiDaRitornare;        
+
+        return statiDaRitornare;
     }
-    
-    
+
+    public static StatoFDA raggiungiStatoOsservabile(SpazioComportamentale spazioDFA, List<String> _osservazioni) {
+        Queue<String> osservazioni = new LinkedList<>(_osservazioni);
+        List<StatoInterface> listaStatiPartenza = new ArrayList<>();
+        List<StatoInterface> listaStatiRaggiuntiOsservabili = new ArrayList<>();
+        List<StatoInterface> listaStatiRaggiuntiTutti = new ArrayList<>();
+        listaStatiPartenza.add(spazioDFA.getRoot());
+        while (!osservazioni.isEmpty()) {
+            String osservazione = osservazioni.poll();
+            for (StatoInterface statoPartenza : listaStatiPartenza) {
+                listaStatiRaggiuntiTutti = spazioDFA.getVerticiAdiacenti(statoPartenza);
+                for (StatoInterface s : listaStatiRaggiuntiTutti) {
+                    if (((StatoFDA) s).getOsservabilita().equals(osservazione)) {
+                        listaStatiRaggiuntiOsservabili.add(s);
+                    }
+                }
+            }
+            listaStatiPartenza = new ArrayList<>(listaStatiRaggiuntiOsservabili);
+        }
+        if (listaStatiRaggiuntiOsservabili.size() == 1) {
+            return (StatoFDA) listaStatiRaggiuntiOsservabili.get(0);
+        } else {
+            return null;
+        }
+    }
+
 }
