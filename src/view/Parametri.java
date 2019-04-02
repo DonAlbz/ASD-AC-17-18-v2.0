@@ -30,6 +30,8 @@ public class Parametri {
     public final static String PARENTESI_QUADRA_C = "]";
     public final static String PARENTESI_GRAFFA_A = "{";
     public final static String PARENTESI_GRAFFA_C = "}";
+    public final static String CARATTERE_MINORE = "<";
+    public final static String CARATTERE_MAGGIORE = ">";
     public final static String SPAZIO = " ";
     public final static String VIRGOLA = ",";
     public final static String FRECCIA = "-->";
@@ -56,6 +58,14 @@ public class Parametri {
                                                                 "Stampa stati che compongono la rete",
                                                                 "Stampa transizioni che compongono la rete",
                                                                 "Stampa globale delle informazioni della rete"};
+    public final static String TITOLO_MENU_COMPITI = "MENU COMPITI";
+    public final static String VOCI_MENU_COMPITI[] = {"Crea spazio comportamentale",
+                                                        "Crea spazio comportamentale decorato",
+                                                        "Distilla diagnosi"};
+    public final static String MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Inserisci una stringa come nell'esempio sottostante per effetturare una ricerca nel dizionario:";
+    public final static String ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Esempio di ingresso: <o3,o2,o3,o2>";
+    public final static String MESSAGGIO_INSERISCI = "Inserisci la stringa desiderata: ";
+        
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;
     public final static int NUMERO_RIGA_NOMI_AUTOMI = 3;

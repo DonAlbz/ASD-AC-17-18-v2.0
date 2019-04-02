@@ -10,7 +10,7 @@ public class MyMenu {
 
     final private static String CORNICE = "--------------------------------";
     final private static String VOCE_USCITA = "0\tEsci";
-    final private static String VOCE_MENU_PRINCIPALE = "Ritorna al menù principale";
+    final private static String VOCE_MENU_PRINCIPALE = "0\tRitorna al menù principale";
     final private static String RICHIESTA_INSERIMENTO = "Digita il numero dell'opzione desiderata > ";
 
     private String titolo;
@@ -60,8 +60,8 @@ public class MyMenu {
             System.out.println((i + 1) + "\t" + voci[i]);
         }
         System.out.println();
-        System.out.println((voci.length+1) + "\t" + VOCE_MENU_PRINCIPALE);
-        System.out.println(VOCE_USCITA);
+        //System.out.println((voci.length+1) + "\t" + VOCE_MENU_PRINCIPALE);
+        System.out.println(VOCE_MENU_PRINCIPALE);
         System.out.println();
     }
     

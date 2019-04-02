@@ -13,6 +13,8 @@ import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,25 +37,16 @@ public class ControllerUtente {
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
      */
-    private static void menuAvvio() {
-        boolean fineProgramma = false;
+    public static void menuAvvio() {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
         int selezione = menu.scegli();
-        fineProgramma = selezioneMenuAvvio(selezione);  
-    }
-    
-    private static boolean selezioneMenuAvvio(int selezione){
-        boolean end = false;
         switch(selezione){
             case 1: importa();
             break;
             
             case 2: carica();
             break;
-            
-            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
-        return end;
     }
     
     /**
@@ -69,7 +62,6 @@ public class ControllerUtente {
             int selezione = menu.scegli();
             fineProgramma = selezioneMenuRete(selezione);
         }while(!fineProgramma);
-        compiti(rete);
     }
     
     private static void importa(){
@@ -103,6 +95,7 @@ public class ControllerUtente {
         View.messaggioImportCorretto(rete);
     }
     
+    // DA SISTEMARE
     private static void carica(){
         File fileSalvataggio = null;
         
@@ -149,7 +142,7 @@ public class ControllerUtente {
             case 1: menuInformazioniRete(rete);
             break;
             
-            case 2: System.out.println("Esegui compito");
+            case 2: menuCompiti(rete);
             break;
             
             case 3: salva();
@@ -169,24 +162,28 @@ public class ControllerUtente {
      * @param rete
      */
     private static void menuInformazioniRete(Rete rete) {
+        boolean fineMenu = false;
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INFORMAZIONI_RETE, Parametri.VOCI_MENU_INFORMAZIONI_RETE);
-        int selezione = menu.scegliMenuInterno();
-        switch (selezione) {
-            case 1:
-                View.stampaNomeRete(rete);
-                break;
+        do {
+            int selezione = menu.scegliMenuInterno();
+            switch (selezione) {
+                case 1:
+                    View.stampaNomeRete(rete);
+                    break;
 
-            case 2:
-                View.stampaAutomi(rete);
-                break;
+                case 2:
+                    View.stampaAutomi(rete);
+                    break;
 
-            case 3:
-                View.stampaStati(rete);
-                break;
-                
+                case 3:
+                    View.stampaStati(rete);
+                    break;
 
-            // ecc ecc
-        }
+                case 0:
+                    fineMenu = true;
+
+                }
+            } while (!fineMenu);  
     }
 
     /**
@@ -194,10 +191,28 @@ public class ControllerUtente {
      *
      * @param rete
      */
-    private static void compiti(Rete rete) {
-        creaSpazioComportamentale(rete);
-        creaSpazioComportamentaleDecorato(rete);
-        creaDizionario(rete);
+    private static void menuCompiti(Rete rete) {
+        boolean fineMenu = false;
+        MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_COMPITI, Parametri.VOCI_MENU_COMPITI);
+        do {
+            int selezione = menu.scegliMenuInterno();
+            switch (selezione) {
+                case 1:
+                    creaSpazioComportamentale(rete);
+                    break;
+
+                case 2:
+                    creaSpazioComportamentaleDecorato(rete);
+                    break;
+
+                case 3:
+                    distillaDiagnosi();
+                    break;
+
+                case 0:
+                    fineMenu = true;
+            }
+        } while (!fineMenu);
     }
 
     /**
@@ -230,5 +245,30 @@ public class ControllerUtente {
    private static void creaDizionario(Rete rete) {
         Controller.creaDizionario(rete);
     }
+   
+   private static void distillaDiagnosi(){
+       creaSpazioComportamentale(rete);
+       creaSpazioComportamentaleDecorato(rete);
+       creaDizionario(rete);
+       List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita();
+   }
+   
+   private static List<String> acquisisciStringaEtichetteOsservabilita(){
+       List<String> daCercare = null;
+       System.out.println(Parametri.MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
+       System.out.println(Parametri.ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
+       List<String> etichetteOsservabilita = getEtichetteOsservabilita();
+       daCercare = InputDati.leggiInserimentoStringaEtichette(Parametri.MESSAGGIO_INSERISCI, etichetteOsservabilita);
+       return daCercare;
+   }
+   
+   private static List<String> getEtichetteOsservabilita(){
+       List<String> etichette = new ArrayList<String>();
+       String[] temp = rete.getEtichettaOsservabilita();
+       for(int i  = 0; i<temp.length; i++){
+           etichette.add(temp[i]);
+       }
+       return etichette;
+   }
   
 }
