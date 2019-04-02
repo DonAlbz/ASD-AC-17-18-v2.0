@@ -1,6 +1,7 @@
 package Utilita;
 
 import java.util.*;
+import view.Parametri;
 
 public class InputDati {
 
@@ -11,6 +12,8 @@ public class InputDati {
     private final static String ERRORE_STRINGA_VUOTA = "Attenzione: non hai inserito alcun carattere";
     private final static String ERRORE_MASSIMO = "Attenzione: e' richiesto un valore minore o uguale a ";
     private final static String MESSAGGIO_AMMISSIBILI = "Attenzione: i caratteri ammissibili sono: ";
+    private final static String ERRORE_SEPARATORE = "Attenzione: nella stringa inserita manca il separatore corretto";
+    private final static String ERRORE_DIZIONARIO = "Attenzione: uno o più simboli inseriti non appartiene al dizionario di osservabilità";
 
     private final static char RISPOSTA_SI = 'S';
     private final static char RISPOSTA_NO = 'N';
@@ -23,7 +26,7 @@ public class InputDati {
 
     public static String leggiStringa(String messaggio) {
         System.out.print(messaggio);
-        return lettore.next();
+        return lettore.nextLine();
     }
 
     public static String leggiStringaNonVuota(String messaggio) {
@@ -177,6 +180,55 @@ public class InputDati {
         } else {
             return false;
         }
+    }
+    
+    public static List<String> leggiInserimentoStringaEtichette(String messaggio, List<String> etichetteOsservabilita){
+        boolean finito = false;
+        List<String> etichette = new ArrayList<String>();
+        String lettura = null;
+        do {
+            lettura = leggiStringa(messaggio);
+            lettura = lettura.trim();
+            String carattereIniziale = lettura.substring(0, 1);
+            String carattereFinale = lettura.substring(lettura.length()-1, lettura.length());
+            if(carattereIniziale.equalsIgnoreCase(Parametri.CARATTERE_MINORE) && carattereFinale.equalsIgnoreCase(Parametri.CARATTERE_MAGGIORE)){
+                if(lettura.contains(Parametri.VIRGOLA)){
+                    // rimozione del minore e maggiore
+                    lettura = lettura.substring(1,lettura.length()-1);
+                    // split
+                    String[] temp = lettura.split(Parametri.VIRGOLA);
+                    // controllo che i caratteri facciano parte dell'osservabilita
+                    boolean controlloEsterno = true;
+                    for(int i = 0; i<temp.length; i++){
+                        boolean controlloInterno = false;
+                        for (String etic : etichetteOsservabilita) {
+                            if (etic.equalsIgnoreCase(temp[i])) {
+                                controlloInterno = true;
+                            }
+                        }
+                        if (!controlloInterno) {
+                            controlloEsterno = false;
+                            break;
+                        }
+                    }
+                    if (controlloEsterno) {
+                        for (int i = 0; i < temp.length; i++) {
+                            etichette.add(temp[i]);
+                        }
+                        finito = true;
+                    } else {
+                        System.out.println(ERRORE_DIZIONARIO);
+                    }
+                } else {
+                    System.out.println(ERRORE_SEPARATORE);
+                }
+            } else {
+                System.out.println(ERRORE_FORMATO);
+            }
+
+        } while (!finito);
+
+        return etichette;
     }
 
 }
