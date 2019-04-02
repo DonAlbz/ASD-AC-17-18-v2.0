@@ -32,7 +32,7 @@ public class Main {
 
         Rete rete = ControllerUtente.start();
 //      rete = Import.primoScenario();
-        ControllerUtente.menuRete(rete);
+//        ControllerUtente.menuRete(rete);
         
 
 //        ControllerUtente.start();

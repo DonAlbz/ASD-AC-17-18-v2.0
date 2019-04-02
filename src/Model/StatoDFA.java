@@ -14,7 +14,7 @@ import view.Parametri;
  *
  * @author alber
  */
-public class StatoFDA implements StatoInterface {
+public class StatoDFA implements StatoInterface {
 
     private List<StatoReteRidenominato> stati;
     private String osservabilita;
@@ -22,7 +22,7 @@ public class StatoFDA implements StatoInterface {
     private boolean isFinale;
     private List<List<String>> diagnosi;
 
-    public StatoFDA(List<StatoReteRidenominato> stati, String osservabilita) {
+    public StatoDFA(List<StatoReteRidenominato> stati, String osservabilita) {
         this.stati = stati;
         java.util.Collections.sort(stati);
         this.osservabilita = osservabilita;
@@ -87,10 +87,10 @@ public class StatoFDA implements StatoInterface {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof StatoFDA)) {
+        if (!(o instanceof StatoDFA)) {
             return false;
         }
-        StatoFDA stato2 = (StatoFDA) o;
+        StatoDFA stato2 = (StatoDFA) o;
 
         if (this.getNome().equals(stato2.getNome()) && this.getOsservabilita().equals(stato2.getOsservabilita())) {
             return true;

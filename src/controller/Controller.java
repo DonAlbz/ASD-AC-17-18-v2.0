@@ -57,7 +57,14 @@ public class Controller {
     }
 
     static void creaDizionario(Rete rete) {
-        determinizzazione(rete);
+        determinizzazione(rete);        
+    }
+    
+    static String distillaDiagnosi(Rete rete, List<String> osservazioni){
+        String diagnosi;
+        StatoDFA statoRaggiunto= raggiungiStatoOsservabile(rete.getSpazioDFA(), osservazioni);
+        diagnosi = getDiagnosi(statoRaggiunto);
+        return diagnosi;
     }
 
     private static List<Cammino> trovaCammini(Rete rete, LinkedList<StatoReteAbstract> stati) {
@@ -439,8 +446,8 @@ public class Controller {
     public static SpazioComportamentale determinizzazione(Rete rete) {
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
         SpazioComportamentale spazioDFA = new SpazioComportamentale();
-        Stack<StatoFDA> stack = new Stack<>();
-        List<StatoFDA> verticiSpazio = new ArrayList<>();
+        Stack<StatoDFA> stack = new Stack<>();
+        List<StatoDFA> verticiSpazio = new ArrayList<>();
         List<StatoReteRidenominato> statiRaggiunti;
         StatoInterface root = spazioComportamentaleDecorato.getRoot();
         List<String> etichetteOsservabilita = Arrays.asList(rete.getEtichettaOsservabilita());
@@ -455,23 +462,23 @@ public class Controller {
         for (String etichettaOsservabilita : etichetteOsservabilita) {
             statiReggiuntiDaOsservabilita.add(new ArrayList<StatoReteRidenominato>());
         }
-        //creazione dello stato statoFDA root a partire dall'epsilon-CLOSURE
+        //creazione dello stato statoDFA root a partire dall'epsilon-CLOSURE
         statiRaggiunti = epsilon_CLOSURE(spazioComportamentaleDecorato, root);
-        root = new StatoFDA(statiRaggiunti, null);
+        root = new StatoDFA(statiRaggiunti, null);
         spazioDFA.aggiungiVertice(root);
         spazioDFA.setRoot(root);
-        stack.push((StatoFDA) root);
+        stack.push((StatoDFA) root);
         //dello stato root NDA
         //fintanto che la stack e' vuota
         while (!stack.isEmpty()) {
-            StatoFDA statoAnalizzato = stack.pop();
+            StatoDFA statoAnalizzato = stack.pop();
 //            System.out.println(statoAnalizzato.getNome());
 //            System.out.printf(statoAnalizzato.toString() + " ");
             if (!verticiSpazio.contains(statoAnalizzato)) {
                 spazioDFA.aggiungiVertice(statoAnalizzato);
 //                System.out.println("non contenuto");
                 verticiSpazio.add(statoAnalizzato);
-                //rimuovi dalla pila il primo stato FDA e prendi tutti gli stati NDA
+                //rimuovi dalla pila il primo stato DFA e prendi tutti gli stati NDA
                 statiRaggiunti = statoAnalizzato.getStati();
                 for (StatoReteRidenominato statoRaggiunto : statiRaggiunti) {//per ogni stato NDA
                     //controlla nello spazio doppiamente decorato gli stati adiacenti
@@ -489,13 +496,13 @@ public class Controller {
                 //Per ogni stato raggiunto da una etichetta di osservabilita'
                 for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {
                     if (!statiReggiuntiDaOsservabilita.get(i).isEmpty()) {
-                        //prendi l'insieme degli stati FDA raggiunti dall'osservabilita' i 
+                        //prendi l'insieme degli stati DFA raggiunti dall'osservabilita' i 
                         statiTemporanei = statiReggiuntiDaOsservabilita.get(i);
                         //Esegui l'epsilon-CLOSURE sull'insieme di stati considerato
                         statiTemporanei = epsilon_CLOSURE(spazioComportamentaleDecorato, statiTemporanei);
-                        //Il nuovo stato FDA e' l'epsilon-CLOSURE CALCOLATO
-                        StatoFDA nuovoStato = new StatoFDA(new ArrayList<StatoReteRidenominato>(statiTemporanei), etichetteOsservabilita.get(i));
-                        //Il nuovo statoFDA viene insierito nella pila
+                        //Il nuovo stato DFA e' l'epsilon-CLOSURE CALCOLATO
+                        StatoDFA nuovoStato = new StatoDFA(new ArrayList<StatoReteRidenominato>(statiTemporanei), etichetteOsservabilita.get(i));
+                        //Il nuovo statoDFA viene insierito nella pila
                         stack.push(nuovoStato);
                         //Aggiunta del lato nello spazioDFA
                         spazioDFA.aggiungiLato(statoAnalizzato, nuovoStato);
@@ -507,7 +514,7 @@ public class Controller {
             }
         }
 
-//        for(StatoFDA s :verticiSpazio){
+//        for(StatoDFA s :verticiSpazio){
 //            System.out.println(s.getNome());
 //        }
         rete.setSpazioDFA(spazioDFA);
@@ -545,7 +552,7 @@ public class Controller {
     }
 
     /**
-     * Restituisce uno statoFDA ottenuto dall'epsilon-CLOSURE su uno statoFDA
+     * Restituisce uno statoDFA ottenuto dall'epsilon-CLOSURE su uno statoDFA
      *
      * @param spazioComportamentaleDecorato
      * @param statiRaggiunti
@@ -563,7 +570,7 @@ public class Controller {
         return statiDaRitornare;
     }
 
-    public static StatoFDA raggiungiStatoOsservabile(SpazioComportamentale spazioDFA, List<String> _osservazioni) {
+    public static StatoDFA raggiungiStatoOsservabile(SpazioComportamentale spazioDFA, List<String> _osservazioni) {
         Queue<String> osservazioni = new LinkedList<>(_osservazioni);
         List<StatoInterface> listaStatiPartenza = new ArrayList<>();
         List<StatoInterface> listaStatiRaggiuntiOsservabili = new ArrayList<>();
@@ -575,7 +582,7 @@ public class Controller {
             for (StatoInterface statoPartenza : listaStatiPartenza) {
                 listaStatiRaggiuntiTutti = spazioDFA.getVerticiAdiacenti(statoPartenza);
                 for (StatoInterface s : listaStatiRaggiuntiTutti) {
-                    if (((StatoFDA) s).getOsservabilita().equals(osservazione)) {
+                    if (((StatoDFA) s).getOsservabilita().equals(osservazione)) {
                         listaStatiRaggiuntiOsservabili.add(s);
                     }
                 }
@@ -583,10 +590,15 @@ public class Controller {
             listaStatiPartenza = new ArrayList<>(listaStatiRaggiuntiOsservabili);
         }
         if (listaStatiRaggiuntiOsservabili.size() == 1) {
-            return (StatoFDA) listaStatiRaggiuntiOsservabili.get(0);
+            return (StatoDFA) listaStatiRaggiuntiOsservabili.get(0);
         } else {
             return null;
         }
+    }
+
+    private static String getDiagnosi(StatoDFA statoRaggiunto) {
+    String diagnosi = "Ciao, bel Camo!";
+    return diagnosi;
     }
 
 }

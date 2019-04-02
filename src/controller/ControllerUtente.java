@@ -29,7 +29,11 @@ public class ControllerUtente {
     public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT+"/salvataggio.dat");
 
     public static Rete start() {
-        menuAvvio();
+        int selezione = menuAvvio();
+        if(selezione!=0){
+            menuRete(rete);
+        }
+        
         return rete;
     }
 
@@ -37,16 +41,17 @@ public class ControllerUtente {
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
      */
-    public static void menuAvvio() {
+    public static int menuAvvio() {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
         int selezione = menu.scegli();
         switch(selezione){
-            case 1: importa();
-            break;
+            case 1: importa(); 
+                break;
             
-            case 2: carica();
-            break;
+            case 2: carica();     
+                break;
         }
+        return selezione;
     }
     
     /**
@@ -239,8 +244,12 @@ public class ControllerUtente {
      * @param rete
      */
     private static void creaSpazioComportamentaleDecorato(Rete rete) {
+        if(rete.getSpazioC()!=null){
         Controller.creaSpazioComportamentaleDecorato(rete);
-    }
+        }else{
+            //TO-DO: messaggio di errore
+        }
+        }
 
    private static void creaDizionario(Rete rete) {
         Controller.creaDizionario(rete);
@@ -251,6 +260,12 @@ public class ControllerUtente {
        creaSpazioComportamentaleDecorato(rete);
        creaDizionario(rete);
        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita();
+       String diagnosi = Controller.distillaDiagnosi(rete, etichetteOsservabilita);
+       if (diagnosi != null){
+           System.out.println(diagnosi);
+       }else{
+           //TO-DO: messaggio errore;
+       }
    }
    
    private static List<String> acquisisciStringaEtichetteOsservabilita(){
