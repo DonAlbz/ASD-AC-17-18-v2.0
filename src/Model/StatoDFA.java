@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import view.Parametri;
  *
  * @author alber
  */
-public class StatoDFA implements StatoInterface {
+public class StatoDFA implements StatoInterface, Serializable {
 
     private List<StatoReteRidenominato> stati;
     private String osservabilita;

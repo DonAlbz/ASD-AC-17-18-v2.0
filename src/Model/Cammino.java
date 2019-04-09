@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import view.Parametri;
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Alb
  */
-public class Cammino {
+public class Cammino implements Serializable{
 
     private ArrayList<StatoReteAbstract> cammino;
     private boolean isTraiettoria;

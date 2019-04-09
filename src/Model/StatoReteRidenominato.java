@@ -1,5 +1,6 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /*
@@ -13,7 +14,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoReteRidenominato extends StatoReteAbstract implements Comparable<StatoReteRidenominato>{
+public class StatoReteRidenominato extends StatoReteAbstract implements Comparable<StatoReteRidenominato>, Serializable{
 
     /**
      * Crea uno StatoRete ridenominato
