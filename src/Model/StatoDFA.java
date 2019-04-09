@@ -132,4 +132,12 @@ public class StatoDFA implements StatoInterface, Serializable {
         return daRitornare;
     }
 
+    public boolean isIsFinale() {
+        return isFinale;
+    }
+
+    public List<List<String>> getDiagnosi() {
+        return diagnosi;
+    }
+    
 }

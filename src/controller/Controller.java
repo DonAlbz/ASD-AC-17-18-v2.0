@@ -57,12 +57,12 @@ public class Controller {
     }
 
     static void creaDizionario(Rete rete) {
-        determinizzazione(rete);        
+        determinizzazione(rete);
     }
-    
-    static String distillaDiagnosi(Rete rete, List<String> osservazioni){
+
+    static String distillaDiagnosi(Rete rete, List<String> osservazioni) {
         String diagnosi;
-        StatoDFA statoRaggiunto= raggiungiStatoOsservabile(rete.getSpazioDFA(), osservazioni);
+        StatoDFA statoRaggiunto = raggiungiStatoOsservabile(rete.getSpazioDFA(), osservazioni);
         diagnosi = getDiagnosi(statoRaggiunto);
         return diagnosi;
     }
@@ -586,7 +586,7 @@ public class Controller {
                         listaStatiRaggiuntiOsservabili.add(s);
                     }
                 }
-            }            
+            }
             listaStatiPartenza = new ArrayList<>(listaStatiRaggiuntiOsservabili);
         }
         if (listaStatiRaggiuntiOsservabili.size() == 1) {
@@ -597,8 +597,12 @@ public class Controller {
     }
 
     private static String getDiagnosi(StatoDFA statoRaggiunto) {
-    String diagnosi = "Ciao, bel Camo!";
-    return diagnosi;
+        List<List<String>> diagnosi = statoRaggiunto.getDiagnosi();
+        StringBuilder s = new StringBuilder();
+        for(List<String> decorazione:diagnosi){
+            s.append(decorazione.toString());
+        }
+        return s.toString();
     }
 
 }
