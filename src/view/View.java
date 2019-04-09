@@ -121,4 +121,9 @@ public class View {
         System.out.println("L'import della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
         System.out.println("");
     }
+
+    public static void messaggioAquisizioneEtichettaOsservabilita() {
+        System.out.println(Parametri.MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
+        System.out.println(Parametri.ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
+    }
 }
