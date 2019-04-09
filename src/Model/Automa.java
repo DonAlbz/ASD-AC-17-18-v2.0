@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author Alb
  */
-public class Automa {
+public class Automa implements Serializable{
     
     private List<Stato> stati;
     private Stato statoCorrente;

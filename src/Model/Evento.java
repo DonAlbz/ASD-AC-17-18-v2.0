@@ -5,11 +5,13 @@
  */
 package Model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Alb
  */
-public class Evento {
+public class Evento implements Serializable{
     private String descrizione;
     
     public Evento(String descrizione){

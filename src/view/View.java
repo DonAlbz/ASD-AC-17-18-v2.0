@@ -47,7 +47,6 @@ public class View {
     
     public static String stampaNomeRete(Rete rete){
         String nomeRete = rete.getDescrizione();
-        System.out.println("");
         System.out.println("Il nome della rete è: " + nomeRete);
         System.out.println("");
         return nomeRete;
@@ -55,8 +54,8 @@ public class View {
     
     public static void stampaAutomi(Rete rete){
         List<Automa> automi = rete.getAutomi();
-        System.out.println("");
         int i = 1;
+        System.out.println("La rete è composta da " + automi.size() + " automi/a:");
         for(Automa aut : automi){
             System.out.println("Automa "+ i + " nella rete è: " + aut.getDescrizione());
             i++;
@@ -66,17 +65,39 @@ public class View {
     
     public static void stampaStati(Rete rete){
         List<Automa> automi = rete.getAutomi();
-        System.out.println("");
         for(Automa aut : automi){
             List<Stato> stati = aut.getStati();
             System.out.println("L'automa " + aut.getDescrizione() + " è composto dei seguenti stati:");
             int i = 1;
             for(Stato st : stati){
-                System.out.println("Stato " + i + " " + st.getDescrizione());
+                System.out.println("Stato " + i + ": " + st.getDescrizione());
                 i++;
             }
             System.out.println("");
         }
+    }
+    
+    public static void stampaTransizioni(Rete rete){
+        List<Automa> automi = rete.getAutomi();
+        for(Automa aut : automi){
+            List<Stato> stati = aut.getStati();
+            for(Stato sta : stati){
+                System.out.print("Lo stato " + sta.getDescrizione() + " facente parte dell'automa " + aut.getDescrizione());
+                System.out.println(" possiede le seguenti transizioni:");
+                List<Transizione> transizioni = sta.getTransizioni();
+                for(Transizione tra : transizioni){
+                    System.out.println("La transizione " + tra.getDescrizione() + " ha come destinazione: " + tra.getStatoDestinazione().getDescrizione());
+                }
+            }
+            System.out.println("");
+        }
+    }
+    
+    public static void stampaGlobaleRete(Rete rete){
+        stampaNomeRete(rete);
+        stampaAutomi(rete);
+        stampaStati(rete);
+        stampaTransizioni(rete);
     }
     
     public static void stampaEtichettaOsservabilita(Rete rete){

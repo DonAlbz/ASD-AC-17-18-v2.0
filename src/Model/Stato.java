@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * @author Alb
  */
-public class Stato {
+public class Stato implements Serializable{
 
     private List<Transizione> transizioni;
     private ArrayList<Transizione> transizioniAbilitate;

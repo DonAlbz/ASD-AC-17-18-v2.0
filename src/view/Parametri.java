@@ -13,7 +13,7 @@ public class Parametri {
 
     public final static String EVENTO_NULLO = "\u0190";
     public final static String INSIEME_VUOTO = "\u00D8";
-        public final static String STATO_DECORATO_PREFISSO = "a";
+    public final static String STATO_DECORATO_PREFISSO = "a";
     public final static String SEPARATORE = "-----------------------";
     public final static String NULL = "null";
     public final static String INIZIALIZZAZIONE_RETE = "********* INIZIALIZZAZIONE RETE *********";
