@@ -19,21 +19,22 @@ import java.util.Stack;
  *
  * @author Alb
  */
-public class Rete implements Serializable{
+public class Rete implements Serializable {
 
-    private  List<Automa> automi;
-    private  Evento[] eventi;
-    private  List<Cammino> cammini;
-    private  List<Cammino> camminiDecorati;
-    private  String descrizione;
-    private  Evento[] link;
-    private  int numeroStati;
-    private  SpazioComportamentale spazioC;
-    private  SpazioComportamentale spazioComportamentaleDecorato;
-     private  SpazioComportamentale spazioDFA;
-    private  LinkedList<StatoReteAbstract> stati;
-    private  String[] etichettaOsservabilita;
-    private  String[] etichettaRilevanza;
+    private List<Automa> automi;
+    private Evento[] eventi;
+    private List<Cammino> cammini;
+    private List<Cammino> camminiDecorati;
+    private String descrizione;
+    private Evento[] link;
+    private int numeroStati;
+    private SpazioComportamentale spazioC;
+    private SpazioComportamentale spazioComportamentaleDecorato;
+    private SpazioComportamentale dizionario;
+    private SpazioComportamentale dizionarioParziale;
+    private LinkedList<StatoReteAbstract> stati;
+    private String[] etichettaOsservabilita;
+    private String[] etichettaRilevanza;
     //private static Transizione transizioneAbilitata;
 
     public Rete(String s, Evento[] _link, Evento[] _eventi) {
@@ -44,14 +45,14 @@ public class Rete implements Serializable{
         cammini = new ArrayList<Cammino>();
         spazioC = new SpazioComportamentale();
     }
-    
+
     public Rete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
         this(s, _link, _eventi);
         etichettaOsservabilita = osservabilita;
         etichettaRilevanza = rilevanza;
     }
-    
-    public  void creaRete(String s, Evento[] _link, Evento[] _eventi) {
+
+    public void creaRete(String s, Evento[] _link, Evento[] _eventi) {
         descrizione = s;
         automi = new ArrayList<Automa>();
         eventi = _eventi;
@@ -82,7 +83,6 @@ public class Rete implements Serializable{
 ////        inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
 ////        System.out.println(spazioComportamentaleDecorato);
 //    }
-
     /**
      * Creazione dei cammini e dello spazio comportamentale
      *
@@ -111,7 +111,7 @@ public class Rete implements Serializable{
 //                System.out.println(statoAttuale.toString());
                 setRete(statoAttuale);
                 if (statoAttuale.isAbilitato(automi)) {
-                    List<List<Transizione>> transizioniAbilitate =  new ArrayList<List<Transizione>>(automi.size());
+                    List<List<Transizione>> transizioniAbilitate = new ArrayList<List<Transizione>>(automi.size());
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < automi.size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
                         automi.get(i).isAbilitato(link);
@@ -266,8 +266,8 @@ public class Rete implements Serializable{
                     if (statoPrecedenteTraiettoria.getClass() == StatoRete.class) {
                         statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
-                    if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {                        
-                        statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);                       
+                    if (statoPrecedenteTraiettoria.getClass() == StatoReteDecorato.class) {
+                        statoPrecedente = new StatoReteRidenominato(statoPrecedenteTraiettoria);
                     }
 
                     StatoReteAbstract statoCorrenteTraiettoria = statiTraiettoria.get(i);
@@ -319,10 +319,10 @@ public class Rete implements Serializable{
             }
             StatoReteRidenominato statoDaAggiungere = new StatoReteRidenominato(_stati.get(i), null);
             if (_stati.get(i).getClass() == StatoReteDecorato.class) {
-            String nome = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(i);
-            _stati.get(i).setNome(nome);
-            statoDaAggiungere.setNome(nome);
-        }            
+                String nome = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(i);
+                _stati.get(i).setNome(nome);
+                statoDaAggiungere.setNome(nome);
+            }
             _spazioC.aggiungiVertice(statoDaAggiungere);
         }
         return _spazioC;
@@ -524,7 +524,6 @@ public class Rete implements Serializable{
 //        spazioComportamentaleDecorato=inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
 //        return spazioComportamentaleDecorato;
 //    }
-
     private void stampaTraiettorie(ArrayList<Cammino> traiettorie) {
 
         System.out.println(Parametri.TRAIETTORIE_ETICHETTA);
@@ -625,14 +624,16 @@ public class Rete implements Serializable{
         this.spazioComportamentaleDecorato = spazioComportamentaleDecorato;
     }
 
-    public SpazioComportamentale getSpazioDFA() {
-        return spazioDFA;
+    public SpazioComportamentale getDizionario() {
+        return dizionario;
     }
 
-    public void setSpazioDFA(SpazioComportamentale spazioDFA) {
-        this.spazioDFA = spazioDFA;
+    public void setDizionario(SpazioComportamentale dizionario) {
+        this.dizionario = dizionario;
     }
-    
-    
-    
+
+    public void setDizionarioParziale(SpazioComportamentale dizionarioParziale) {
+        this.dizionarioParziale = dizionarioParziale;
+    }
+
 }

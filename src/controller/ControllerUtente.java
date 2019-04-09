@@ -24,16 +24,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author alber
  */
 public class ControllerUtente {
-    
-    public static Rete rete;
-    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT+"/salvataggio.dat");
+
+    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
 
     public static Rete start() {
-        int selezione = menuAvvio();
-        if(selezione!=0){
+        Rete rete = menuAvvio();
+        if (rete != null) {
             menuRete(rete);
         }
-        
+
         return rete;
     }
 
@@ -41,19 +40,23 @@ public class ControllerUtente {
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
      */
-    public static int menuAvvio() {
+    public static Rete menuAvvio() {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_INIZIALE, Parametri.VOCI_MENU_INIZIALE);
         int selezione = menu.scegli();
-        switch(selezione){
-            case 1: importa(); 
+        Rete rete = null;
+        switch (selezione) {
+            case 1:
+                rete = importa();
                 break;
-            
-            case 2: carica();     
+
+            case 2:
+                rete = carica();
                 break;
+
         }
-        return selezione;
+        return rete;
     }
-    
+
     /**
      * Metodo che permette di eseguire delle osservazioni o delle operazioni
      * sulla rete considerata
@@ -63,15 +66,15 @@ public class ControllerUtente {
     public static void menuRete(Rete rete) {
         boolean fineProgramma = false;
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_RETE, Parametri.VOCI_MENU_RETE);
-        do{
+        do {
             int selezione = menu.scegli();
-            fineProgramma = selezioneMenuRete(selezione);
-        }while(!fineProgramma);
+            fineProgramma = selezioneMenuRete(rete, selezione);
+        } while (!fineProgramma);
     }
-    
-    private static void importa(){
+
+    private static Rete importa() {
         File cartella = new File(Parametri.PATH_FILE_INPUT);
-        
+
         // inizializzazione della classe che mi permette di filtrare i txt
         FilenameFilter textFilter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -86,25 +89,27 @@ public class ControllerUtente {
 
         File[] listaFile = cartella.listFiles(textFilter);
         String[] nomiFile = new String[listaFile.length];
-        for(int i = 0; i < listaFile.length; i++){
+        for (int i = 0; i < listaFile.length; i++) {
             nomiFile[i] = listaFile[i].getName();
         }
-        
+
         MyMenu menuSelezione = new MyMenu(Parametri.IMPORT_SELEZIONE, nomiFile);
         int selezione = menuSelezione.scegliSenzaUscita();
-        File fileScelto = listaFile[selezione-1];
+        File fileScelto = listaFile[selezione - 1];
         String pathCompletoFile = fileScelto.getAbsolutePath();
         Import nuovoImport = new Import();
-        rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
-        
+        Rete rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
+
         View.messaggioImportCorretto(rete);
+        return rete;
     }
-    
+
     // DA SISTEMARE
-    private static void carica(){
+    private static Rete carica() {
+        Rete rete = null;
         File fileSalvataggio = null;
-        
-         // impostazione della directory di partenza
+
+        // impostazione della directory di partenza
         JFileChooser fileScelto = new JFileChooser(Parametri.PATH_FILE_INPUT);
         // creazione del filtro dat
         FileFilter filtroDat = new FileNameExtensionFilter("DAT file", "dat");
@@ -123,7 +128,7 @@ public class ControllerUtente {
 //            rete = nuovoImport.caricaReteDaFile(path);
             fileSalvataggio = new File(path);
         }
-        
+
         if (fileSalvataggio.exists()) {
             try {
                 rete = (Rete) ServizioFile.caricaSingoloOggetto(fileSalvataggio);
@@ -139,24 +144,30 @@ public class ControllerUtente {
         } else {
             System.out.println("Problemi con il file");
         }
+        return rete;
     }
-    
-    private static boolean selezioneMenuRete(int selezione){
+
+    private static boolean selezioneMenuRete(Rete rete, int selezione) {
         boolean end = false;
-        switch(selezione){
-            case 1: menuInformazioniRete(rete);
-            break;
-            
-            case 2: menuCompiti(rete);
-            break;
-            
-            case 3: salva();
-            break;
-            
-            case 4: System.out.println("Cambia rete");
-            break;
-            
-            case 0: end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
+        switch (selezione) {
+            case 1:
+                menuInformazioniRete(rete);
+                break;
+
+            case 2:
+                menuCompiti(rete);
+                break;
+
+            case 3:
+                salva(rete);
+                break;
+
+            case 4:
+                System.out.println("Cambia rete");
+                break;
+
+            case 0:
+                end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
@@ -186,12 +197,12 @@ public class ControllerUtente {
                     System.out.println("");
                     View.stampaStati(rete);
                     break;
-                    
+
                 case 4:
                     System.out.println("");
                     View.stampaTransizioni(rete);
                     break;
-                    
+
                 case 5:
                     System.out.println("");
                     View.stampaGlobaleRete(rete);
@@ -200,8 +211,8 @@ public class ControllerUtente {
                 case 0:
                     fineMenu = true;
 
-                }
-            } while (!fineMenu);  
+            }
+        } while (!fineMenu);
     }
 
     /**
@@ -215,21 +226,20 @@ public class ControllerUtente {
         do {
             int selezione = menu.scegliMenuInterno();
             switch (selezione) {
-                case 1:
-                    System.out.println("");
+                case 1:                    
                     creaSpazioComportamentale(rete);
                     break;
 
-                case 2:
-                    System.out.println("");
+                case 2:                    
                     creaSpazioComportamentaleDecorato(rete);
                     break;
 
-                case 3:
-                    System.out.println("");
-                    distillaDiagnosi();
+                case 3:                  
+                    distillaDiagnosi(rete);
                     break;
-
+                case 4:
+                    distillaDiagnosiDaDizionarioParziale(rete);
+                    break;
                 case 0:
                     fineMenu = true;
             }
@@ -241,7 +251,7 @@ public class ControllerUtente {
      *
      * @param rete
      */
-    private static void salva() {
+    private static void salva(Rete rete) {
         ServizioFile.salvaSingoloOggetto(fileSalvataggio, rete);
     }
 
@@ -260,46 +270,52 @@ public class ControllerUtente {
      * @param rete
      */
     private static void creaSpazioComportamentaleDecorato(Rete rete) {
-        if(rete.getSpazioC()!=null){
-        Controller.creaSpazioComportamentaleDecorato(rete);
-        }else{
+        if (rete.getSpazioC() != null) {
+            Controller.creaSpazioComportamentaleDecorato(rete);
+        } else {
             //TO-DO: messaggio di errore
         }
-        }
+    }
 
-   private static void creaDizionario(Rete rete) {
+    private static void creaDizionario(Rete rete) {
         Controller.creaDizionario(rete);
     }
-   
-   private static void distillaDiagnosi(){
-       creaSpazioComportamentale(rete);
-       creaSpazioComportamentaleDecorato(rete);
-       creaDizionario(rete);
-       List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita();
-       String diagnosi = Controller.distillaDiagnosi(rete, etichetteOsservabilita);
-       if (diagnosi != null){
-           System.out.println(diagnosi);
-       }else{
-           //TO-DO: messaggio errore;
-       }
-   }
-   
-   private static List<String> acquisisciStringaEtichetteOsservabilita(){
-       List<String> daCercare = null;
-       System.out.println(Parametri.MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
-       System.out.println(Parametri.ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
-       List<String> etichetteOsservabilita = getEtichetteOsservabilita();
-       daCercare = InputDati.leggiInserimentoStringaEtichette(Parametri.MESSAGGIO_INSERISCI, etichetteOsservabilita);
-       return daCercare;
-   }
-   
-   private static List<String> getEtichetteOsservabilita(){
-       List<String> etichette = new ArrayList<String>();
-       String[] temp = rete.getEtichettaOsservabilita();
-       for(int i  = 0; i<temp.length; i++){
-           etichette.add(temp[i]);
-       }
-       return etichette;
-   }
-  
+
+    private static void distillaDiagnosi(Rete rete) {
+        if (rete.getDizionario() == null) {
+            creaSpazioComportamentale(rete);
+            creaSpazioComportamentaleDecorato(rete);
+            creaDizionario(rete);
+        }
+        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+        String diagnosi = Controller.distillaDiagnosi(rete, etichetteOsservabilita);
+        if (diagnosi != null) {
+            System.out.println(diagnosi);
+        } else {
+            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+        }
+    }
+
+    private static List<String> acquisisciStringaEtichetteOsservabilita(Rete rete) {
+        List<String> daCercare = null;
+        View.messaggioAquisizioneEtichettaOsservabilita();
+        
+        List<String> etichetteOsservabilita = Controller.getEtichetteOsservabilita(rete);
+        daCercare = InputDati.leggiInserimentoStringaEtichette(Parametri.MESSAGGIO_INSERISCI, etichetteOsservabilita);
+        return daCercare;
+    }
+
+    private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
+        //TO-DO: CAMO
+        String osservazione = getOsservazione();
+        Controller.creaDizionarioParziale(rete, osservazione);
+        
+        
+    }
+
+    private static String getOsservazione() {
+    //TO-DO: CAMO
+    return null;
+    }
+
 }

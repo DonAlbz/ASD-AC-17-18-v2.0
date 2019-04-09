@@ -36,6 +36,11 @@ public class StatoDFA implements StatoInterface, Serializable {
         }
     }
 
+    public StatoDFA(String nome, String osservabilita) {
+        this.nome = nome;
+        this.osservabilita = osservabilita;
+    }
+
     public String toString() {
 //        StringBuilder s = new StringBuilder();
 //        s.append(Parametri.PARENTESI_TONDA_A);
@@ -132,12 +137,12 @@ public class StatoDFA implements StatoInterface, Serializable {
         return daRitornare;
     }
 
-    public boolean isIsFinale() {
+    public boolean isFinale() {
         return isFinale;
     }
 
     public List<List<String>> getDiagnosi() {
         return diagnosi;
     }
-    
+
 }

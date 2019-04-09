@@ -62,7 +62,7 @@ public class Controller {
 
     static String distillaDiagnosi(Rete rete, List<String> osservazioni) {
         String diagnosi;
-        StatoDFA statoRaggiunto = raggiungiStatoOsservabile(rete.getSpazioDFA(), osservazioni);
+        StatoDFA statoRaggiunto = raggiungiStatoOsservabile(rete.getDizionario(), osservazioni);
         diagnosi = getDiagnosi(statoRaggiunto);
         return diagnosi;
     }
@@ -517,7 +517,7 @@ public class Controller {
 //        for(StatoDFA s :verticiSpazio){
 //            System.out.println(s.getNome());
 //        }
-        rete.setSpazioDFA(spazioDFA);
+        rete.setDizionario(spazioDFA);
         return spazioDFA;
     }
 
@@ -599,10 +599,51 @@ public class Controller {
     private static String getDiagnosi(StatoDFA statoRaggiunto) {
         List<List<String>> diagnosi = statoRaggiunto.getDiagnosi();
         StringBuilder s = new StringBuilder();
-        for(List<String> decorazione:diagnosi){
+        for (List<String> decorazione : diagnosi) {
             s.append(decorazione.toString());
         }
         return s.toString();
+    }
+
+    public static List<String> getEtichetteOsservabilita(Rete rete) {
+        List<String> etichette = new ArrayList<String>();
+        String[] temp = rete.getEtichettaOsservabilita();
+        for (int i = 0; i < temp.length; i++) {
+            etichette.add(temp[i]);
+        }
+        return etichette;
+    }
+    
+    static void creaDizionarioParziale(Rete rete, String osservazione) {
+        //TODO CAMO
+        creaRiconoscitoreEspressione(rete, osservazione);
+        SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete);
+        
+        //TODO Alby
+        SpazioComportamentale dizionarioParziale = creaDizionarioParziale(spazioComportamentaleParziale);
+        rete.setDizionarioParziale(dizionarioParziale);
+    }
+
+    private static void creaRiconoscitoreEspressione(Rete rete, String osservazione) {
+        //TODO CAMO
+        SpazioComportamentale dizionario = rete.getDizionario();
+        SpazioComportamentale dizionarioParziale = new SpazioComportamentale();
+        StatoDFA root = new StatoDFA("0", null);
+        dizionarioParziale.setRoot(root);
+        dizionarioParziale.aggiungiVertice(root);
+        //Per aggiungere un lato: dizionareParziale.aggiungiLato(verticeDiPartenza, verticeDiArrivo);
+
+    }
+
+
+    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete) {
+        //TODO Alby
+        return null;
+    }
+
+    private static SpazioComportamentale creaDizionarioParziale(SpazioComportamentale spazioComportamentaleParziale) {
+       //TODO Alby
+        return null;
     }
 
 }
