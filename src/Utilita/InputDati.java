@@ -14,6 +14,9 @@ public class InputDati {
     private final static String MESSAGGIO_AMMISSIBILI = "Attenzione: i caratteri ammissibili sono: ";
     private final static String ERRORE_SEPARATORE = "Attenzione: nella stringa inserita manca il separatore corretto";
     private final static String ERRORE_DIZIONARIO = "Attenzione: uno o più simboli inseriti non appartiene al dizionario di osservabilità";
+    private final static String ERRORE_ALFABETO_DIZIONARIO = "Attenzione: l'inserimento dell'espressione regolare non è conforme alla sintassi";
+    private final static String ERRORE_ALFABETO_PARENTESI = "Attenzione: le parentesi inserite non sono corrette";
+    private final static String ERRORE_ALFABETO_SINTASSI ="Attenzione: la sintassi dell'espressione regolare non è corretta";
 
     private final static char RISPOSTA_SI = 'S';
     private final static char RISPOSTA_NO = 'N';
@@ -230,5 +233,97 @@ public class InputDati {
 
         return etichette;
     }
+    
+    
+    public static String inserimentoEspressioneRegolare(String messaggio, String[] alfabetoEspressione){
+        String espressione = null;
+        boolean finito = false;
+        
+        // inizializzazione di tutti i caratteri ammessi nell'espressione regolare
+        String parentesiAperta = Parametri.PARENTESI_TONDA_A;
+        String parentesiChiusa = Parametri.PARENTESI_TONDA_C;
+        char parentesiChiusaChar = ')';
+        char parentesiApertaChar = '(';
+        String asterisco = Parametri.ASTERISCO;
+        String piu = Parametri.PIU;
+        String apice = Parametri.APICE;
+        
+        // controllo alfabeto
+        // controllo delle parentesi
+        // controllo sintassi (esempio * succede ^ altrimenti errore)
+        do{
+            espressione = leggiStringa(messaggio);
+            
+            // inizializzazione variabili di controllo
+            boolean controlloAlfabeto = true;
+            boolean controlloParentesi = false;
+            boolean controlloSintassi = false;
+            
+            // CONTROLLO DELL'ALFABETO
+            // elimino caratteri ammessi per controllare se l'alfabeto è corretto
+            String espressionePulita = espressione;
+            espressionePulita = espressionePulita.replace(parentesiAperta, " ");
+            espressionePulita = espressionePulita.replace(parentesiChiusa, " ");
+            espressionePulita = espressionePulita.replace(asterisco, " ");
+            espressionePulita = espressionePulita.replace(piu, " ");
+            espressionePulita = espressionePulita.replace(apice, " ");
+            // spacchetto la stringa per verificare i caratteri
+            String[] splittato = espressionePulita.split(" ");
+            for (String split : splittato) {
+                boolean controlloParole = false;
+                if (!split.equalsIgnoreCase("")) {
+                    for (String alfabeto : alfabetoEspressione) {
+                        if (split.equalsIgnoreCase(alfabeto)) {
+                            controlloParole = true;
+                        }
+                    }
+                } else {
+                    controlloParole = true;
+                }
+                if(!controlloParole){
+                    controlloAlfabeto = false;
+                }
+            }
+
+            // CONTROLLO DELLE PARENTESI
+            int contaParentesiChiuse = contaOccorrenze(espressione, parentesiChiusaChar);
+            int contaParentesiAperte = contaOccorrenze(espressione, parentesiApertaChar);
+            if(contaParentesiAperte == contaParentesiChiuse){
+                controlloParentesi = true;
+            }
+            
+            // CONTROLLO SINTASSI
+            
+            
+            // CONTROLLO FINALE PER MESSAGGI DI ERRORE
+            if(controlloAlfabeto){
+                if(controlloParentesi){
+                    if(controlloSintassi){
+                        finito = true;
+                    } else {
+                        System.out.println(ERRORE_ALFABETO_SINTASSI);
+                    }
+                } else {
+                    System.out.println(ERRORE_ALFABETO_PARENTESI);
+                }
+            } else {
+                System.out.println(ERRORE_ALFABETO_DIZIONARIO);
+            }
+            
+            
+        } while (!finito);
+        return espressione;
+    }
+    
+    private static int contaOccorrenze(String source, char target){
+        int occorrenze = 0;
+        for(int i = 0; i<source.length(); i++){
+            if(source.charAt(i) == target){
+                occorrenze++;
+            }
+        }
+        return occorrenze;
+    }
+   
 
 }

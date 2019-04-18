@@ -307,15 +307,11 @@ public class ControllerUtente {
 
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
         //TO-DO: CAMO
-        String osservazione = getOsservazione();
+        View.stampaLegendaEspressioneRegolare(rete);
+        String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
         Controller.creaDizionarioParziale(rete, osservazione);
         
-        
-    }
-
-    private static String getOsservazione() {
-    //TO-DO: CAMO
-    return null;
+        // controllare se serve altro
     }
 
 }

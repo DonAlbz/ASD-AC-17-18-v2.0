@@ -616,6 +616,7 @@ public class Controller {
     
     static void creaDizionarioParziale(Rete rete, String osservazione) {
         //TODO CAMO
+        // parte relativa alla creazione dello spazio comportamentale
         creaRiconoscitoreEspressione(rete, osservazione);
         SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete);
         
