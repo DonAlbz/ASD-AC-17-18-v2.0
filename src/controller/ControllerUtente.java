@@ -309,6 +309,7 @@ public class ControllerUtente {
         //TO-DO: CAMO
         View.stampaLegendaEspressioneRegolare(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
+        System.out.println(osservazione);
         Controller.creaDizionarioParziale(rete, osservazione);
         
         // controllare se serve altro

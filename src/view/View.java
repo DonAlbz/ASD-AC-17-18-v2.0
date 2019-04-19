@@ -134,13 +134,15 @@ public class View {
         System.out.print(Parametri.A_CAPO);
         System.out.print("L'alfabeto è composto da queste etichette: [ ");
         String[] etichetteOsservabilita = rete.getEtichettaOsservabilita();
-        for(String etichet : etichetteOsservabilita){
+        for (String etichet : etichetteOsservabilita) {
             System.out.print(etichet + " ");
         }
-        System.out.print("]"+Parametri.A_CAPO);
-        for(String legenda : Parametri.VOCI_LEGENDA_ESPRESSIONE_REGOLARE){
+        System.out.print("]" + Parametri.A_CAPO);
+        for (String legenda : Parametri.VOCI_LEGENDA_ESPRESSIONE_REGOLARE) {
             System.out.println(legenda);
         }
         System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO);
+        System.out.println(Parametri.SEPARATORE);
+        System.out.print(Parametri.A_CAPO);
     }
 }

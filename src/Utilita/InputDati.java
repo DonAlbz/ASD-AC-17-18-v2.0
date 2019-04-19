@@ -14,7 +14,7 @@ public class InputDati {
     private final static String MESSAGGIO_AMMISSIBILI = "Attenzione: i caratteri ammissibili sono: ";
     private final static String ERRORE_SEPARATORE = "Attenzione: nella stringa inserita manca il separatore corretto";
     private final static String ERRORE_DIZIONARIO = "Attenzione: uno o più simboli inseriti non appartiene al dizionario di osservabilità";
-    private final static String ERRORE_ALFABETO_DIZIONARIO = "Attenzione: l'inserimento dell'espressione regolare non è conforme alla sintassi";
+    private final static String ERRORE_ALFABETO_DIZIONARIO = "Attenzione: l'inserimento dell'espressione regolare non contiene i caratteri dell'alfabeto delle etichette";
     private final static String ERRORE_ALFABETO_PARENTESI = "Attenzione: le parentesi inserite non sono corrette";
     private final static String ERRORE_ALFABETO_SINTASSI ="Attenzione: la sintassi dell'espressione regolare non è corretta";
 
@@ -293,7 +293,52 @@ public class InputDati {
             }
             
             // CONTROLLO SINTASSI
-            
+            int indexAsterisco = espressione.indexOf(asterisco);
+            int indexPiu = espressione.indexOf(piu);
+            int indexApice = espressione.indexOf(apice);
+            // controllo caratteri dopo l'apice
+            if(indexAsterisco == -1 && indexPiu == -1 && indexApice == -1){
+                controlloSintassi = true;
+            }
+            if(indexApice != -1){
+                // se il carattere dopo è spazio vado avanti
+                int daControllare = indexApice + 1;
+                String daControllareString = espressione.substring(daControllare, daControllare + 1);
+                if(daControllareString.equalsIgnoreCase(" ")){
+                    daControllare = daControllare + 1;
+                    daControllareString = espressione.substring(daControllare, daControllare + 1);
+                }
+                if(daControllareString.equalsIgnoreCase(asterisco) || daControllareString.equalsIgnoreCase(piu)){
+                    // controllo se dopo * o + c'è l'apice
+                    String daControllarePiu = null;
+                    String daControllareAsterisco = null;
+                    if(indexPiu != -1){
+                        daControllarePiu = espressione.substring(indexPiu - 1, indexPiu);
+                    }
+                    if(indexAsterisco != -1){
+                        daControllareAsterisco = espressione.substring(indexAsterisco - 1, indexAsterisco);
+                    }
+                    if(daControllarePiu != null || daControllareAsterisco != null){
+                        // se entrambi sono diversi da null
+                        if(daControllarePiu != null && daControllareAsterisco != null){
+                            if(daControllarePiu.equalsIgnoreCase(apice) && daControllareAsterisco.equalsIgnoreCase(apice)){
+                                controlloSintassi = true;
+                            }
+                        }
+                        // se uno dei due è null
+                        if(daControllarePiu != null && daControllarePiu.equalsIgnoreCase(apice)){
+                            controlloSintassi = true;
+                        }
+                        if(daControllareAsterisco != null && daControllareAsterisco.equalsIgnoreCase(apice)){
+                            controlloSintassi = true;
+                        }
+                    } else {
+                        controlloSintassi = true;
+                    }
+                } else {
+                    // non ho * o + dopo l'apice per cui è errore
+                }
+            }
             
             // CONTROLLO FINALE PER MESSAGGI DI ERRORE
             if(controlloAlfabeto){
@@ -315,6 +360,7 @@ public class InputDati {
         return espressione;
     }
     
+    // metodo di appoggio a inserimentoEspressioneRegolare
     private static int contaOccorrenze(String source, char target){
         int occorrenze = 0;
         for(int i = 0; i<source.length(); i++){

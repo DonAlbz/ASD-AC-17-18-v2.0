@@ -45,6 +45,7 @@ public class MyMenu {
         for (int i = 0; i < voci.length; i++) {
             System.out.println((i + 1) + "\t" + voci[i]);
         }
+        System.out.println();
     }
     
     public int scegliMenuInterno() {
