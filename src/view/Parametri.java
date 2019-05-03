@@ -19,6 +19,7 @@ public class Parametri {
     public final static String INIZIALIZZAZIONE_RETE = "********* INIZIALIZZAZIONE RETE *********";
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
+    public final static String AUTOMA_RICONOSCITORE_ETICHETTA = "********* AUTOMA RICONOSCITORE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
     public final static String CAMMINI_ETICHETTA = "********* CAMMINI *********";
     public final static String CAMMINI_NUMERO_ETICHETTA = "numero cammino: ";

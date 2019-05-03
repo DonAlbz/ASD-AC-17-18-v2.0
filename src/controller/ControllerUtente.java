@@ -238,6 +238,11 @@ public class ControllerUtente {
                     distillaDiagnosi(rete);
                     break;
                 case 4:
+                    // PARTE DA CANCELLARE APPENA FINISCE IL COMPITO 4
+                    // HO FATTO COSì COSì NON RICHIAMO TUTTE LE VOLTE IL COMPITO 1 E POI IL 2
+                    //
+                    creaSpazioComportamentale(rete);
+                    creaSpazioComportamentaleDecorato(rete);
                     distillaDiagnosiDaDizionarioParziale(rete);
                     break;
                 case 0:
@@ -309,7 +314,6 @@ public class ControllerUtente {
         //TO-DO: CAMO
         View.stampaLegendaEspressioneRegolare(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
-        System.out.println(osservazione);
         Controller.creaDizionarioParziale(rete, osservazione);
         
         // controllare se serve altro

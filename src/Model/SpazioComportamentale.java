@@ -130,6 +130,46 @@ public class SpazioComportamentale {
         }
         return s.toString();
     }
+    
+    public String toStringAutomaRiconoscitore() {
+        boolean isDecorato = false;
+        boolean isRidenominato;
+        if (root.getClass() == StatoReteDecorato.class) {
+            isDecorato = true;
+        }
+        StringBuilder s = new StringBuilder();
+        s.append(Parametri.AUTOMA_RICONOSCITORE_ETICHETTA);
+        s.append(Parametri.A_CAPO);
+        for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
+            s.append(statoPartenza.toString());
+            s.append(Parametri.TAB);
+            s.append(Parametri.FRECCIA);
+            s.append(Parametri.TAB);
+            int i = 0;
+            for (StatoInterface statoArrivo : verticiAdiacenti.get(statoPartenza)) {
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+                if (isDecorato) {
+                    statoArrivo = (StatoReteDecorato) statoArrivo;
+                }
+                s.append(Parametri.PARENTESI_TONDA_A);
+//                if (((StatoReteAbstract) statoArrivo).getOsservabilita() != null) {
+//                    s.append(((StatoReteAbstract) statoArrivo).getOsservabilita());
+//                } else {
+//                    s.append(Parametri.EVENTO_NULLO);
+//                }
+//                    s.append(Parametri.SPAZIO);
+                    s.append(statoArrivo.getNome());
+//                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
+                s.append(Parametri.PARENTESI_TONDA_C);
+                i++;
+            }
+            s.append(Parametri.A_CAPO);
+        }
+        return s.toString();
+    }
 
     public Set<StatoInterface> getVertici(){
        return verticiAdiacenti.keySet();
