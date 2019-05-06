@@ -626,8 +626,8 @@ public class Controller {
         rete.setDizionarioParziale(dizionarioParziale);
     }
 
-    private static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione) {
-        //TODO CAMO
+    // METODO DEPRECATO
+    private static SpazioComportamentale creaRiconoscitoreEspressioneTEST(Rete rete, String osservazione) {
         // copia dello spazio comportamentale decorato calcolato prima
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
         System.out.println(spazioComportamentaleDecorato.toString());
@@ -635,17 +635,15 @@ public class Controller {
         StatoInterface rootSpazioComportamentaleDecorato = spazioComportamentaleDecorato.getRoot();
         SpazioComportamentale automaRiconoscitore = new SpazioComportamentale();
         int nomeStatoDFA = 0;
+        StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
+        automaRiconoscitore.setRoot(root);
+        automaRiconoscitore.aggiungiVertice(root);
 
         // prendo la lista dei vertici adiacenti della root
         List<StatoInterface> verticiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(rootSpazioComportamentaleDecorato);
         for (StatoInterface verticeAbstract : verticiAdiacenti) {
             StatoInterface verticeInterface = (StatoInterface) verticeAbstract; // usato per trovare i vertici adiacenti nelle iterazioni successive
             StatoReteAbstract vertice = (StatoReteAbstract) verticeInterface;
-
-            // creo il nuovo spazio comportamentale che ritornerò in base all'osservazione data
-            StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
-            automaRiconoscitore.setRoot(root);
-            automaRiconoscitore.aggiungiVertice(root);
 
             // INZIO DELL'ALGORITMO
             // controllo se l'osservazione è una stringa vuota -> se si, cerco lo stato finale
@@ -692,41 +690,52 @@ public class Controller {
                     } else {
                         singolaOsservazione = osservazione.substring(indiceLetturaOsservazione, indicePrimoSpazio);
                         if (singolaOsservazione.equalsIgnoreCase(vertice.getOsservabilita())) {
-                            // devo verificare tutte le etichette dell'osservazione
                             // aggiungo stato verificato
                                 nomeStatoDFA++;
                                 StatoDFA statoSuccessivo = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
                                 automaRiconoscitore.aggiungiVertice(statoSuccessivo);
                                 automaRiconoscitore.aggiungiLato(root, statoSuccessivo);
+                                // verifico tutti i vertici con le etichette
+                                boolean fineCiclo = false;
+                                List<StatoInterface> verticiSuccessivi = spazioComportamentaleDecorato.getVerticiAdiacenti(verticeInterface);
                             do {
                                 // prendo il nuovo statoSuccessivo
-                                List<StatoInterface> verticiSuccessivi = spazioComportamentaleDecorato.getVerticiAdiacenti(verticeInterface);
                                 for (StatoInterface verticeSecondo : verticiSuccessivi) {
-                                    System.out.println("sto calcolando i vertici successivi");
                                     StatoReteAbstract verticeSuccessivo = (StatoReteAbstract) verticeSecondo;
-                                    System.out.println("stampo la sua osservabilita");
-                                    System.out.println(verticeSuccessivo.getOsservabilita());
+                                    indiceLetturaOsservazione = indicePrimoSpazio + 1;
+                                    //System.out.println("indice lettura osservazione " + indiceLetturaOsservazione);
+                                    String osservazioneTemp = osservazione.substring(indiceLetturaOsservazione, osservazione.length());
+                                    //System.out.println("osservazione temp " + osservazioneTemp);
+                                    indicePrimoSpazio = osservazioneTemp.indexOf(Parametri.SPAZIO);
+                                    //System.out.println("indice primo spazio " + indicePrimoSpazio);
+                                    StatoDFA statoSuccessivo2 = null;
+                                    if (indicePrimoSpazio == -1) {
+                                        // siamo alla fine della stringa
+                                        if (osservazioneTemp.equalsIgnoreCase(verticeSuccessivo.getOsservabilita())) {
+                                            // aggiungo stato
+                                            nomeStatoDFA++;
+                                            statoSuccessivo2 = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                                            automaRiconoscitore.aggiungiVertice(statoSuccessivo2);
+                                            automaRiconoscitore.aggiungiLato(statoSuccessivo, statoSuccessivo2);
+                                            fineCiclo = true;
+                                            System.out.println("sono arrivato a fine ciclo");
+                                        }
+                                    } else {
+                                        // non siamo alla fine della stringa
+                                        singolaOsservazione = osservazioneTemp.substring(indiceLetturaOsservazione, indicePrimoSpazio);
+                                        if(singolaOsservazione.equalsIgnoreCase(verticeSuccessivo.getOsservabilita())){
+                                            // aggiungo stato
+                                            nomeStatoDFA++;
+                                            statoSuccessivo2 = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                                            automaRiconoscitore.aggiungiVertice(statoSuccessivo2);
+                                            automaRiconoscitore.aggiungiLato(statoSuccessivo, statoSuccessivo2);
+                                            System.out.println("sto aggiungendo uno stato");
+                                        }
+                                    }
+                                    verticiSuccessivi = spazioComportamentaleDecorato.getVerticiAdiacenti(statoSuccessivo2);
                                 }
-                                
-                                // PRENDO I VERTICI SUCCESSSIVI E VERIFICARE
-                                
-//                                // aggiorno la singolaOsservazione
-//                                indiceLetturaOsservazione = indicePrimoSpazio + 1;
-//                                String osservazioneTemp = osservazione.substring(indiceLetturaOsservazione, osservazione.length()); // strinfa temporanea della usata per i vari confronti
-//                                indicePrimoSpazio = osservazioneTemp.indexOf(Parametri.SPAZIO);
-//                                if (indicePrimoSpazio == -1) {
-//                                    // siamo alla fine della stringa  DA CONTROLLARE QUESTO COMANDO SOTTO
-//                                    singolaOsservazione = osservazioneTemp.substring(indiceLetturaOsservazione, osservazioneTemp.length());
-//                                    if (singolaOsservazione.equalsIgnoreCase(osservazione)) {
-//
-//                                    }
-//                                } else {
-//                                    singolaOsservazione = osservazioneTemp.substring(indiceLetturaOsservazione, indicePrimoSpazio);
-//
-//                                }
 
-                                //List<StatoInterface> verticiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(primoVertice);
-                            } while (false);
+                            } while (!fineCiclo);
 
                         } else {
                             // multipla osservazione con la prima che non combacia
@@ -739,16 +748,86 @@ public class Controller {
 
             }
         }
-
-
-        
-        //Per aggiungere un lato: automaRiconoscitore.aggiungiLato(verticeDiPartenza, verticeDiArrivo);
-        // per settare l'osservabilita del vertice di arrivo devo fare verticeDiArrivo.setOsservabilita(nomeDell'osservabilita)
-        
-        // l'idea è di aggiungere prima tutti i vertici (in base all'osservazione generale che ho) e poi creare i aggiungiLato avendo
-        // già tutti i vertici inseriti
         
         System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
+        return automaRiconoscitore;
+    }
+    
+    private static SpazioComportamentale creaRiconoscitoreEspressione (Rete rete, String osservazione){
+        // copia dello spazio comportamentale decorato calcolato prima
+        SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
+        System.out.println(spazioComportamentaleDecorato.toString());
+        // inizializzazione della root e dell'automa riconoscitore
+        StatoInterface rootSpazioComportamentaleDecorato = spazioComportamentaleDecorato.getRoot();
+        SpazioComportamentale automaRiconoscitore = new SpazioComportamentale();
+        int nomeStatoDFA = 0;
+        StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
+        automaRiconoscitore.setRoot(root);
+        automaRiconoscitore.aggiungiVertice(root);
+        
+        // inizializzo pila
+        Stack <StatoDFA> pila = new Stack<StatoDFA>();
+        // inizializzo osservazione
+        String[] listaOsservazioni = osservazione.split(Parametri.SPAZIO);
+        
+        // INIZIO ALGORITMO
+        // controllo se l'osservazione è vuota
+        if(listaOsservazioni[0].equalsIgnoreCase("")){
+            // cerco stato finale, se esiste
+                if (root.isFinale()) {
+                    System.out.println("Lo stato iniziale coincide con quello finale");
+                    return automaRiconoscitore;
+                } else {
+                    // messaggio di errore perché siamo in uno stato finale in cui non c'è lo stato finale
+                    System.out.println("Errore: l'osservazione inserita non corrisponde a nessun stato finale");
+                    return null;
+                }
+        }
+        else {
+            List<StatoInterface> vertici = spazioComportamentaleDecorato.getVerticiAdiacenti(rootSpazioComportamentaleDecorato);
+            StatoInterface statoPrecedente = spazioComportamentaleDecorato.getRoot();
+//            StatoInterface statoPrecedenteInterface = automaRiconoscitore.getRoot();
+            // ESTRAGGO LA ROOT IN STATO INTERFACE E POI FACCIO IL CAST DELLA ROOT IN STATO_DFA
+            StatoDFA statoPrecedenteDFA = automaRiconoscitore;
+            for (int i = 0; i < listaOsservazioni.length; i++) { // ciclo degli indici delle osservazioni da considerare
+                StatoReteAbstract stato = (StatoReteAbstract) statoPrecedente;
+                if (i != 0) { // salto il primo controllo
+                    if (stato.getOsservabilita().equalsIgnoreCase(Parametri.EVENTO_NULLO)) {
+                        i--;
+                    }
+                }
+                for (StatoInterface verticeAbstract : vertici) {
+                    StatoInterface verticeInterface = (StatoInterface) verticeAbstract; // usato per trovare i vertici adiacenti nelle iterazioni successive
+                    StatoReteAbstract vertice = (StatoReteAbstract) verticeInterface;
+                    if (vertice.getOsservabilita().equalsIgnoreCase(listaOsservazioni[i])) {
+                        // aggiungo stato verificato
+                        nomeStatoDFA++;
+                        StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), vertice.getOsservabilita());
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedenteDFA, statoDaAggiungere);
+                        
+                        // aggiungo nella pila
+                        
+                        pila.push(statoDaAggiungere);
+                    }
+                    if(vertice.getOsservabilita().equalsIgnoreCase(Parametri.EVENTO_NULLO)){
+                        // non è verificato lo stato ma proseguo con la verifica
+                        nomeStatoDFA++;
+                        StatoDFA StatoDaVerificare = new StatoDFA(String.valueOf(nomeStatoDFA), vertice.getOsservabilita());
+                        pila.push(StatoDaVerificare);
+                    }
+                }
+                if (!pila.empty()) {
+                    statoPrecedenteDFA = pila.pop();
+                    statoPrecedente = (StatoInterface) statoPrecedenteDFA;
+                    vertici = spazioComportamentaleDecorato.getVerticiAdiacenti(statoPrecedente);
+                }
+            }
+
+        }
+        
+       System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
+        // CONTROLLARE CHE SE IL METODO RITORNA SOLTANTO LA ROTT BISOGNA CONTROLLARE CHE ESSA SIA FINALE ALTRIMENTI è SBAGLIATO
         return automaRiconoscitore;
     }
 
