@@ -10,6 +10,7 @@ import Model.*;
 import Utilita.InputDati;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -618,7 +619,7 @@ public class Controller {
     static void creaDizionarioParziale(Rete rete, String osservazione) {
         //TODO CAMO
         // parte relativa alla creazione dello spazio comportamentale
-        SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione(rete, osservazione);
+        SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione2(rete, osservazione);
         SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete);
         
         //TODO Alby
@@ -753,12 +754,13 @@ public class Controller {
         return automaRiconoscitore;
     }
     
-    private static SpazioComportamentale creaRiconoscitoreEspressione (Rete rete, String osservazione){
+    private static SpazioComportamentale creaRiconoscitoreEspressione2(Rete rete, String osservazione){
         // copia dello spazio comportamentale decorato calcolato prima
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
         //System.out.println(spazioComportamentaleDecorato.toString());
         // inizializzazione della root e dell'automa riconoscitore
         StatoInterface rootSpazioComportamentaleDecorato = spazioComportamentaleDecorato.getRoot();
+        StatoReteAbstract rootAbstract = (StatoReteAbstract) rootSpazioComportamentaleDecorato;
         SpazioComportamentale automaRiconoscitore = new SpazioComportamentale();
         int nomeStatoDFA = 0;
         StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
@@ -766,8 +768,10 @@ public class Controller {
         automaRiconoscitore.aggiungiVertice(root);
         
         // inizializzo pile
-        Stack <StatoDFA> pilaDFA = new Stack<StatoDFA>();
-        Stack <StatoInterface> pilaInterface = new Stack <StatoInterface>();
+        Stack <StatoDFA> pilaDFA = new Stack<StatoDFA>(); // da usare in caso di loop
+        pilaDFA.push(root);
+        //Stack <StatoInterface> pilaInterface = new Stack <StatoInterface>();
+//        pilaInterface.push(rootSpazioComportamentaleDecorato);
         // inizializzo osservazione
         String[] listaOsservazioni = osservazione.split(Parametri.SPAZIO);
         
@@ -775,8 +779,9 @@ public class Controller {
         // controllo se l'osservazione è vuota
         if(listaOsservazioni[0].equalsIgnoreCase("")){
             // cerco stato finale, se esiste
-            if (root.isFinale()) {
+            if (rootAbstract.isFinale()) {
                 System.out.println("Lo stato iniziale coincide con quello finale");
+                root.setIsFinale(true);
                 return automaRiconoscitore;
             } else {
                 // messaggio di errore perché siamo in uno stato finale in cui non c'è lo stato finale
@@ -784,111 +789,30 @@ public class Controller {
                 return null;
             }
         } else {
-            if (osservazione.contains(Parametri.APICE)) {
-                // ALGORITMO CON LA GESTIONE DEI LOOP
+            if(osservazione.contains(Parametri.APICE) || osservazione.contains(Parametri.PARENTESI_TONDA_A)){
+                // LETTURA CON LOOP DELLE OSSERVAZIONI
+                System.out.println("sono nella sezione loop");
             } else {
-                List<StatoInterface> vertici = spazioComportamentaleDecorato.getVerticiAdiacenti(rootSpazioComportamentaleDecorato);
-                StatoDFA statoPrecedenteDFA = root; // sono le root iniziali
-                StatoInterface statoPrecedenteInterface = rootSpazioComportamentaleDecorato;
-                for (int i = 0; i < listaOsservazioni.length; i++) { // ciclo degli indici delle osservazioni da considerare
-                    System.out.println("quanti vertici ho: " + vertici.size());
-                    for (StatoInterface verticeAbstract : vertici) {
-                        System.out.println("ciao ammma");
-                        StatoReteAbstract vertice = (StatoReteAbstract) verticeAbstract;
-                        if (vertice.getOsservabilita() == null) {
-                            // non è verificato lo stato ma proseguo con la verifica
-                            System.out.println("sono qua dentro");
-                            nomeStatoDFA++;
-                            StatoDFA StatoConEtichettaNulla = new StatoDFA(String.valueOf(nomeStatoDFA), null);
-                            automaRiconoscitore.aggiungiVertice(StatoConEtichettaNulla);
-                            automaRiconoscitore.aggiungiLato(statoPrecedenteDFA, StatoConEtichettaNulla);
-                            pilaDFA.push(StatoConEtichettaNulla);
-                            pilaInterface.push(verticeAbstract);
-                        } else {
-                            if (vertice.getOsservabilita().equalsIgnoreCase(listaOsservazioni[i])) {
-                                // aggiungo stato verificato
-                                nomeStatoDFA++;
-                                StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), vertice.getOsservabilita());
-                                automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
-                                automaRiconoscitore.aggiungiLato(statoPrecedenteDFA, statoDaAggiungere);
-                                // aggiungo nella pila
-                                pilaDFA.push(statoDaAggiungere);
-                                pilaInterface.push(verticeAbstract);
-                            }
-
-                            // da vedere se c'è qualche altro controllo
-                        }
-
+                // LETTURA LINEARE DELLE OSSERVAZIONI
+                StatoDFA statoPrecedente = root;
+                for (int i = 0; i < listaOsservazioni.length; i++) {
+                    String singolaOsservazione = listaOsservazioni[i];
+                    nomeStatoDFA++;
+                    StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                    automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                    automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                    int controlloUltimaOsservazione = i+1;
+                    if(controlloUltimaOsservazione == listaOsservazioni.length){
+                        // se è l'ultimo della lista deve essere finale
+                        statoDaAggiungere.setIsFinale(true);
                     }
-                    
-                    // RIPARTIRE DA QUA CONSIDERANDO LA LETTURA O3 O2 CON TUTTI GLI STATI + VERIFICA DELLE TERMINAZIONI
-
-//                    // ho analizzato tutti i vertici figli, guardo se è l'ultima iterazione
-//                    int temp = i + 1;
-//                    if (temp == listaOsservazioni.length) {
-//                        // sono alla fine, svuoto la pila
-//                        if (pilaDFA.isEmpty()) {
-//                            System.out.println("non ho nessun stato, ritorno null");
-//                            return null;
-//                        } else {
-//                            if (almenoUnaEtichettaIsNull(pilaDFA)) {
-//                                // trovo lo statoDFA con l'etichetta null e vado avanti
-//                                statoPrecedenteDFA = pilaDFA.pop();
-//                                statoPrecedenteInterface = pilaInterface.pop();
-//                                vertici = spazioComportamentaleDecorato.getVerticiAdiacenti(statoPrecedenteInterface);
-//                                i--;
-//                            } else {
-//                                while (!pilaDFA.empty()) {
-//                                    pilaDFA.pop();
-//                                    pilaInterface.pop();
-//                                }
-//                            }
-//                        }
-//                    } else {
-//                        if (!pilaDFA.empty()) {
-//                            // vado avanti e ricalcolo i vertici
-//                            statoPrecedenteDFA = pilaDFA.pop();
-//                            statoPrecedenteInterface = pilaInterface.pop();
-//                            vertici = spazioComportamentaleDecorato.getVerticiAdiacenti(statoPrecedenteInterface);
-//                        } else {
-//                            // finisco i vari cicli, non ho percorsi validi
-//                            System.out.println("non ho nessun percorso valido, ritorno null");
-//                            return null;
-//                        }
-//
-//                    }
-
+                    statoPrecedente = statoDaAggiungere;
                 }
             }
-
         }
-
-        System.out.println("Ho il mio stato finale");
+        
         System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
-        // CONTROLLARE CHE SE IL METODO RITORNA SOLTANTO LA ROTT BISOGNA CONTROLLARE CHE ESSA SIA FINALE ALTRIMENTI è SBAGLIATO
         return automaRiconoscitore;
-    }
-
-    private static boolean almenoUnaEtichettaIsNull(Stack<StatoDFA> pila){
-        boolean controllo = false;
-        for(int i = 0; i<pila.size(); i++){
-            StatoDFA stato = pila.get(i);
-            if(stato.getOsservabilita()==null){
-                controllo = true;
-            }
-        }
-        return controllo;
-    }
-    
-    private static int trovaIndiceStatoConOsservabilitaNull(Stack<StatoDFA> pila){
-        int indiceStatoDaTornare = -1;
-        for(int i = 0; i<pila.size(); i++){
-            StatoDFA stato = pila.get(i);
-            if(stato.getOsservabilita()==null){
-                indiceStatoDaTornare = i;
-            }
-        }
-        return indiceStatoDaTornare;
     }
 
     private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete) {

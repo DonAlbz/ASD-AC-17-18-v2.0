@@ -289,7 +289,12 @@ public class InputDati {
             int contaParentesiChiuse = contaOccorrenze(espressione, parentesiChiusaChar);
             int contaParentesiAperte = contaOccorrenze(espressione, parentesiApertaChar);
             if(contaParentesiAperte == contaParentesiChiuse){
-                controlloParentesi = true;
+                // controllo se dopo le parentesi ci sono apici e * o +
+                int indexParentesiChiusa = espressione.indexOf(Parametri.PARENTESI_TONDA_C);
+                String parteDaControllare = espressione.substring(indexParentesiChiusa, espressione.length());
+                if(parteDaControllare.contains(Parametri.APICE) && (parteDaControllare.contains(Parametri.ASTERISCO) || parteDaControllare.contains(Parametri.PIU))){
+                    controlloParentesi = true;
+                }
             }
             
             // CONTROLLO SINTASSI

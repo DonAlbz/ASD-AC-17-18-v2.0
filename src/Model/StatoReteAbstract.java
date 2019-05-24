@@ -109,7 +109,7 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
      *
      * @return
      */
-    boolean isFinale() {
+    public boolean isFinale() {
         for (Evento l : link) {
             if (l != null) {
                 return false;
