@@ -77,6 +77,7 @@ public class Parametri {
                                                                         "( ) = sono da considerarsi solo le parentesi tonde, anche nidificate, per definire l'espressione"};
     public final static String ESPRESSIONE_REGOLARE_ESEMPIO = "Esempio di espressione regolare: (o2 o3)^* o3";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
+    public final static String FINALE = "Finale";
         
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;

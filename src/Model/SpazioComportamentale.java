@@ -162,6 +162,11 @@ public class SpazioComportamentale {
 //                }
 //                    s.append(Parametri.SPAZIO);
                     s.append(statoArrivo.getNome());
+                    StatoDFA stato = (StatoDFA) statoArrivo;
+                    if(stato.isFinale()){
+                        s.append(Parametri.SPAZIO);
+                        s.append(Parametri.FINALE);
+                    }
 //                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
