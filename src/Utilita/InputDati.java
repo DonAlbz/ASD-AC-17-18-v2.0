@@ -297,7 +297,7 @@ public class InputDati {
                 if (indexParentesiChiusa != -1) {
                     if (indexParentesiChiusa != (espressione.length()-1)) {
                         String parteDaControllare = espressione.substring(indexParentesiChiusa, espressione.length());
-                        System.out.println("parte da controllare: " + parteDaControllare);
+//                        System.out.println("parte da controllare: " + parteDaControllare);
                         if (parteDaControllare.contains(Parametri.APICE)) {
                             if (parteDaControllare.contains(Parametri.ASTERISCO) || parteDaControllare.contains(Parametri.PIU)) {
                                 controlloParentesi = true;

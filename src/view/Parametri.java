@@ -74,7 +74,7 @@ public class Parametri {
     public final static String VOCI_LEGENDA_ESPRESSIONE_REGOLARE[] = {"^ = apice per l'elevamento a potenza",
                                                                         "* = da mettere in seguito a ^ per definire opzionalità multipla",
                                                                         "+ = da mettere in seguito a ^ per definire multiplicità",
-                                                                        "( ) = sono da considerarsi solo le parentesi tonde, anche nidificate, per definire l'espressione"};
+                                                                        "( ) = sono da considerarsi solo le parentesi tonde per definire l'espressione"};
     public final static String ESPRESSIONE_REGOLARE_ESEMPIO = "Esempio di espressione regolare: (o2 o3)^* o3";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
