@@ -688,23 +688,24 @@ public class Controller {
                                     // parte opzionale
                                     String singolaOsservazione = listaOsservazioni[i];
                                     singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
-                                    nomeStatoDFA++;
-                                    StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+//                                    nomeStatoDFA++;
+                                    
+                                    StatoDFA statoDaAggiungere = new StatoDFA(ultimoStatoFuoriParentesi.getNome(), singolaOsservazione);
                                     automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                                     automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
                                     //collego all'ultimo stato fuori parentesi
 //                                    automaRiconoscitore.aggiungiLato(statoDaAggiungere, ultimoStatoFuoriParentesi);
 
                                     // collego allo stato precedente per loop
-                                    automaRiconoscitore.aggiungiLato(statoDaAggiungere, statoPrecedente);
+//                                    automaRiconoscitore.aggiungiLato(statoDaAggiungere, statoPrecedente);
                                     statoPrecedente = statoDaAggiungere;
 //                                    statoPrecedente = ultimoStatoFuoriParentesi;
-                                    int controlloUltimaOsservazione = i+1;
+                                    int controlloUltimaOsservazione = i + 1;
                                     if (controlloUltimaOsservazione == listaOsservazioni.length) {
                                         // lo stato finale è l'ultimo stato valido fuori dalla parentesi
                                         ultimoStatoFuoriParentesi.setIsFinale(true);
                                     }
-                                    
+
                                 } else if (listaOsservazioni[i].contains(Parametri.PIU)) {
                                     // parte multipla
                                     String singolaOsservazione = listaOsservazioni[i];
@@ -798,6 +799,8 @@ public class Controller {
                         String singolaOsservazione = listaOsservazioni[i];
                         if (singolaOsservazione.contains(Parametri.ASTERISCO)) {
                             // loop sullo stato precedente
+                            statoDaAggiungere = new StatoDFA(statoPrecedente.getNome(), InputDati.pulisciOsservazione(singolaOsservazione));
+                            automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                             automaRiconoscitore.aggiungiLato(statoPrecedente, statoPrecedente);
                             //controllo se il precedente è opzionale
                             if (i > 0) {
@@ -830,7 +833,7 @@ public class Controller {
                         if (singolaOsservazione.contains(Parametri.PIU)) {
                             //aggiunta dello stato
                             nomeStatoDFA++;
-                            statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                            statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), InputDati.pulisciOsservazione(singolaOsservazione));
                             automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                             automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
                             controlloUltimaOsservazione = i + 1;
@@ -841,7 +844,7 @@ public class Controller {
                             statoPrecedente = statoDaAggiungere;
                             ultimoStatoValido = statoDaAggiungere;
                             //lopp sullo stato creato
-                            statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                            statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), InputDati.pulisciOsservazione(singolaOsservazione));
                             automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                             automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
                         }
