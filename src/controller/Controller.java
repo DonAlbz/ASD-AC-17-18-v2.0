@@ -620,7 +620,7 @@ public class Controller {
         //TODO CAMO
         // parte relativa alla creazione dello spazio comportamentale
         SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione(rete, osservazione);
-        SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete);
+        SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete, automaRiconoscitore);
         
         //TODO Alby
         SpazioComportamentale dizionarioParziale = creaDizionarioParziale(spazioComportamentaleParziale);
@@ -898,21 +898,23 @@ public class Controller {
         return automaRiconoscitore;
     }
     
-    private static void collegaTuttiArchiOpzionali(SpazioComportamentale automa, String[] listaOsservazioni){
-        boolean controlloOpzionalitaConsecutive = false;
-        for(int i = 0; i<listaOsservazioni.length; i++){
-            
-        }
-    }
+    
+   
+    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
+        //TO-DO: CAMO
+        SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale();
+        
 
-    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete) {
-        //TODO Alby
-        return null;
+        //Questo non si tocca, si guarda e basta
+        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); 
+        
+        return spazioComportamentaleParziale;
     }
 
     private static SpazioComportamentale creaDizionarioParziale(SpazioComportamentale spazioComportamentaleParziale) {
        //TODO Alby
         return null;
     }
+
 
 }

@@ -22,6 +22,9 @@ public class StatoDFA implements StatoInterface, Serializable {
     private String nome;
     private boolean isFinale;
     private List<List<String>> diagnosi;
+    private String statoRiconoscitoreEspressione;
+
+    
 
     public StatoDFA(List<StatoReteRidenominato> stati, String osservabilita) {
         this.stati = stati;
@@ -149,4 +152,12 @@ public class StatoDFA implements StatoInterface, Serializable {
         isFinale = valore;
     }
 
+    
+    public String getStatoRiconoscitoreEspressione() {
+        return statoRiconoscitoreEspressione;
+    }
+
+    public void setStatoRiconoscitoreEspressione(String statoRiconoscitoreEspressione) {
+        this.statoRiconoscitoreEspressione = statoRiconoscitoreEspressione;
+    }
 }
