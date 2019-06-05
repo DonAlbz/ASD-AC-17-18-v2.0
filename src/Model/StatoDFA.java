@@ -144,5 +144,9 @@ public class StatoDFA implements StatoInterface, Serializable {
     public List<List<String>> getDiagnosi() {
         return diagnosi;
     }
+    
+    public void setIsFinale(boolean valore){
+        isFinale = valore;
+    }
 
 }

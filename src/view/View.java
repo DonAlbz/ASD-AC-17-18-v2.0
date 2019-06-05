@@ -126,4 +126,23 @@ public class View {
         System.out.println(Parametri.MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
         System.out.println(Parametri.ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
     }
+
+    public static void stampaLegendaEspressioneRegolare(Rete rete) {
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.SEPARATORE);
+        System.out.println(Parametri.LEGENDA_ESPRESSIONE_REGOLARE);
+        System.out.print(Parametri.A_CAPO);
+        System.out.print("L'alfabeto è composto da queste etichette: [ ");
+        String[] etichetteOsservabilita = rete.getEtichettaOsservabilita();
+        for (String etichet : etichetteOsservabilita) {
+            System.out.print(etichet + " ");
+        }
+        System.out.print("]" + Parametri.A_CAPO);
+        for (String legenda : Parametri.VOCI_LEGENDA_ESPRESSIONE_REGOLARE) {
+            System.out.println(legenda);
+        }
+        System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO);
+        System.out.println(Parametri.SEPARATORE);
+        System.out.print(Parametri.A_CAPO);
+    }
 }

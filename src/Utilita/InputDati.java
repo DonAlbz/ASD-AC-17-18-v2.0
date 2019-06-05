@@ -14,6 +14,9 @@ public class InputDati {
     private final static String MESSAGGIO_AMMISSIBILI = "Attenzione: i caratteri ammissibili sono: ";
     private final static String ERRORE_SEPARATORE = "Attenzione: nella stringa inserita manca il separatore corretto";
     private final static String ERRORE_DIZIONARIO = "Attenzione: uno o più simboli inseriti non appartiene al dizionario di osservabilità";
+    private final static String ERRORE_ALFABETO_DIZIONARIO = "Attenzione: l'inserimento dell'espressione regolare non contiene i caratteri dell'alfabeto delle etichette";
+    private final static String ERRORE_ALFABETO_PARENTESI = "Attenzione: le parentesi inserite non sono corrette";
+    private final static String ERRORE_ALFABETO_SINTASSI ="Attenzione: la sintassi dell'espressione regolare non è corretta";
 
     private final static char RISPOSTA_SI = 'S';
     private final static char RISPOSTA_NO = 'N';
@@ -230,5 +233,197 @@ public class InputDati {
 
         return etichette;
     }
+    
+    
+    public static String inserimentoEspressioneRegolare(String messaggio, String[] alfabetoEspressione){
+        String espressione = null;
+        boolean finito = false;
+        
+        // inizializzazione di tutti i caratteri ammessi nell'espressione regolare
+        String parentesiAperta = Parametri.PARENTESI_TONDA_A;
+        String parentesiChiusa = Parametri.PARENTESI_TONDA_C;
+        char parentesiChiusaChar = ')';
+        char parentesiApertaChar = '(';
+        String asterisco = Parametri.ASTERISCO;
+        String piu = Parametri.PIU;
+        String apice = Parametri.APICE;
+        
+        // controllo alfabeto
+        // controllo delle parentesi
+        // controllo sintassi (esempio * succede ^ altrimenti errore)
+        do{
+            espressione = leggiStringa(messaggio);
+            
+            // inizializzazione variabili di controllo
+            boolean controlloAlfabeto = true;
+            boolean controlloParentesi = false;
+            boolean controlloSintassi = false;
+            boolean controlloApici = true; // se anche solo uno è sbagliato allora è false
+            
+            // CONTROLLO DELL'ALFABETO
+            // elimino caratteri ammessi per controllare se l'alfabeto è corretto
+            String espressionePulita = espressione;
+            espressionePulita = espressionePulita.replace(parentesiAperta, " ");
+            espressionePulita = espressionePulita.replace(parentesiChiusa, " ");
+            espressionePulita = espressionePulita.replace(asterisco, " ");
+            espressionePulita = espressionePulita.replace(piu, " ");
+            espressionePulita = espressionePulita.replace(apice, " ");
+            // spacchetto la stringa per verificare i caratteri
+            String[] splittato = espressionePulita.split(" ");
+            for (String split : splittato) {
+                boolean controlloParole = false;
+                if (!split.equalsIgnoreCase("")) {
+                    for (String alfabeto : alfabetoEspressione) {
+                        if (split.equalsIgnoreCase(alfabeto)) {
+                            controlloParole = true;
+                        }
+                    }
+                } else {
+                    controlloParole = true;
+                }
+                if(!controlloParole){
+                    controlloAlfabeto = false;
+                }
+            }
+
+            // CONTROLLO DELLE PARENTESI
+            int contaParentesiChiuse = contaOccorrenze(espressione, parentesiChiusaChar);
+            int contaParentesiAperte = contaOccorrenze(espressione, parentesiApertaChar);
+            if (contaParentesiAperte == contaParentesiChiuse) {
+                // controllo se dopo le parentesi ci sono apici e * o +
+                int indexParentesiChiusa = espressione.indexOf(Parametri.PARENTESI_TONDA_C);
+//                System.out.println("index parentesi chiusa " + indexParentesiChiusa);
+//                System.out.println("lunghezza array " + espressione.length());
+                if (indexParentesiChiusa != -1) {
+                    if (indexParentesiChiusa != (espressione.length()-1)) {
+                        String parteDaControllare = espressione.substring(indexParentesiChiusa, espressione.length());
+//                        System.out.println("parte da controllare: " + parteDaControllare);
+                        if (parteDaControllare.contains(Parametri.APICE)) {
+                            if (parteDaControllare.contains(Parametri.ASTERISCO) || parteDaControllare.contains(Parametri.PIU)) {
+                                controlloParentesi = true;
+                            }
+                        }
+                    }
+                } else {
+                    // non ci sono parentesi
+                    controlloParentesi = true;
+                }
+            }
+            
+            // CONTROLLO APICI - per inserimenti lineari
+            String[] splitApici = espressione.split(Parametri.SPAZIO);
+            for (int i = 0; i < splitApici.length; i++) {
+                if ((splitApici[i].contains(Parametri.APICE)) || (splitApici[i].contains(Parametri.ASTERISCO)) || (splitApici[i].contains(Parametri.PIU))) {
+                    int indexAsterisco2 = splitApici[i].indexOf(Parametri.ASTERISCO);
+                    int indexPiu2 = splitApici[i].indexOf(Parametri.PIU);
+                    int indexApice2 = splitApici[i].indexOf(Parametri.APICE);
+                    if (indexApice2 == -1) {
+                        controlloApici = false;
+                    } else if ((indexApice2 != -1) && (indexAsterisco2 == -1 && indexPiu2 == -1)) {
+                        controlloApici = false;
+                    }
+                }
+            }
+
+            if (controlloApici) {
+                // CONTROLLO SINTASSI
+                int indexAsterisco = espressione.indexOf(asterisco);
+                int indexPiu = espressione.indexOf(piu);
+                int indexApice = espressione.indexOf(apice);
+                // controllo caratteri dopo l'apice
+                if (indexAsterisco == -1 && indexPiu == -1 && indexApice == -1) {
+                    controlloSintassi = true;
+                }
+                if (indexApice != -1) {
+                    // se il carattere dopo è spazio vado avanti
+                    int daControllare = indexApice + 1;
+                    String daControllareString = espressione.substring(daControllare, daControllare + 1);
+                    if (daControllareString.equalsIgnoreCase(" ")) {
+                        daControllare = daControllare + 1;
+                        daControllareString = espressione.substring(daControllare, daControllare + 1);
+                    }
+                    if (daControllareString.equalsIgnoreCase(asterisco) || daControllareString.equalsIgnoreCase(piu)) {
+                        // controllo se dopo * o + c'è l'apice
+                        String daControllarePiu = null;
+                        String daControllareAsterisco = null;
+                        if (indexPiu != -1) {
+                            daControllarePiu = espressione.substring(indexPiu - 1, indexPiu);
+                        }
+                        if (indexAsterisco != -1) {
+                            daControllareAsterisco = espressione.substring(indexAsterisco - 1, indexAsterisco);
+                        }
+                        if (daControllarePiu != null || daControllareAsterisco != null) {
+                            // se entrambi sono diversi da null
+                            if (daControllarePiu != null && daControllareAsterisco != null) {
+                                if (daControllarePiu.equalsIgnoreCase(apice) && daControllareAsterisco.equalsIgnoreCase(apice)) {
+                                    controlloSintassi = true;
+                                }
+                            }
+                            // se uno dei due è null
+                            if (daControllarePiu != null && daControllarePiu.equalsIgnoreCase(apice)) {
+                                controlloSintassi = true;
+                            }
+                            if (daControllareAsterisco != null && daControllareAsterisco.equalsIgnoreCase(apice)) {
+                                controlloSintassi = true;
+                            }
+                        } else {
+                            controlloSintassi = true;
+                        }
+                    } else {
+                        // non ho * o + dopo l'apice per cui è errore
+                    }
+                }
+            }
+
+            // CONTROLLO FINALE PER MESSAGGI DI ERRORE
+            if (controlloAlfabeto) {
+                if (controlloParentesi) {
+                    if (controlloSintassi) {
+                        if (controlloApici) {
+                            finito = true;
+                        } else {
+                            System.out.println(ERRORE_ALFABETO_SINTASSI);
+                        }
+                    } else {
+                        System.out.println(ERRORE_ALFABETO_SINTASSI);
+                    }
+                } else {
+                    System.out.println(ERRORE_ALFABETO_PARENTESI);
+                }
+            } else {
+                System.out.println(ERRORE_ALFABETO_DIZIONARIO);
+            }
+
+            
+        } while (!finito);
+        return espressione;
+    }
+    
+    // metodo di appoggio a inserimentoEspressioneRegolare
+    private static int contaOccorrenze(String source, char target){
+        int occorrenze = 0;
+        for(int i = 0; i<source.length(); i++){
+            if(source.charAt(i) == target){
+                occorrenze++;
+            }
+        }
+        return occorrenze;
+    }
+    
+    /**
+     *
+     * @param osservazione
+     * @return metodo utilizzato per rimuovere le parentesi, apici, asterischi e + in una osservazione
+     */
+    public static String pulisciOsservazione(String osservazione){
+        String osservazionePulita = osservazione;
+        osservazionePulita = osservazionePulita.replace(Parametri.ASTERISCO, "");
+        osservazionePulita = osservazionePulita.replace(Parametri.PIU, "");
+        osservazionePulita = osservazionePulita.replace(Parametri.APICE, "");
+        osservazionePulita = osservazionePulita.replace(Parametri.PARENTESI_TONDA_A, "");
+        osservazionePulita = osservazionePulita.replace(Parametri.PARENTESI_TONDA_C, "");
+        return osservazionePulita;
+    }
+   
 
 }
