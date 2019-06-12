@@ -902,19 +902,99 @@ public class Controller {
    
     private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
         //TO-DO: CAMO
-        SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale();
+        SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale(); //da formare
+        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); // in sola lettura
         
+        // SCP = Spazio Comportamentale Parziale
+        // SCI = Spazio Comportamentale Intero
+        // AR = Automa Riconoscitore
+        
+        // utilizzare statoDFA e modificare attributo String statoRiconoscitoreEspressione
+        
+        StatoInterface rootSCI = spazioComportamentaleIntero.getRoot();
+        StatoInterface rootAR = automaRiconoscitore.getRoot();
+        
+        //INIZIO ALGORITMO
+        spazioComportamentaleParziale.setRoot(rootAR);
+        spazioComportamentaleParziale.aggiungiVertice(rootAR);
+//        spazioComportamentaleParziale = epsilon_CLOSURE_SCP(spazioComportamentaleParziale, rootSCI);
+        
+        Stack<StatoInterface> pilaDaAnalizzare = new Stack<>(); // pila che contiene i vertici interface da analizzare
+        Stack<StatoInterface> pilaSCI = new Stack<>(); // pila che contiene i vertici del SCI
+        StatoInterface primoStatoNellaPilaAR = (StatoInterface) automaRiconoscitore.getRoot();
+        StatoInterface primoStatoNellaPilaSCI = (StatoInterface) spazioComportamentaleIntero.getRoot();
+        pilaDaAnalizzare.push(primoStatoNellaPilaAR);
+        pilaSCI.push(primoStatoNellaPilaSCI);
 
-        //Questo non si tocca, si guarda e basta
-        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); 
+        int indiceStato = 0;
+        StatoInterface statoPrecedenteAR = null;
+        StatoInterface statoPrecedenteSCI = null;
+        while (!pilaDaAnalizzare.empty()) {
+            statoPrecedenteAR = pilaDaAnalizzare.pop();
+            statoPrecedenteSCI = pilaSCI.pop();
+            List<StatoInterface> verticiAdiacentiAR = automaRiconoscitore.getVerticiAdiacenti(statoPrecedenteAR);
+            List<StatoInterface> verticiAdiacentiSCI = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedenteSCI);
+            
+            for(StatoInterface verticeAR : verticiAdiacentiAR){
+                StatoDFA verticeDFA = (StatoDFA) verticeAR;
+                for(StatoInterface verticeSCI : verticiAdiacentiSCI){
+                    StatoReteAbstract verticeABS = (StatoReteAbstract) verticeSCI;
+                    if(verticeDFA.getOsservabilita().equalsIgnoreCase(verticeABS.getOsservabilita())){
+                        StatoDFA statoDaAggiungere = new StatoDFA(verticeDFA.getNome(), verticeDFA.getOsservabilita());
+                        int temp = Integer.parseInt(verticeDFA.getNome());
+                        if(temp >= indiceStato){
+                            indiceStato = temp;
+                        }
+                        spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
+                        spazioComportamentaleParziale.aggiungiLato(statoPrecedenteAR, statoDaAggiungere);
+                        if(verticeDFA.isFinale()){
+                            statoDaAggiungere.setIsFinale(true);
+                        }
+                        // aggiorno le pile
+                        pilaDaAnalizzare.push(statoDaAggiungere);
+                        pilaSCI.push(verticeABS);
+                    }
+                }
+            }
+        }
         
+        spazioComportamentaleParziale = epsilon_CLOSURE_SCP(spazioComportamentaleParziale, spazioComportamentaleIntero, statoPrecedenteSCI, statoPrecedenteAR, indiceStato);
+
+        System.out.println(spazioComportamentaleParziale.toStringSpazioComportamentaleParziale());
         return spazioComportamentaleParziale;
+    }
+    
+    private static SpazioComportamentale epsilon_CLOSURE_SCP(SpazioComportamentale spazioComportamentaleParziale, SpazioComportamentale spazioComportamentaleIntero, StatoInterface stato, StatoInterface statoDFA, int indiceStato){
+        SpazioComportamentale spazioModificato = spazioComportamentaleParziale;
+        Stack<StatoInterface> pila = new Stack<>();
+        StatoInterface statoPrecedente = stato;
+        StatoDFA statoPrecedenteDFA = (StatoDFA) statoDFA;
+        pila.push(statoPrecedente);
+        
+        while(!pila.isEmpty()){
+            statoPrecedente = pila.pop();
+            // DA CONTROLLARE LO STATO PRECEDENTE
+            List<StatoInterface> verticiAdiacenti = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedente);
+            for(StatoInterface vertice : verticiAdiacenti){
+                StatoReteAbstract verticeABS = (StatoReteAbstract) vertice;
+                if(verticeABS.getOsservabilita() == null){
+                    indiceStato++;
+                    StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(indiceStato), null);
+                    spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
+                    spazioComportamentaleParziale.aggiungiLato(statoPrecedenteDFA, statoDaAggiungere);
+                    pila.push(statoDaAggiungere);
+                }
+            }
+        }
+        
+        return spazioModificato;
     }
 
     private static SpazioComportamentale creaDizionarioParziale(SpazioComportamentale spazioComportamentaleParziale) {
-       //TODO Alby
+        //TODO Alby
         return null;
     }
-
+    
+    
 
 }
