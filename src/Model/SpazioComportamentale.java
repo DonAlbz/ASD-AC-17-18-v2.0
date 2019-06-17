@@ -225,4 +225,9 @@ public class SpazioComportamentale {
        return verticiAdiacenti.keySet();
     }
     
+    public void setNomeRoot(String nuovoNomeRoot){
+        StatoDFA rootDFA = (StatoDFA) root;
+        rootDFA.setNome(nuovoNomeRoot);
+    }
+    
 }
