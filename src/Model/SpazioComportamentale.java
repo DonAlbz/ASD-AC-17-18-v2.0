@@ -177,16 +177,14 @@ public class SpazioComportamentale {
     }
     
     public String toStringSpazioComportamentaleParziale() {
-        boolean isDecorato = false;
-        boolean isRidenominato;
-        if (root.getClass() == StatoReteDecorato.class) {
-            isDecorato = true;
-        }
+        // spazio comportamentale parziale è statoDFA
+        
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_PARZIALE);
         s.append(Parametri.A_CAPO);
         for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
-            s.append(statoPartenza.toString());
+            StatoDFA statoPartenzaDFA = (StatoDFA) statoPartenza;
+            s.append(statoPartenza.toString() + "(AR " + statoPartenzaDFA.getStatoRiconoscitoreEspressione() + ")");
             s.append(Parametri.TAB);
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
@@ -196,23 +194,15 @@ public class SpazioComportamentale {
                     s.append(Parametri.VIRGOLA);
                     s.append(Parametri.SPAZIO);
                 }
-                if (isDecorato) {
-                    statoArrivo = (StatoReteDecorato) statoArrivo;
-                }
                 s.append(Parametri.PARENTESI_TONDA_A);
-//                if (((StatoReteAbstract) statoArrivo).getOsservabilita() != null) {
-//                    s.append(((StatoReteAbstract) statoArrivo).getOsservabilita());
-//                } else {
-//                    s.append(Parametri.EVENTO_NULLO);
-//                }
-//                    s.append(Parametri.SPAZIO);
-                    s.append(statoArrivo.getNome());
-                    StatoDFA stato = (StatoDFA) statoArrivo;
-                    if(stato.isFinale()){
-                        s.append(Parametri.SPAZIO);
-                        s.append(Parametri.FINALE);
-                    }
-//                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
+
+                StatoDFA stato = (StatoDFA) statoArrivo;
+                s.append(statoArrivo.getNome()+"(AR " + stato.getStatoRiconoscitoreEspressione() + ")");
+                
+                if (stato.isFinale()) {
+                    s.append(Parametri.SPAZIO);
+                    s.append(Parametri.FINALE);
+                }
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
             }
