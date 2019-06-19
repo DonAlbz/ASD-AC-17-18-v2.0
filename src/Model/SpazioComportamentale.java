@@ -175,9 +175,49 @@ public class SpazioComportamentale {
         }
         return s.toString();
     }
+    
+    public String toStringSpazioComportamentaleParziale() {
+        // spazio comportamentale parziale è statoDFA
+        
+        StringBuilder s = new StringBuilder();
+        s.append(Parametri.SPAZIO_COMPORTAMENTALE_PARZIALE);
+        s.append(Parametri.A_CAPO);
+        for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
+            StatoDFA statoPartenzaDFA = (StatoDFA) statoPartenza;
+            s.append(statoPartenza.toString() + "(AR " + statoPartenzaDFA.getStatoRiconoscitoreEspressione() + ")");
+            s.append(Parametri.TAB);
+            s.append(Parametri.FRECCIA);
+            s.append(Parametri.TAB);
+            int i = 0;
+            for (StatoInterface statoArrivo : verticiAdiacenti.get(statoPartenza)) {
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+                s.append(Parametri.PARENTESI_TONDA_A);
+
+                StatoDFA stato = (StatoDFA) statoArrivo;
+                s.append(statoArrivo.getNome()+"(AR " + stato.getStatoRiconoscitoreEspressione() + ")");
+                
+                if (stato.isFinale()) {
+                    s.append(Parametri.SPAZIO);
+                    s.append(Parametri.FINALE);
+                }
+                s.append(Parametri.PARENTESI_TONDA_C);
+                i++;
+            }
+            s.append(Parametri.A_CAPO);
+        }
+        return s.toString();
+    }
 
     public Set<StatoInterface> getVertici(){
        return verticiAdiacenti.keySet();
+    }
+    
+    public void setNomeRoot(String nuovoNomeRoot){
+        StatoDFA rootDFA = (StatoDFA) root;
+        rootDFA.setNome(nuovoNomeRoot);
     }
     
 }

@@ -151,6 +151,10 @@ public class StatoDFA implements StatoInterface, Serializable {
     public void setIsFinale(boolean valore){
         isFinale = valore;
     }
+    
+    public void setNome(String nuovoNome){
+        this.nome = nuovoNome;
+    }
 
     
     public String getStatoRiconoscitoreEspressione() {

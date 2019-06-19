@@ -20,6 +20,7 @@ public class Parametri {
     public final static String A_CAPO = System.getProperty("line.separator");
     public final static String SPAZIO_COMPORTAMENTALE_ETICHETTA = "********* SPAZIO COMPORTAMENTALE *********";
     public final static String AUTOMA_RICONOSCITORE_ETICHETTA = "********* AUTOMA RICONOSCITORE *********";
+    public final static String SPAZIO_COMPORTAMENTALE_PARZIALE = "********* SPAZIO COMPORTAMENTALE PARZIALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
     public final static String CAMMINI_ETICHETTA = "********* CAMMINI *********";
     public final static String CAMMINI_NUMERO_ETICHETTA = "numero cammino: ";
@@ -78,6 +79,7 @@ public class Parametri {
     public final static String ESPRESSIONE_REGOLARE_ESEMPIO = "Esempio di espressione regolare: (o2 o3)^+ o3";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
+    public final static String MESSAGGIO_SCP_NULLO = "Non è stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
         
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;

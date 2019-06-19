@@ -902,19 +902,359 @@ public class Controller {
    
     private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
         //TO-DO: CAMO
-        SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale();
+        SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale(); //da formare
+        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); // in sola lettura
         
+        // SCP = Spazio Comportamentale Parziale
+        // SCI = Spazio Comportamentale Intero
+        // AR = Automa Riconoscitore
+        
+        StatoInterface rootSCI = spazioComportamentaleIntero.getRoot();
+        StatoInterface rootAR = automaRiconoscitore.getRoot();
+        
+        //INIZIO ALGORITMO
+        
+        // variabile che identifica se c'è stato almeno un inserimento nell'algoritmo. Se rimane falsa
+        // significa che non ho avuto inserimenti nel SCP e quindi l'automa riconoscitore non identifica correttmente uno
+        // spazio comportamentale parziale.
+        boolean presenzaModifica = false;
+        int indiceStato = 0;
+        spazioComportamentaleParziale.aggiungiVertice(rootAR);
+        spazioComportamentaleParziale.setRoot(rootAR);;
+        
+        Stack<StatoInterface> pilaAR = new Stack<>(); // pila che contiene i vertici dell'automa riconoscitore
+        Stack<StatoInterface> pilaSCI = new Stack<>(); // pila che contiene i vertici del SCI
+        Stack<StatoInterface> pilaSCP = new Stack<>(); // pila che contiene i vertici da analizzare
+        ArrayList<StatoInterface> statiInseritiSCP = new ArrayList<>(); // array che man mano va a contenere tutti gli stati inseriti nel SCP
+        StatoInterface primoStatoNellaPilaAR = (StatoInterface) automaRiconoscitore.getRoot();
+        StatoInterface primoStatoNellaPilaSCI = (StatoInterface) spazioComportamentaleIntero.getRoot();
 
-        //Questo non si tocca, si guarda e basta
-        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); 
-        
+        pilaAR.push(primoStatoNellaPilaAR);
+        pilaSCI.push(primoStatoNellaPilaSCI);
+        pilaSCP.push(spazioComportamentaleParziale.getRoot());
+//        statiInseritiSCP.add(spazioComportamentaleParziale.getRoot());
+
+        StatoInterface statoPrecedenteAR = rootAR;
+        StatoInterface statoPrecedenteSCI = rootSCI;
+        StatoInterface statoPrecedenteSCP = spazioComportamentaleParziale.getRoot();
+
+        while (!pilaAR.empty()) {
+
+            statoPrecedenteSCP = pilaSCP.pop();
+            statoPrecedenteAR = pilaAR.pop();
+            statoPrecedenteSCI = pilaSCI.pop();
+
+            // controllo se statoFinaleAR è l'ultimo stato
+            StatoDFA statoFinaleAR = (StatoDFA) statoPrecedenteAR;
+            if (statoFinaleAR.isFinale()) {
+                // interrompo il while ed esco
+                break;
+            }
+
+            spazioComportamentaleParziale = epsilon_CLOSURE_SCP(spazioComportamentaleParziale, spazioComportamentaleIntero, statoPrecedenteSCI, statoPrecedenteSCP, statoPrecedenteAR.getNome());
+
+            if (controlloPresenzaNuoviStati(statiInseritiSCP, spazioComportamentaleParziale)) {
+
+                ArrayList<StatoInterface> statiEpsilon = getStatiDaArchiEpsilon(spazioComportamentaleParziale, statoPrecedenteSCP);
+                pilaSCP = inserisciTerminazioni(statiEpsilon, pilaSCP);
+
+                List<StatoInterface> verticiAdiacentiAR = automaRiconoscitore.getVerticiAdiacenti(statoPrecedenteAR);
+                ArrayList<StatoInterface> nuoviStatiSCP = new ArrayList<>();
+                for (StatoInterface verticeAR : verticiAdiacentiAR) {
+                    StatoDFA verticeDFA = (StatoDFA) verticeAR;
+                    String etichettaDFA = verticeDFA.getOsservabilita();
+
+                    while (!pilaSCP.empty()) {
+                        
+                        StatoInterface statoDaPilaSCP = pilaSCP.pop();
+                        StatoDFA statoDaPilaSCP_DFA = (StatoDFA) statoDaPilaSCP;
+                        StatoInterface statoCercato = cercaInSpazioComportamentaleIntero(statoDaPilaSCP_DFA.getNome(), spazioComportamentaleIntero);
+                        List<StatoInterface> verticiAdiacentiSCI = spazioComportamentaleIntero.getVerticiAdiacenti(statoCercato);
+                        
+                        for (StatoInterface verticeSCI : verticiAdiacentiSCI) {
+                            StatoReteAbstract verticeABS = (StatoReteAbstract) verticeSCI;
+                            if (verticeABS.getOsservabilita() == null) {
+                                // niente
+                            } else {
+                                if (verticeABS.getOsservabilita().equalsIgnoreCase(etichettaDFA)) {
+                                    StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), verticeDFA.getOsservabilita());
+                                    int temp = Integer.parseInt(verticeDFA.getNome());
+                                    if (temp >= indiceStato) {
+                                        indiceStato = temp;
+                                    }
+                                    spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
+                                    spazioComportamentaleParziale.aggiungiLato(statoDaPilaSCP, statoDaAggiungere);
+                                    if (verticeABS.isFinale()) {
+                                        statoDaAggiungere.setIsFinale(true);
+                                    }
+                                    statoDaAggiungere.setStatoRiconoscitoreEspressione(statoPrecedenteAR.getNome());
+                                    //aggiorno le pile
+                                    pilaAR.push(verticeAR); // aggiungo il vertice che segue il percorso di AR
+                                    pilaSCI.push(verticeSCI);
+                                    nuoviStatiSCP.add(statoDaAggiungere); // aggiorno la lista degli stati inseriti nel SCP
+                                    presenzaModifica = true; // c'è stato un inserimento
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                pilaSCP = inserisciTerminazioni(nuoviStatiSCP, pilaSCP);
+
+            } else {
+
+                List<StatoInterface> verticiAdiacentiAR = automaRiconoscitore.getVerticiAdiacenti(statoPrecedenteAR);
+                // qui mettere il controllo se lo stato considerato non sia già contenuto nello spazio comportamentale parziale 
+
+                List<StatoInterface> verticiAdiacentiSCI = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedenteSCI);
+
+                for (StatoInterface verticeAR : verticiAdiacentiAR) {
+                    StatoDFA verticeDFA = (StatoDFA) verticeAR;
+                    String etichettaDFA = verticeDFA.getOsservabilita();
+                    // confronto su spazio intero
+                    for (StatoInterface verticeSCI : verticiAdiacentiSCI) {
+                        StatoReteAbstract verticeABS = (StatoReteAbstract) verticeSCI;
+                        if (verticeABS.getOsservabilita() == null) {
+                            // niente
+                        } else {
+                            if (verticeABS.getOsservabilita().equalsIgnoreCase(etichettaDFA)) {
+                                StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), verticeDFA.getOsservabilita());
+                                int temp = Integer.parseInt(verticeDFA.getNome());
+                                if (temp >= indiceStato) {
+                                    indiceStato = temp;
+                                }
+                                spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
+                                spazioComportamentaleParziale.aggiungiLato(statoPrecedenteSCP, statoDaAggiungere);
+                                if (verticeABS.isFinale()) {
+                                    statoDaAggiungere.setIsFinale(true);
+                                }
+                                statoDaAggiungere.setStatoRiconoscitoreEspressione(statoPrecedenteAR.getNome());
+                                //aggiorno le pile
+                                pilaAR.push(verticeAR); // aggiungo il vertice che segue il percorso di AR
+                                pilaSCI.push(verticeSCI);
+                                pilaSCP.push(statoDaAggiungere); // aggiungo lo stato appena creato e aggiunto a SCP
+                                statiInseritiSCP.add(statoDaAggiungere); // aggiorno la lista degli stati inseriti nel SCP
+                                presenzaModifica = true; // c'è stato un inserimento
+                            }
+                        }
+                    }
+                }
+
+            }
+     
+            if (presenzaModifica) {
+                presenzaModifica = false;
+            } else {
+                spazioComportamentaleParziale = null;
+                System.out.println(Parametri.MESSAGGIO_SCP_NULLO);
+                return spazioComportamentaleParziale;
+            }
+
+        }
+
+        System.out.println(spazioComportamentaleParziale.toStringSpazioComportamentaleParziale());
+        System.out.println("ULTIMO GIRO");
+        ArrayList<StatoInterface> terminazioni = getTerminazioni(spazioComportamentaleParziale);
+        for (StatoInterface terminazioneSCP : terminazioni) {
+            StatoInterface terminazioneSCI = cercaInSpazioComportamentaleIntero(terminazioneSCP.getNome(), spazioComportamentaleIntero);
+            spazioComportamentaleParziale = epsilon_CLOSURE_SCP(spazioComportamentaleParziale, spazioComportamentaleIntero, terminazioneSCI, terminazioneSCP, statoPrecedenteAR.getNome());
+        }
+        System.out.println(spazioComportamentaleParziale.toStringSpazioComportamentaleParziale());
         return spazioComportamentaleParziale;
     }
 
-    private static SpazioComportamentale creaDizionarioParziale(SpazioComportamentale spazioComportamentaleParziale) {
-       //TODO Alby
-        return null;
+    private static ArrayList<StatoInterface> getTerminazioni(SpazioComportamentale spazioComportamentaleParziale) {
+        ArrayList<StatoInterface> terminazioni = new ArrayList<>();
+        StatoInterface root = spazioComportamentaleParziale.getRoot();
+        Stack<StatoInterface> pila = new Stack<>();
+        pila.push(root);
+
+        while (!pila.empty()) {
+            StatoInterface stato = pila.pop();
+            List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(stato);
+            if (verticiAdiacenti.size() == 0) {
+                terminazioni.add(stato);
+            } else {
+                for (StatoInterface vertice : verticiAdiacenti) {
+                     pila.push(vertice);
+                }
+            }
+        }
+
+        return terminazioni;
+    }
+    
+    private static boolean controlloPresenzaNuoviStati(ArrayList<StatoInterface> statiInseriti, SpazioComportamentale spazioComportamentaleParziale){
+        boolean controllo = false;
+        StatoInterface root = spazioComportamentaleParziale.getRoot();
+        ArrayList<StatoInterface> temp = (ArrayList<StatoInterface>) statiInseriti.clone();
+        Stack<StatoInterface> pila = new Stack<>();
+        pila.push(root);
+        int conta = 0;
+        
+        while(!pila.empty()){
+            StatoInterface stato = pila.pop();
+            List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(stato);
+            for (StatoInterface vertice : verticiAdiacenti) {
+                pila.push(vertice);
+                conta++;
+            }
+        }
+        if(temp.size() != conta){
+            controllo = true;
+        }
+        
+        return controllo;
     }
 
+    private static StatoInterface cercaInSpazioComportamentaleIntero(String nomeStato, SpazioComportamentale spazioComportamentaleIntero) {
+        StatoInterface statoCercato = null;
+        StatoInterface root = spazioComportamentaleIntero.getRoot();
+        ArrayList<StatoInterface> visitati = new ArrayList<>();
+        Stack<StatoInterface> pila = new Stack<>();
+        pila.push(root);
+        
+        StatoReteAbstract verticeABSroot = (StatoReteAbstract) root;
+        if (nomeStato.equalsIgnoreCase(verticeABSroot.getNome())) {
+            return root;
+        } else {
+            visitati.add(root);
+            boolean controllo = false;
+            while (!controllo) {
+                StatoInterface stato = pila.pop();
+                StatoReteAbstract verticeABS = (StatoReteAbstract) stato;
+                List<StatoInterface> verticiAdiacenti = spazioComportamentaleIntero.getVerticiAdiacenti(stato);
+                for (StatoInterface vertice : verticiAdiacenti) {
+                    verticeABS = (StatoReteAbstract) vertice;
+                    if (!visitati.contains(verticeABS)) {
+                        if (verticeABS.getNome().equalsIgnoreCase(nomeStato)) {
+                            statoCercato = vertice;
+                            controllo = true;
+                            break;
+                        } else {
+                            visitati.add(vertice);
+                            pila.push(vertice);
+                        }
+                    }
+                }
+            }
+        }
+
+        return statoCercato;
+    }
+    
+    private static StatoInterface cercaInSpazioComportamentaleParziale(String nomeStato, SpazioComportamentale spazioComportamentaleParziale) {
+        StatoInterface statoCercato = null;
+        StatoInterface root = spazioComportamentaleParziale.getRoot();
+        ArrayList<StatoInterface> visitati = new ArrayList<>();
+        Stack<StatoInterface> pila = new Stack<>();
+        pila.push(root);
+        
+        StatoDFA verticeDFAroot = (StatoDFA) root;
+        if (nomeStato.equalsIgnoreCase(verticeDFAroot.getNome())) {
+            return root;
+        } else {
+            visitati.add(root);
+            boolean controllo = false;
+            while (!controllo) {
+                StatoInterface stato = pila.pop();
+                StatoDFA verticeDFA= (StatoDFA) stato;
+                List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(stato);
+                for (StatoInterface vertice : verticiAdiacenti) {
+                    verticeDFA = (StatoDFA) vertice;
+                    if (!visitati.contains(verticeDFA)) {
+                        if (verticeDFA.getNome().equalsIgnoreCase(nomeStato)) {
+                            statoCercato = vertice;
+                            controllo = true;
+                            break;
+                        } else {
+                            visitati.add(vertice);
+                            pila.push(vertice);
+                        }
+                    }
+                }
+            }
+        }
+
+        return statoCercato;
+    }
+
+    private static SpazioComportamentale epsilon_CLOSURE_SCP(SpazioComportamentale spazioComportamentaleParziale, SpazioComportamentale spazioComportamentaleIntero, StatoInterface stato, StatoInterface statoDFA_SCP, String nomeAR){
+        SpazioComportamentale spazioModificato = spazioComportamentaleParziale;
+        Stack<StatoInterface> pila = new Stack<>();
+        Stack<StatoDFA> pilaDFA = new Stack<>();
+        StatoInterface statoPrecedente = stato;
+        StatoDFA statoPrecedenteSCP = (StatoDFA) statoDFA_SCP;
+        pilaDFA.push(statoPrecedenteSCP);
+        pila.push(statoPrecedente);
+        
+        while(!pila.isEmpty()){
+            statoPrecedente = pila.pop();
+            statoPrecedenteSCP = pilaDFA.pop();
+            List<StatoInterface> verticiAdiacenti = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedente);
+            for(StatoInterface vertice : verticiAdiacenti){
+                StatoReteAbstract verticeABS = (StatoReteAbstract) vertice;
+                if(verticeABS.getOsservabilita() == null){
+                    StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), null);
+                    System.out.println("STATO DA AGGIUNGERE: " + statoDaAggiungere.getNome());
+                    try {
+                        spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
+                        spazioComportamentaleParziale.aggiungiLato(statoPrecedenteSCP, statoDaAggiungere);
+                    } catch(NullPointerException e) { 
+                        System.out.println("stato già presente");
+//                        StatoInterface verticeGiaPresente = cercaInSpazioComportamentaleParziale(verticeABS.getNome(), spazioComportamentaleParziale);
+//                        System.out.println(verticeGiaPresente.getNome());
+//                        StatoDFA verticeGiaPresenteDFA = (StatoDFA) verticeGiaPresente;
+//                        spazioComportamentaleParziale.aggiungiLato(statoPrecedenteSCP, verticeGiaPresenteDFA);
+                    }
+                    statoDaAggiungere.setStatoRiconoscitoreEspressione(nomeAR);
+                    if(verticeABS.isFinale()){
+                        statoDaAggiungere.setIsFinale(true);
+                    }
+                    pila.push(vertice);
+                    pilaDFA.push(statoDaAggiungere);
+                }
+            }
+        }
+        
+        return spazioModificato;
+    }
+    
+    private static ArrayList<StatoInterface> getStatiDaArchiEpsilon(SpazioComportamentale spazioComportamentaleParziale, StatoInterface stato){
+        ArrayList<StatoInterface> stati = new ArrayList<>();
+        Stack<StatoInterface> pila = new Stack<>();
+        StatoInterface statoPrecedente = stato;
+        pila.push(statoPrecedente);
+        
+        while(!pila.isEmpty()){
+            statoPrecedente = pila.pop();
+            List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(statoPrecedente);
+            for(StatoInterface vertice : verticiAdiacenti){
+                StatoDFA verticeDFA = (StatoDFA) vertice;
+                if(verticeDFA.getOsservabilita() == null){
+                    stati.add(vertice);
+                    pila.push(vertice);
+                }
+            }
+        }
+        
+        return stati;
+    }
+  
+    private static Stack<StatoInterface> inserisciTerminazioni(ArrayList<StatoInterface> terminazioni, Stack<StatoInterface> pila) {
+        for (int i = 0; i < terminazioni.size(); i++) {
+            StatoInterface stato = terminazioni.get(i);
+            pila.push(stato);
+        }
+        return pila;
+    }
+
+    private static SpazioComportamentale creaDizionarioParziale(SpazioComportamentale spazioComportamentaleParziale) {
+        //TODO Alby
+        return null;
+    }
+    
+    
 
 }

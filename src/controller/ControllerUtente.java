@@ -316,7 +316,7 @@ public class ControllerUtente {
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
         Controller.creaDizionarioParziale(rete, osservazione);
         
-        // controllare se serve altro
+       
     }
 
 }
