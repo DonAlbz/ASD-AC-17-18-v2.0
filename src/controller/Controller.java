@@ -898,9 +898,26 @@ public class Controller {
         return automaRiconoscitore;
     }
     
+    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
+        
+        
+        List<Cammino> camminiDecorati;
+        LinkedList<StatoReteAbstract> statiDecoratiSpazioC = new LinkedList<>();
+        camminiDecorati = trovaCamminiDecorati(rete.getSpazioC(), statiDecoratiSpazioC);
+//        View.stampaCammini(camminiDecorati);
+        SpazioComportamentale spazioComportamentaleDecorato = new SpazioComportamentale();
+        spazioComportamentaleDecorato = inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
+        spazioComportamentaleDecorato = inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+        spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
+        rete.setSpazioComportamentaleDecorato(spazioComportamentaleDecorato);
+        System.out.println(spazioComportamentaleDecorato.toString());
+        return null; //DA TOGLIERE
+    }
+    
+    
     
    
-    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
+    /*private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
         //TO-DO: CAMO
         SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale(); //da formare
         SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); // in sola lettura
@@ -1063,7 +1080,8 @@ public class Controller {
         System.out.println(spazioComportamentaleParziale.toStringSpazioComportamentaleParziale());
         return spazioComportamentaleParziale;
     }
-
+    */
+    
     private static ArrayList<StatoInterface> getTerminazioni(SpazioComportamentale spazioComportamentaleParziale) {
         ArrayList<StatoInterface> terminazioni = new ArrayList<>();
         StatoInterface root = spazioComportamentaleParziale.getRoot();
