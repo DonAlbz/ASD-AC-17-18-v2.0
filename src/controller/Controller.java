@@ -898,7 +898,7 @@ public class Controller {
         return automaRiconoscitore;
     }
     
-    private static void creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
+    private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
         
         List<Cammino> cammini;
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
@@ -915,7 +915,7 @@ public class Controller {
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
 //        stampaCammini(camminiDecorati);
         System.out.println(spazioC.toString());
-        
+        return spazioC;
     }
     
     
@@ -1291,12 +1291,14 @@ public class Controller {
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
-        StatoReteAbstract statoRadiceRiconoscitore = (StatoReteAbstract) automaRiconoscitore.getRoot();
+        StatoDFA statoRadiceRiconoscitore = (StatoDFA) automaRiconoscitore.getRoot();
         StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
+        statoRadice.setStatoAutomaRiconoscitore(statoRadiceRiconoscitore);
         pilaStato.push(statoRadice);
 
         while (!pilaStato.isEmpty()) {
             StatoRete statoAttuale = pilaStato.pop();
+            StatoDFA statoAutomaRiconoscitoreAttuale=statoAttuale.getStatoAutomaRiconoscitore();
 //            
 
             if (!stati.contains(statoAttuale)) {//se è uno stato nuovo
@@ -1311,7 +1313,14 @@ public class Controller {
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < rete.getAutomi().size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
                         rete.getAutomi().get(i).isAbilitato(rete.getLink());
-                        transizioniAbilitate.add(rete.getAutomi().get(i).getTransizioneAbilitata());//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
+                        ArrayList<Transizione> transizioniAbilitateDaControllare = rete.getAutomi().get(i).getTransizioneAbilitata();
+                        /*//controllo che le transizioni abilitate soddisfino l'automa riconoscitore
+                        for ( int z=0; z < transizioniAbilitateDaControllare.size(); z++){
+                            boolean alitata = transizioniAbilitateDaControllare.get(z).getOsservabilita()==null;
+                            
+                            
+                        }*/
+                        transizioniAbilitate.add(transizioniAbilitateDaControllare);//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
                         numeroTransizioniAbilitate += transizioniAbilitate.get(i).size();
                     }
                     ArrayList<StatoRete> statiDopoLoScatto = new ArrayList<>();
@@ -1320,27 +1329,65 @@ public class Controller {
                     if (numeroTransizioniAbilitate == 1) {
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
                             if (rete.getAutomi().get(i).isAbilitato(rete.getLink())) {
+                                //la prima e unica transizione abilitata allo scatto
+                                Transizione transizioneDaEseguire = rete.getAutomi().get(i).getTransizioneAbilitata().get(0);
+                                boolean abilitata = transizioneDaEseguire.getOsservabilita()==null;
+                                StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
+                                List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
+                                
+                                for(int z=0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata ; z++){
+                                    StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
+                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())){
+                                        abilitata = true;
+                                        statoAutomaRiconoscitoreDopoLoScatto=statoAutomaRiconoscitoreConsiderato;
+                                    }
+                                }
+                                if (abilitata){
                                 transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
 //                                statoAttuale.setTransizionePrecedente(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
                                 StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
                                 statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                //lo stato dell'automa riconoscitore viene aggiunto al nome dello stato della rete
+                                statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
                                 statiDopoLoScatto.add(statoDopoLoScatto);
                                 rete.setRete(statoAttuale);
+                                }
                             }
                         }
                     } else {
-                        copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);//Provare a sostituire con creaStatoCorrente(rete)
-
+                        //Provare a sostituire con creaStatoCorrente(rete)
+                        copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                        copiaStatoAttuale.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreAttuale);
+                        copiaStatoAttuale.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+                        
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
                             for (int j = 0; j < transizioniAbilitate.get(i).size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
                                 rete.setRete(statoAttuale);
                                 Transizione transizioneDaEseguire = transizioniAbilitate.get(i).get(j);
+                                
+                                boolean abilitata = transizioneDaEseguire.getOsservabilita()==null;
+                                StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
+                                List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
+                                
+                                for(int z=0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata ; z++){
+                                    StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
+                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())){
+                                        abilitata = true;
+                                        statoAutomaRiconoscitoreDopoLoScatto=statoAutomaRiconoscitoreConsiderato;
+                                    }
+                                }
+                                
+                                if(abilitata){
                                 transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
                                 copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
                                 StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
                                 statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
                                 statiDopoLoScatto.add(statoDopoLoScatto);
                                 pilaDiramazioni.add(statoAttuale);
+                                }
                             }
                         }
                         pilaDiramazioni.pop();

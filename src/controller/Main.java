@@ -30,8 +30,9 @@ public class Main {
 //        Import.caricaReteDaFile();
 
 
-        Rete rete = ControllerUtente.start();
-//      rete = Import.primoScenario();
+//        Rete rete = ControllerUtente.start();
+     Rete rete = Import.primoScenario();
+     ControllerUtente.startDebug(rete);
 //        ControllerUtente.menuRete(rete);
         
 

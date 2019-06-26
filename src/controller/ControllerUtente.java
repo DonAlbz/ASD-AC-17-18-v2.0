@@ -36,6 +36,10 @@ public class ControllerUtente {
         return rete;
     }
 
+    public static void startDebug(Rete rete){        
+        distillaDiagnosiDaDizionarioParziale(rete);
+               
+    }
     /**
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
@@ -241,8 +245,8 @@ public class ControllerUtente {
                     // PARTE DA CANCELLARE APPENA FINISCE IL COMPITO 4
                     // HO FATTO COSì COSì NON RICHIAMO TUTTE LE VOLTE IL COMPITO 1 E POI IL 2
                     //
-                    creaSpazioComportamentale(rete);
-                    creaSpazioComportamentaleDecorato(rete);
+                    //creaSpazioComportamentale(rete);
+                    //creaSpazioComportamentaleDecorato(rete);
                     distillaDiagnosiDaDizionarioParziale(rete);
                     break;
                 case 0:

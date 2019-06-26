@@ -23,6 +23,7 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
     private List<String> decorazione;
     private String osservabilita;
     private String nome;
+    private StatoDFA statoAutomaRiconoscitore;
 
     public StatoReteAbstract(Evento[] link, Stato[] stati, int _numero) {
         this.link = link;
@@ -167,4 +168,21 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public StatoDFA getStatoAutomaRiconoscitore() {
+        return statoAutomaRiconoscitore;
+    }
+
+    public void setStatoAutomaRiconoscitore(StatoDFA statoAutomaRiconoscitore) {
+        this.statoAutomaRiconoscitore = statoAutomaRiconoscitore;
+    }
+    
+    public void aggiungiStatoAutomaRinocitoreAllaDescrizione(){
+        StringBuilder s = new StringBuilder(descrizione);
+        s.append(Parametri.SPAZIO);
+        s.append(statoAutomaRiconoscitore.getNome());
+        descrizione = s.toString();
+        
+    }
+    
 }
