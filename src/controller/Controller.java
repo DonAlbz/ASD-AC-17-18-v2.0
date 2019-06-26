@@ -627,6 +627,7 @@ public class Controller {
         rete.setDizionarioParziale(dizionarioParziale);
     }
     
+        //TO-DO Rimuovere lo spazio comportamentale decorato da questo algoritmo
     private static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione){
         // copia dello spazio comportamentale decorato calcolato prima
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
@@ -1294,6 +1295,7 @@ public class Controller {
         StatoDFA statoRadiceRiconoscitore = (StatoDFA) automaRiconoscitore.getRoot();
         StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
         statoRadice.setStatoAutomaRiconoscitore(statoRadiceRiconoscitore);
+        statoRadice.aggiungiStatoAutomaRinocitoreAllaDescrizione();
         pilaStato.push(statoRadice);
 
         while (!pilaStato.isEmpty()) {
