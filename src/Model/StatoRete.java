@@ -7,19 +7,18 @@ package Model;
 
 import Model.Automa;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Objects;
-
 
 /**
  *
  * @author alber
  */
-public class StatoRete extends StatoReteAbstract implements Serializable{
-    
-    private Transizione transizioneEseguita; 
-    
+public class StatoRete extends StatoReteAbstract implements Serializable {
+
+    private Transizione transizioneEseguita;
 
     public StatoRete(Evento[] link, Stato[] stati, int _numero) {
         super(link, stati, _numero);
@@ -29,7 +28,7 @@ public class StatoRete extends StatoReteAbstract implements Serializable{
         super(statoDaClonare.getLink().clone(), statoDaClonare.getStati().clone(), statoDaClonare.getNumero());
         setNome(statoDaClonare);
     }
-    
+
     public void setTransizioneEseguita(Transizione transizioneEseguita) {
         this.transizioneEseguita = transizioneEseguita;
     }
@@ -38,23 +37,55 @@ public class StatoRete extends StatoReteAbstract implements Serializable{
         return transizioneEseguita;
     }
 
-    public boolean isAbilitato(List<Automa> automi){
-        for(int i=0;i<automi.size();i++){
-            if (automi.get(i).isAbilitato(this.getLink())){
+    public boolean isAbilitato(List<Automa> automi) {
+        for (int i = 0; i < automi.size(); i++) {
+            if (automi.get(i).isAbilitato(this.getLink())) {
                 return true;
             }
         }
         return false;
     }
 
-    
+    public boolean isAbilitato(List<Automa> automi, List<StatoInterface> statiAutomaRiconoscitore) {
+        boolean abilitato = false;
+        List<List<Transizione>> transizioniAbilitate = new ArrayList<>();
+        for (int i = 0; i < automi.size(); i++) {
+            if (automi.get(i).isAbilitato(this.getLink())) {
+                abilitato = true;
+                transizioniAbilitate.add(automi.get(i).getTransizioneAbilitata());
+            }
+        }
+        //Controllo se le transizioni abilitate soddisfano l'automa riconoscitore dell'espressione
+        if(statiAutomaRiconoscitore.size()!=0){
+        for(int i=0; i< statiAutomaRiconoscitore.size() && abilitato; i++){
+            StatoDFA statoConsiderato = (StatoDFA) statiAutomaRiconoscitore.get(i);
+            for(int j = 0 ; j< transizioniAbilitate.size(); j++){
+                for ( int k = 0; k< transizioniAbilitate.get(j).size(); k++){
+                    String osservabilitaTransizione = transizioniAbilitate.get(j).get(k).getOsservabilita();
+                    if (osservabilitaTransizione == null || osservabilitaTransizione.equals(statoConsiderato.getOsservabilita()))
+                        return true;
+                }
+            }
+        }
+        }
+        else{
+            for(int j = 0 ; j< transizioniAbilitate.size(); j++){
+                for ( int k = 0; k< transizioniAbilitate.get(j).size(); k++){
+                    String osservabilitaTransizione = transizioniAbilitate.get(j).get(k).getOsservabilita();
+                    if (osservabilitaTransizione == null )
+                        return true;
+                }
+                }
+        }
+        return false;
+    }
 
     /**
      * Override del metodo per poter implementare il metodo contains() in un
      * arrayList di cammini
      *
      * Due StatoRete sono uguali se hanno la stessa descrizione
-     * 
+     *
      * @param o
      * @return
      */
@@ -93,7 +124,7 @@ public class StatoRete extends StatoReteAbstract implements Serializable{
         hash = 97 * hash + Arrays.deepHashCode(this.stati);*/
         return hash;
     }
+
     
-    
-    
+
 }

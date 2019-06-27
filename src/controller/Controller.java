@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import view.View;
 
 /**
  *
@@ -904,7 +905,8 @@ public class Controller {
         List<Cammino> cammini;
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
         cammini = trovaCamminiParziali(rete, statiSpazioC, automaRiconoscitore);
-//        View.stampaCammini(cammini);
+        
+        View.stampaCammini(cammini);
         List<Cammino> traiettorie = potatura(cammini);
         traiettorie = ridenominazione(traiettorie, statiSpazioC);
 //        View.stampaTraiettorie(traiettorie);
@@ -1310,7 +1312,7 @@ public class Controller {
                 //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
 //                System.out.println(statoAttuale.toString());
                 rete.setRete(statoAttuale);
-                if (statoAttuale.isAbilitato(rete.getAutomi())) {
+                if (statoAttuale.isAbilitato(rete.getAutomi(), automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale))) {
                     List<List<Transizione>> transizioniAbilitate = new ArrayList<List<Transizione>>(rete.getAutomi().size());
                     int numeroTransizioniAbilitate = 0;
                     for (int i = 0; i < rete.getAutomi().size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
@@ -1358,6 +1360,7 @@ public class Controller {
                             }
                         }
                     } else {
+                        //Se sono abilitate piu' transizioni:
                         //Provare a sostituire con creaStatoCorrente(rete)
                         copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
                         copiaStatoAttuale.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreAttuale);
