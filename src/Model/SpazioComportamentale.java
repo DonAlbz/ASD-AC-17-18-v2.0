@@ -127,6 +127,7 @@ public class SpazioComportamentale {
                 i++;
             }
             s.append(Parametri.A_CAPO);
+        
         }
         return s.toString();
     }
@@ -219,5 +220,11 @@ public class SpazioComportamentale {
         StatoDFA rootDFA = (StatoDFA) root;
         rootDFA.setNome(nuovoNomeRoot);
     }
+
+    public Map<StatoInterface, List<StatoInterface>> getMap() {
+        return verticiAdiacenti;
+    }
+    
+    
     
 }

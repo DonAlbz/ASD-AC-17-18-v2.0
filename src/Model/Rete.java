@@ -29,6 +29,7 @@ public class Rete implements Serializable {
     private Evento[] link;
     private int numeroStati;
     private SpazioComportamentale spazioC;
+    private List<SpazioComportamentale> spazioComportamentaleParaziale;
     private SpazioComportamentale spazioComportamentaleDecorato;
     private SpazioComportamentale dizionario;
     private SpazioComportamentale dizionarioParziale;
@@ -44,6 +45,7 @@ public class Rete implements Serializable {
         link = _link;
         cammini = new ArrayList<Cammino>();
         spazioC = new SpazioComportamentale();
+        spazioComportamentaleParaziale = new ArrayList<>();
     }
 
     public Rete(String s, Evento[] _link, Evento[] _eventi, String[] osservabilita, String[] rilevanza) {
@@ -635,5 +637,8 @@ public class Rete implements Serializable {
     public void setDizionarioParziale(SpazioComportamentale dizionarioParziale) {
         this.dizionarioParziale = dizionarioParziale;
     }
-
+    
+    public void addSpazioComportamentaleParziale(SpazioComportamentale daAggiungere){
+        spazioComportamentaleParaziale.add(daAggiungere);
+    }
 }
