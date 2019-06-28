@@ -10,7 +10,6 @@ import Model.*;
 import Utilita.InputDati;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -175,10 +174,79 @@ public class Controller {
         }
         for (int j = 0; j < traiettorie.size(); j++) {
             for (int i = 0; i < notTraiettorie.size(); i++) {
+                //Se un cammino ciclico ha come ultimo stato uno stato appartente ad una traiettoria, diventa una traiettoria
                 if (traiettorie.get(j).contains((StatoRete) notTraiettorie.get(i).getUltimoStato())) {
                     notTraiettorie.get(i).setIsTraiettoria(true);
                     traiettorie.add(notTraiettorie.get(i));
                     notTraiettorie.remove(i);
+                    i--;
+                }
+            }
+        }
+        return traiettorie;
+    }
+
+    private static ArrayList<Cammino> potatura2(List<Cammino> cammini) {
+        //cammini con stati finali
+        ArrayList<Cammino> traiettorie = new ArrayList<>();
+
+        //cammini ciclici
+        ArrayList<Cammino> camminiCiclici = new ArrayList<>();
+
+        //cammini NON ciclici, con ultimo stato NON finale
+        ArrayList<Cammino> notTraiettoria = new ArrayList<>();
+
+        //traiettoria ricavata da una notTraiettora, e' necessario controllare che non sia uguale ad una delle traiettorie gia' inserite
+        ArrayList<Cammino> traiettoriaDaControllare = new ArrayList<>();
+
+        for (Cammino c : cammini) {
+            if (c.isTraiettoria()) {
+                traiettorie.add(c);
+            } else {
+                if (c.isCiclico()) {
+                    camminiCiclici.add(c);
+                } else {
+                    notTraiettoria.add(c);
+                }
+            }
+        }
+
+        for (int j = 0; j < notTraiettoria.size(); j++) {
+            boolean statoFinaleTrovato = false;
+            while(!statoFinaleTrovato && notTraiettoria.get(j).size() > 0){            
+                notTraiettoria.get(j).rimuoviUltimoStato();
+                if (notTraiettoria.get(j).isTraiettoria()) {
+                    statoFinaleTrovato=true;
+                    traiettoriaDaControllare.add(notTraiettoria.get(j));
+                    notTraiettoria.remove(j);
+                    j--;
+                }   
+            }
+        }
+
+        for (int j = 0; j < traiettoriaDaControllare.size(); j++) {
+            boolean traiettoriaDaScartare = false;
+            for (int i = 0; i < traiettorie.size() && !traiettoriaDaScartare; i++) {
+                //Se lo stato finale di una traiettoriaDaControllare e' già presente in una traiettoria, allora la traiettorai da controllare e' da scartare
+                if (traiettorie.get(i).contains((StatoRete) traiettoriaDaControllare.get(j).getUltimoStato())) {
+                    traiettoriaDaScartare=true;
+                    traiettoriaDaControllare.remove(j);
+                    j--;
+                }
+            }
+            if(!traiettoriaDaScartare){
+                 traiettorie.add(traiettoriaDaControllare.get(j));
+            }
+        }
+
+        for (int j = 0; j < traiettorie.size(); j++) {
+            for (int i = 0; i < camminiCiclici.size(); i++) {
+
+                //Se un cammino ciclico ha come ultimo stato uno stato appartente ad una traiettoria, diventa una traiettoria
+                if (traiettorie.get(j).contains((StatoRete) camminiCiclici.get(i).getUltimoStato())) {
+                    camminiCiclici.get(i).setIsTraiettoria(true);
+                    traiettorie.add(camminiCiclici.get(i));
+                    camminiCiclici.remove(i);
                     i--;
                 }
             }
@@ -616,20 +684,20 @@ public class Controller {
         }
         return etichette;
     }
-    
+
     static void creaDizionarioParziale(Rete rete, String osservazione) {
         //TODO CAMO
         // parte relativa alla creazione dello spazio comportamentale
         SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione(rete, osservazione);
         SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete, automaRiconoscitore);
-        
+
         //TODO Alby
         SpazioComportamentale dizionarioParziale = creaDizionarioParziale(spazioComportamentaleParziale);
         rete.setDizionarioParziale(dizionarioParziale);
     }
-    
-        //TO-DO Rimuovere lo spazio comportamentale decorato da questo algoritmo
-    private static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione){
+
+    //TO-DO Rimuovere lo spazio comportamentale decorato da questo algoritmo
+    private static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione) {
         // copia dello spazio comportamentale decorato calcolato prima
         SpazioComportamentale spazioComportamentaleDecorato = rete.getSpazioComportamentaleDecorato();
         //System.out.println(spazioComportamentaleDecorato.toString());
@@ -641,18 +709,18 @@ public class Controller {
         StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
         automaRiconoscitore.setRoot(root);
         automaRiconoscitore.aggiungiVertice(root);
-        
+
         // inizializzo pile
-        Stack <StatoDFA> pilaDFA = new Stack<StatoDFA>(); // da usare in caso di loop
+        Stack<StatoDFA> pilaDFA = new Stack<StatoDFA>(); // da usare in caso di loop
         pilaDFA.push(root);
         //Stack <StatoInterface> pilaInterface = new Stack <StatoInterface>();
 //        pilaInterface.push(rootSpazioComportamentaleDecorato);
         // inizializzo osservazione
         String[] listaOsservazioni = osservazione.split(Parametri.SPAZIO);
-        
+
         // INIZIO ALGORITMO
         // controllo se l'osservazione è vuota
-        if(listaOsservazioni[0].equalsIgnoreCase("")){
+        if (listaOsservazioni[0].equalsIgnoreCase("")) {
             // cerco stato finale, se esiste
             if (rootAbstract.isFinale()) {
                 System.out.println("Lo stato iniziale coincide con quello finale");
@@ -691,7 +759,7 @@ public class Controller {
                                     String singolaOsservazione = listaOsservazioni[i];
                                     singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
 //                                    nomeStatoDFA++;
-                                    
+
                                     StatoDFA statoDaAggiungere = new StatoDFA(ultimoStatoFuoriParentesi.getNome(), singolaOsservazione);
                                     automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                                     automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
@@ -744,7 +812,7 @@ public class Controller {
                             if (singolaOsservazione.contains(Parametri.ASTERISCO)) {
                                 automaRiconoscitore.aggiungiLato(statoPrecedente, statoPrecedente);
                                 int controllaNumeroOsservazioni = i + 1;
-                                if(controllaNumeroOsservazioni == listaOsservazioni.length){
+                                if (controllaNumeroOsservazioni == listaOsservazioni.length) {
                                     statoPrecedente.setIsFinale(true);
                                 }
                             }
@@ -769,10 +837,10 @@ public class Controller {
                                 StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
                                 automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                                 // controllo che lo stato precedente non sia uno stato loop opzionale
-                                if(i>0){
+                                if (i > 0) {
                                     // se si collego l'ultimo stato fuori parentesi
                                     int temp = i - 1;
-                                    if(listaOsservazioni[temp].contains(Parametri.PARENTESI_TONDA_C) && listaOsservazioni[temp].contains(Parametri.ASTERISCO)){
+                                    if (listaOsservazioni[temp].contains(Parametri.PARENTESI_TONDA_C) && listaOsservazioni[temp].contains(Parametri.ASTERISCO)) {
                                         automaRiconoscitore.aggiungiLato(ultimoStatoFuoriParentesi, statoDaAggiungere);
                                     }
                                 }
@@ -850,7 +918,7 @@ public class Controller {
                             automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                             automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
                         }
-                        if (!singolaOsservazione.contains(Parametri.ASTERISCO) && !singolaOsservazione.contains(Parametri.PIU)){
+                        if (!singolaOsservazione.contains(Parametri.ASTERISCO) && !singolaOsservazione.contains(Parametri.PIU)) {
                             nomeStatoDFA++;
                             statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
 //                            System.out.println(statoDaAggiungere.toString());
@@ -870,7 +938,7 @@ public class Controller {
                                 automaRiconoscitore.aggiungiLato(penultimoStatoOpzionale, statoDaAggiungere);
                             }
                             // nel caso di due opzionalità collego l'ultima opzionalità
-                            if(statoPrecedenteOpzionale != null){
+                            if (statoPrecedenteOpzionale != null) {
                                 automaRiconoscitore.aggiungiLato(statoPrecedenteOpzionale, statoDaAggiungere);
                                 statoPrecedenteOpzionale = null;
                             }
@@ -887,7 +955,7 @@ public class Controller {
                     automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
                     automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
                     int controlloUltimaOsservazione = i + 1;
-                    if (controlloUltimaOsservazione == listaOsservazioni.length){
+                    if (controlloUltimaOsservazione == listaOsservazioni.length) {
                         // se è l'ultimo della lista deve essere finale
                         statoDaAggiungere.setIsFinale(true);
                     }
@@ -895,21 +963,22 @@ public class Controller {
                 }
             }
         }
-        
+
         System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
         return automaRiconoscitore;
     }
-    
+
     private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
-        
+
         List<Cammino> cammini;
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
         cammini = trovaCamminiParziali(rete, statiSpazioC, automaRiconoscitore);
-        
+
         View.stampaCammini(cammini);
-        List<Cammino> traiettorie = potatura(cammini);
+        List<Cammino> traiettorie = potatura2(cammini);
+        View.stampaTraiettorie(traiettorie);
         traiettorie = ridenominazione(traiettorie, statiSpazioC);
-//        View.stampaTraiettorie(traiettorie);
+        View.stampaTraiettorie(traiettorie);
         SpazioComportamentale spazioC = new SpazioComportamentale();
         spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, statiSpazioC);
         spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
@@ -920,10 +989,7 @@ public class Controller {
         System.out.println(spazioC.toString());
         return spazioC;
     }
-    
-    
-    
-   
+
     /*private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
         //TO-DO: CAMO
         SpazioComportamentale spazioComportamentaleParziale = new SpazioComportamentale(); //da formare
@@ -1087,8 +1153,7 @@ public class Controller {
         System.out.println(spazioComportamentaleParziale.toStringSpazioComportamentaleParziale());
         return spazioComportamentaleParziale;
     }
-    */
-    
+     */
     private static ArrayList<StatoInterface> getTerminazioni(SpazioComportamentale spazioComportamentaleParziale) {
         ArrayList<StatoInterface> terminazioni = new ArrayList<>();
         StatoInterface root = spazioComportamentaleParziale.getRoot();
@@ -1102,23 +1167,23 @@ public class Controller {
                 terminazioni.add(stato);
             } else {
                 for (StatoInterface vertice : verticiAdiacenti) {
-                     pila.push(vertice);
+                    pila.push(vertice);
                 }
             }
         }
 
         return terminazioni;
     }
-    
-    private static boolean controlloPresenzaNuoviStati(ArrayList<StatoInterface> statiInseriti, SpazioComportamentale spazioComportamentaleParziale){
+
+    private static boolean controlloPresenzaNuoviStati(ArrayList<StatoInterface> statiInseriti, SpazioComportamentale spazioComportamentaleParziale) {
         boolean controllo = false;
         StatoInterface root = spazioComportamentaleParziale.getRoot();
         ArrayList<StatoInterface> temp = (ArrayList<StatoInterface>) statiInseriti.clone();
         Stack<StatoInterface> pila = new Stack<>();
         pila.push(root);
         int conta = 0;
-        
-        while(!pila.empty()){
+
+        while (!pila.empty()) {
             StatoInterface stato = pila.pop();
             List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(stato);
             for (StatoInterface vertice : verticiAdiacenti) {
@@ -1126,10 +1191,10 @@ public class Controller {
                 conta++;
             }
         }
-        if(temp.size() != conta){
+        if (temp.size() != conta) {
             controllo = true;
         }
-        
+
         return controllo;
     }
 
@@ -1139,7 +1204,7 @@ public class Controller {
         ArrayList<StatoInterface> visitati = new ArrayList<>();
         Stack<StatoInterface> pila = new Stack<>();
         pila.push(root);
-        
+
         StatoReteAbstract verticeABSroot = (StatoReteAbstract) root;
         if (nomeStato.equalsIgnoreCase(verticeABSroot.getNome())) {
             return root;
@@ -1168,14 +1233,14 @@ public class Controller {
 
         return statoCercato;
     }
-    
+
     private static StatoInterface cercaInSpazioComportamentaleParziale(String nomeStato, SpazioComportamentale spazioComportamentaleParziale) {
         StatoInterface statoCercato = null;
         StatoInterface root = spazioComportamentaleParziale.getRoot();
         ArrayList<StatoInterface> visitati = new ArrayList<>();
         Stack<StatoInterface> pila = new Stack<>();
         pila.push(root);
-        
+
         StatoDFA verticeDFAroot = (StatoDFA) root;
         if (nomeStato.equalsIgnoreCase(verticeDFAroot.getNome())) {
             return root;
@@ -1184,7 +1249,7 @@ public class Controller {
             boolean controllo = false;
             while (!controllo) {
                 StatoInterface stato = pila.pop();
-                StatoDFA verticeDFA= (StatoDFA) stato;
+                StatoDFA verticeDFA = (StatoDFA) stato;
                 List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(stato);
                 for (StatoInterface vertice : verticiAdiacenti) {
                     verticeDFA = (StatoDFA) vertice;
@@ -1205,7 +1270,7 @@ public class Controller {
         return statoCercato;
     }
 
-    private static SpazioComportamentale epsilon_CLOSURE_SCP(SpazioComportamentale spazioComportamentaleParziale, SpazioComportamentale spazioComportamentaleIntero, StatoInterface stato, StatoInterface statoDFA_SCP, String nomeAR){
+    private static SpazioComportamentale epsilon_CLOSURE_SCP(SpazioComportamentale spazioComportamentaleParziale, SpazioComportamentale spazioComportamentaleIntero, StatoInterface stato, StatoInterface statoDFA_SCP, String nomeAR) {
         SpazioComportamentale spazioModificato = spazioComportamentaleParziale;
         Stack<StatoInterface> pila = new Stack<>();
         Stack<StatoDFA> pilaDFA = new Stack<>();
@@ -1213,20 +1278,20 @@ public class Controller {
         StatoDFA statoPrecedenteSCP = (StatoDFA) statoDFA_SCP;
         pilaDFA.push(statoPrecedenteSCP);
         pila.push(statoPrecedente);
-        
-        while(!pila.isEmpty()){
+
+        while (!pila.isEmpty()) {
             statoPrecedente = pila.pop();
             statoPrecedenteSCP = pilaDFA.pop();
             List<StatoInterface> verticiAdiacenti = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedente);
-            for(StatoInterface vertice : verticiAdiacenti){
+            for (StatoInterface vertice : verticiAdiacenti) {
                 StatoReteAbstract verticeABS = (StatoReteAbstract) vertice;
-                if(verticeABS.getOsservabilita() == null){
+                if (verticeABS.getOsservabilita() == null) {
                     StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), null);
                     System.out.println("STATO DA AGGIUNGERE: " + statoDaAggiungere.getNome());
                     try {
                         spazioComportamentaleParziale.aggiungiVertice(statoDaAggiungere);
                         spazioComportamentaleParziale.aggiungiLato(statoPrecedenteSCP, statoDaAggiungere);
-                    } catch(NullPointerException e) { 
+                    } catch (NullPointerException e) {
                         System.out.println("stato già presente");
 //                        StatoInterface verticeGiaPresente = cercaInSpazioComportamentaleParziale(verticeABS.getNome(), spazioComportamentaleParziale);
 //                        System.out.println(verticeGiaPresente.getNome());
@@ -1234,7 +1299,7 @@ public class Controller {
 //                        spazioComportamentaleParziale.aggiungiLato(statoPrecedenteSCP, verticeGiaPresenteDFA);
                     }
                     statoDaAggiungere.setStatoRiconoscitoreEspressione(nomeAR);
-                    if(verticeABS.isFinale()){
+                    if (verticeABS.isFinale()) {
                         statoDaAggiungere.setIsFinale(true);
                     }
                     pila.push(vertice);
@@ -1242,31 +1307,31 @@ public class Controller {
                 }
             }
         }
-        
+
         return spazioModificato;
     }
-    
-    private static ArrayList<StatoInterface> getStatiDaArchiEpsilon(SpazioComportamentale spazioComportamentaleParziale, StatoInterface stato){
+
+    private static ArrayList<StatoInterface> getStatiDaArchiEpsilon(SpazioComportamentale spazioComportamentaleParziale, StatoInterface stato) {
         ArrayList<StatoInterface> stati = new ArrayList<>();
         Stack<StatoInterface> pila = new Stack<>();
         StatoInterface statoPrecedente = stato;
         pila.push(statoPrecedente);
-        
-        while(!pila.isEmpty()){
+
+        while (!pila.isEmpty()) {
             statoPrecedente = pila.pop();
             List<StatoInterface> verticiAdiacenti = spazioComportamentaleParziale.getVerticiAdiacenti(statoPrecedente);
-            for(StatoInterface vertice : verticiAdiacenti){
+            for (StatoInterface vertice : verticiAdiacenti) {
                 StatoDFA verticeDFA = (StatoDFA) vertice;
-                if(verticeDFA.getOsservabilita() == null){
+                if (verticeDFA.getOsservabilita() == null) {
                     stati.add(vertice);
                     pila.push(vertice);
                 }
             }
         }
-        
+
         return stati;
     }
-  
+
     private static Stack<StatoInterface> inserisciTerminazioni(ArrayList<StatoInterface> terminazioni, Stack<StatoInterface> pila) {
         for (int i = 0; i < terminazioni.size(); i++) {
             StatoInterface stato = terminazioni.get(i);
@@ -1282,15 +1347,15 @@ public class Controller {
 
     private static List<Cammino> trovaCamminiParziali(Rete rete, LinkedList<StatoReteAbstract> stati, SpazioComportamentale automaRiconoscitore) {
         //  TO-DO inserire l'automa riconoscitore 
-        
+
         List<Cammino> cammini = new ArrayList<>();
         Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
-       
+
         Stack<StatoRete> pilaDiramazioni = new Stack<StatoRete>();//pila degli stati che hanno più di una transizione in uscita
-        
+
         //pila degli stati dell'automa riconoscitore associati ad uno stato della rete che hanno più di una transizione in uscita
         Stack<StatoRete> pilaDiramazioniRiconoscitore = new Stack<StatoRete>();
-        
+
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
@@ -1302,7 +1367,7 @@ public class Controller {
 
         while (!pilaStato.isEmpty()) {
             StatoRete statoAttuale = pilaStato.pop();
-            StatoDFA statoAutomaRiconoscitoreAttuale=statoAttuale.getStatoAutomaRiconoscitore();
+            StatoDFA statoAutomaRiconoscitoreAttuale = statoAttuale.getStatoAutomaRiconoscitore();
 //            
 
             if (!stati.contains(statoAttuale)) {//se è uno stato nuovo
@@ -1335,27 +1400,27 @@ public class Controller {
                             if (rete.getAutomi().get(i).isAbilitato(rete.getLink())) {
                                 //la prima e unica transizione abilitata allo scatto
                                 Transizione transizioneDaEseguire = rete.getAutomi().get(i).getTransizioneAbilitata().get(0);
-                                boolean abilitata = transizioneDaEseguire.getOsservabilita()==null;
+                                boolean abilitata = transizioneDaEseguire.getOsservabilita() == null;
                                 StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
                                 List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
-                                
-                                for(int z=0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata ; z++){
+
+                                for (int z = 0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata; z++) {
                                     StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
-                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())){
+                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())) {
                                         abilitata = true;
-                                        statoAutomaRiconoscitoreDopoLoScatto=statoAutomaRiconoscitoreConsiderato;
+                                        statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreConsiderato;
                                     }
                                 }
-                                if (abilitata){
-                                transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
+                                if (abilitata) {
+                                    transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
 //                                statoAttuale.setTransizionePrecedente(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-                                StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
-                                statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
-                                statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
-                                //lo stato dell'automa riconoscitore viene aggiunto al nome dello stato della rete
-                                statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
-                                statiDopoLoScatto.add(statoDopoLoScatto);
-                                rete.setRete(statoAttuale);
+                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                    statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                    //lo stato dell'automa riconoscitore viene aggiunto al nome dello stato della rete
+                                    statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+                                    statiDopoLoScatto.add(statoDopoLoScatto);
+                                    rete.setRete(statoAttuale);
                                 }
                             }
                         }
@@ -1365,33 +1430,33 @@ public class Controller {
                         copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
                         copiaStatoAttuale.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreAttuale);
                         copiaStatoAttuale.aggiungiStatoAutomaRinocitoreAllaDescrizione();
-                        
+
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
                             for (int j = 0; j < transizioniAbilitate.get(i).size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
                                 rete.setRete(statoAttuale);
                                 Transizione transizioneDaEseguire = transizioniAbilitate.get(i).get(j);
-                                
-                                boolean abilitata = transizioneDaEseguire.getOsservabilita()==null;
+
+                                boolean abilitata = transizioneDaEseguire.getOsservabilita() == null;
                                 StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
                                 List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
-                                
-                                for(int z=0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata ; z++){
+
+                                for (int z = 0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata; z++) {
                                     StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
-                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())){
+                                    if (transizioneDaEseguire.getOsservabilita().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())) {
                                         abilitata = true;
-                                        statoAutomaRiconoscitoreDopoLoScatto=statoAutomaRiconoscitoreConsiderato;
+                                        statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreConsiderato;
                                     }
                                 }
-                                
-                                if(abilitata){
-                                transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
-                                copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
-                                StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
-                                statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
-                                statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
-                                statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
-                                statiDopoLoScatto.add(statoDopoLoScatto);
-                                pilaDiramazioni.add(statoAttuale);
+
+                                if (abilitata) {
+                                    transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
+                                    copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
+                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                    statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                    statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+                                    statiDopoLoScatto.add(statoDopoLoScatto);
+                                    pilaDiramazioni.add(statoAttuale);
                                 }
                             }
                         }
@@ -1429,7 +1494,5 @@ public class Controller {
         return cammini;
 
     }
-    
-    
 
 }
