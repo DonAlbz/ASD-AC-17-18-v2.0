@@ -31,8 +31,9 @@ public class Main {
 
 
         Rete rete = ControllerUtente.start();
-//      rete = Import.primoScenario();
-//        ControllerUtente.menuRete(rete);
+//     Rete rete = Import.primoScenario();
+//     ControllerUtente.startDebug(rete);
+////        ControllerUtente.menuRete(rete);
         
 
 //        ControllerUtente.start();

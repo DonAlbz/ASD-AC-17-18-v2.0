@@ -39,7 +39,8 @@ public class StatoReteRidenominato extends StatoReteAbstract implements Comparab
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(s.getTransizionePrecedente());
         setDecorazione(s.getDecorazione());
-        setNome(s);
+        setNome(s);        
+        setDescrizione(s.getDescrizione());
     }
 
     /**
@@ -52,6 +53,7 @@ public class StatoReteRidenominato extends StatoReteAbstract implements Comparab
         super(s.getLink(), s.getStati(), s.getNumero());
         setTransizionePrecedente(t);
         setNome(s);
+        setDescrizione(s.getDescrizione());
     }
 
     public String getNomeToString() {

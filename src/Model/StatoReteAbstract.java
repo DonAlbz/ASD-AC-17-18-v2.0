@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author alber
  */
-public abstract class StatoReteAbstract implements StatoInterface, Serializable{
+public abstract class StatoReteAbstract implements StatoInterface, Serializable {
 
     private Evento[] link;
     private Stato[] stati;
@@ -23,12 +23,13 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
     private List<String> decorazione;
     private String osservabilita;
     private String nome;
+    private StatoDFA statoAutomaRiconoscitore;
 
     public StatoReteAbstract(Evento[] link, Stato[] stati, int _numero) {
         this.link = link;
         this.stati = stati;
         this.numero = _numero;
-        this.descrizione = creaDescrizione();        
+        this.descrizione = creaDescrizione();
     }
 
     public String creaDescrizione() {
@@ -104,28 +105,48 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
         return descrizione;
     }
 
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
     /**
      * Controllo se e' uno stato finale, quindi se ha i link vuoti
+     * in caso di automa riconoscitore del linguaggio, lo stato e' finale se ha i link vuoti e se
+     * ha lo statoAutomaRiconoscitore finale
      *
      * @return
      */
     public boolean isFinale() {
-        for (Evento l : link) {
-            if (l != null) {
+        if (statoAutomaRiconoscitore == null) {
+            for (Evento l : link) {
+                if (l != null) {
+                    return false;
+                }
+            }
+            return true;
+        } //Se esiste un automa riconoscitore del linguaggio
+        else {
+            if (!statoAutomaRiconoscitore.isFinale()) {
                 return false;
+            } else {
+                for (Evento l : link) {
+                    if (l != null) {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
-        return true;
     }
 
-    public void setNome(StatoReteAbstract s){
+    public void setNome(StatoReteAbstract s) {
         if (s.getNome() == null) {
             setNome(new String(Integer.toString(s.getNumero())));
         } else {
             setNome(s.getNome());
         }
     }
-    
+
     public int getNumero() {
         return numero;
     }
@@ -158,8 +179,6 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
         this.osservabilita = osservabilita;
     }
 
-   
-    
     public String getNome() {
         return nome;
     }
@@ -167,4 +186,21 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable{
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public StatoDFA getStatoAutomaRiconoscitore() {
+        return statoAutomaRiconoscitore;
+    }
+
+    public void setStatoAutomaRiconoscitore(StatoDFA statoAutomaRiconoscitore) {
+        this.statoAutomaRiconoscitore = statoAutomaRiconoscitore;
+    }
+
+    public void aggiungiStatoAutomaRinocitoreAllaDescrizione() {
+        StringBuilder s = new StringBuilder(descrizione);
+        s.append(Parametri.SPAZIO);
+        s.append(statoAutomaRiconoscitore.getNome());
+        descrizione = s.toString();
+
+    }
+
 }

@@ -13,14 +13,16 @@ import java.util.ArrayList;
  *
  * @author Alb
  */
-public class Cammino implements Serializable{
+public class Cammino implements Serializable {
 
     private ArrayList<StatoReteAbstract> cammino;
     private boolean isTraiettoria;
+    private boolean isCiclo;
 
     public Cammino() {
         cammino = new ArrayList<>();
         isTraiettoria = false;
+        isCiclo=false;
     }
 
     public void add(StatoRete statoRete) {
@@ -77,9 +79,9 @@ public class Cammino implements Serializable{
     public StatoReteAbstract getUltimoStato() {
         return this.cammino.get(this.cammino.size() - 1);
     }
-    
-    public void rimuoviUltimoStato(){
-        this.cammino.remove(cammino.size()-1);
+
+    public void rimuoviUltimoStato() {
+        this.cammino.remove(cammino.size() - 1);
     }
 
     public ArrayList<StatoReteAbstract> getCammino() {
@@ -99,6 +101,14 @@ public class Cammino implements Serializable{
         return isTraiettoria;
     }
 
+    public boolean isCiclico() {        
+        return isCiclo;
+    }
+
+    public void setIsCiclo(boolean isCiclo) {
+        this.isCiclo = isCiclo;
+    }
+ 
     public void setIsTraiettoria(boolean isTraiettoria) {
         this.isTraiettoria = isTraiettoria;
     }
@@ -111,4 +121,16 @@ public class Cammino implements Serializable{
         }
     }
 
+    public int size() {
+        return cammino.size();
+    }
+
+    public boolean contieneStatoFinale() {
+        for(int j=cammino.size()-1; j>0; j--){
+            if(cammino.get(j).isFinale()){
+                return true;
+            }
+        }
+        return false;        
+    }
 }
