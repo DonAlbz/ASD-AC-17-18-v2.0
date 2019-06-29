@@ -121,17 +121,21 @@ public class SpazioComportamentale {
 //                    s.append(Parametri.EVENTO_NULLO);
 //                }
 //                    s.append(Parametri.SPAZIO);
+                if (statoArrivo.getNome() != null) {
                     s.append(statoArrivo.getNome());
+                } else {
+                    s.append(((StatoRete) statoArrivo).getNumero());
+                }
 //                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
             }
             s.append(Parametri.A_CAPO);
-        
+
         }
         return s.toString();
     }
-    
+
     public String toStringAutomaRiconoscitore() {
         boolean isDecorato = false;
         boolean isRidenominato;
@@ -162,12 +166,12 @@ public class SpazioComportamentale {
 //                    s.append(Parametri.EVENTO_NULLO);
 //                }
 //                    s.append(Parametri.SPAZIO);
-                    s.append(statoArrivo.getNome());
-                    StatoDFA stato = (StatoDFA) statoArrivo;
-                    if(stato.isFinale()){
-                        s.append(Parametri.SPAZIO);
-                        s.append(Parametri.FINALE);
-                    }
+                s.append(statoArrivo.getNome());
+                StatoDFA stato = (StatoDFA) statoArrivo;
+                if (stato.isFinale()) {
+                    s.append(Parametri.SPAZIO);
+                    s.append(Parametri.FINALE);
+                }
 //                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
                 s.append(Parametri.PARENTESI_TONDA_C);
                 i++;
@@ -176,10 +180,10 @@ public class SpazioComportamentale {
         }
         return s.toString();
     }
-    
+
     public String toStringSpazioComportamentaleParziale() {
         // spazio comportamentale parziale è statoDFA
-        
+
         StringBuilder s = new StringBuilder();
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_PARZIALE);
         s.append(Parametri.A_CAPO);
@@ -198,8 +202,8 @@ public class SpazioComportamentale {
                 s.append(Parametri.PARENTESI_TONDA_A);
 
                 StatoDFA stato = (StatoDFA) statoArrivo;
-                s.append(statoArrivo.getNome()+"(AR " + stato.getStatoRiconoscitoreEspressione() + ")");
-                
+                s.append(statoArrivo.getNome() + "(AR " + stato.getStatoRiconoscitoreEspressione() + ")");
+
                 if (stato.isFinale()) {
                     s.append(Parametri.SPAZIO);
                     s.append(Parametri.FINALE);
@@ -212,11 +216,11 @@ public class SpazioComportamentale {
         return s.toString();
     }
 
-    public Set<StatoInterface> getVertici(){
-       return verticiAdiacenti.keySet();
+    public Set<StatoInterface> getVertici() {
+        return verticiAdiacenti.keySet();
     }
-    
-    public void setNomeRoot(String nuovoNomeRoot){
+
+    public void setNomeRoot(String nuovoNomeRoot) {
         StatoDFA rootDFA = (StatoDFA) root;
         rootDFA.setNome(nuovoNomeRoot);
     }
@@ -224,7 +228,9 @@ public class SpazioComportamentale {
     public Map<StatoInterface, List<StatoInterface>> getMap() {
         return verticiAdiacenti;
     }
-    
-    
-    
+
+    public boolean isEmpty() {
+        return verticiAdiacenti.isEmpty();
+    }
+
 }

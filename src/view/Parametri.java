@@ -80,6 +80,7 @@ public class Parametri {
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
     public final static String MESSAGGIO_SCP_NULLO = "Non è stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
+    public final static String TRAIETTORIE_NON_TROVATE = "L'osservazione inserita non produce traiettorie";
         
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;

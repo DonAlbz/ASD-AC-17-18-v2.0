@@ -13,6 +13,7 @@ import java.util.*;
  * @author alber
  */
 public class View {
+
     public static void stampaCammini(List<Cammino> daStampare) {
 
         System.out.println(Parametri.CAMMINI_ETICHETTA);
@@ -38,85 +39,85 @@ public class View {
             System.out.println();
         }
     }
-    
-    public static void stampaFileTxt(List<String> fileTxt){
-        for(String str : fileTxt){
+
+    public static void stampaFileTxt(List<String> fileTxt) {
+        for (String str : fileTxt) {
             System.out.println(str);
         }
     }
-    
-    public static String stampaNomeRete(Rete rete){
+
+    public static String stampaNomeRete(Rete rete) {
         String nomeRete = rete.getDescrizione();
         System.out.println("Il nome della rete è: " + nomeRete);
         System.out.println("");
         return nomeRete;
     }
-    
-    public static void stampaAutomi(Rete rete){
+
+    public static void stampaAutomi(Rete rete) {
         List<Automa> automi = rete.getAutomi();
         int i = 1;
         System.out.println("La rete è composta da " + automi.size() + " automi/a:");
-        for(Automa aut : automi){
-            System.out.println("Automa "+ i + " nella rete è: " + aut.getDescrizione());
+        for (Automa aut : automi) {
+            System.out.println("Automa " + i + " nella rete è: " + aut.getDescrizione());
             i++;
         }
         System.out.println("");
     }
-    
-    public static void stampaStati(Rete rete){
+
+    public static void stampaStati(Rete rete) {
         List<Automa> automi = rete.getAutomi();
-        for(Automa aut : automi){
+        for (Automa aut : automi) {
             List<Stato> stati = aut.getStati();
             System.out.println("L'automa " + aut.getDescrizione() + " è composto dei seguenti stati:");
             int i = 1;
-            for(Stato st : stati){
+            for (Stato st : stati) {
                 System.out.println("Stato " + i + ": " + st.getDescrizione());
                 i++;
             }
             System.out.println("");
         }
     }
-    
-    public static void stampaTransizioni(Rete rete){
+
+    public static void stampaTransizioni(Rete rete) {
         List<Automa> automi = rete.getAutomi();
-        for(Automa aut : automi){
+        for (Automa aut : automi) {
             List<Stato> stati = aut.getStati();
-            for(Stato sta : stati){
+            for (Stato sta : stati) {
                 System.out.print("Lo stato " + sta.getDescrizione() + " facente parte dell'automa " + aut.getDescrizione());
                 System.out.println(" possiede le seguenti transizioni:");
                 List<Transizione> transizioni = sta.getTransizioni();
-                for(Transizione tra : transizioni){
+                for (Transizione tra : transizioni) {
                     System.out.println("La transizione " + tra.getDescrizione() + " ha come destinazione: " + tra.getStatoDestinazione().getDescrizione());
                 }
             }
             System.out.println("");
         }
     }
-    
-    public static void stampaGlobaleRete(Rete rete){
+
+    public static void stampaGlobaleRete(Rete rete) {
         stampaNomeRete(rete);
         stampaAutomi(rete);
         stampaStati(rete);
         stampaTransizioni(rete);
     }
-    
-    public static void stampaEtichettaOsservabilita(Rete rete){
+
+    public static void stampaEtichettaOsservabilita(Rete rete) {
         String[] etichette = rete.getEtichettaOsservabilita();
         System.out.println("Le etichette di osservabilità sono:");
-        for(String str : etichette){
+        for (String str : etichette) {
             System.out.println(str);
         }
     }
-    
-    public static void stampaEtichettaRilevanza(Rete rete){
+
+    public static void stampaEtichettaRilevanza(Rete rete) {
         String[] etichette = rete.getEtichettaRilevanza();
         System.out.println("Le etichette di rilevanza sono:");
-        for(String str : etichette){
+        for (String str : etichette) {
             System.out.println(str);
         }
     }
-    
-    public static void messaggioImportCorretto(Rete rete){
+
+    public static void messaggioImportCorretto(Rete rete) {
         System.out.println("");
         System.out.println("L'import della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
         System.out.println("");
@@ -144,5 +145,9 @@ public class View {
         System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO);
         System.out.println(Parametri.SEPARATORE);
         System.out.print(Parametri.A_CAPO);
+    }
+
+    public static void traiettorieNonTrovate() {
+        System.out.println(Parametri.TRAIETTORIE_NON_TROVATE);
     }
 }

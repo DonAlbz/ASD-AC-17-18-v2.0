@@ -278,26 +278,33 @@ public class ControllerUtente {
      *
      * @param rete
      */
-    private static void creaSpazioComportamentaleDecorato(Rete rete) {
+    private static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
+        SpazioComportamentale spazioComportamentaleDecorato= null;
         if (rete.getSpazioC() != null) {
-            Controller.creaSpazioComportamentaleDecorato(rete);
+           spazioComportamentaleDecorato= Controller.creaSpazioComportamentaleDecorato(rete);
         } else {
             //TO-DO: messaggio di errore
         }
+        return spazioComportamentaleDecorato;
     }
 
-    private static void creaDizionario(Rete rete) {
-        Controller.creaDizionario(rete);
+    private static SpazioComportamentale creaDizionario(Rete rete, SpazioComportamentale spazioComportamentaleDecorato) {
+        SpazioComportamentale dizionario = Controller.creaDizionario(rete, spazioComportamentaleDecorato);
+        rete.setDizionario(dizionario);
+        return dizionario;
     }
 
-    private static void distillaDiagnosi(Rete rete) {
+    private static void distillaDiagnosi(Rete rete) {        
+        SpazioComportamentale dizionario;
         if (rete.getDizionario() == null) {
             creaSpazioComportamentale(rete);
-            creaSpazioComportamentaleDecorato(rete);
-            creaDizionario(rete);
+            SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
+            dizionario = creaDizionario(rete, spazioComportamentaleDecorato);
+        }else{
+            dizionario = rete.getDizionario();
         }
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(rete, etichetteOsservabilita);
+        String diagnosi = Controller.distillaDiagnosi(dizionario, etichetteOsservabilita);
         if (diagnosi != null) {
             System.out.println(diagnosi);
         } else {
@@ -318,7 +325,14 @@ public class ControllerUtente {
         //TO-DO: CAMO
         View.stampaLegendaEspressioneRegolare(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
-        Controller.creaDizionarioParziale(rete, osservazione);
+        SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
+        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+        String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
+        if (diagnosi != null) {
+            System.out.println(diagnosi);
+        } else {
+            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+        }
         
        
     }
