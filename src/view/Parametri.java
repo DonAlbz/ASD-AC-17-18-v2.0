@@ -67,7 +67,8 @@ public class Parametri {
     public final static String VOCI_MENU_COMPITI[] = {"Crea spazio comportamentale",
                                                         "Crea spazio comportamentale decorato",
                                                         "Distilla diagnosi",
-                                                        "Distilla diagnosi da dizionario parziale"};
+                                                        "Distilla diagnosi da dizionario parziale",
+                                                        "Crea dizionario incrementale"};
     public final static String MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Inserisci una stringa come nell'esempio sottostante per effetturare una ricerca nel dizionario:";
     public final static String ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Esempio di ingresso: <o3,o2,o3,o2>";
     public final static String MESSAGGIO_INSERISCI = "Inserisci la stringa desiderata: ";

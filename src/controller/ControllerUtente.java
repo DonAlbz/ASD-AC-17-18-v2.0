@@ -13,7 +13,6 @@ import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -36,10 +35,11 @@ public class ControllerUtente {
         return rete;
     }
 
-    public static void startDebug(Rete rete){        
+    public static void startDebug(Rete rete) {
         distillaDiagnosiDaDizionarioParziale(rete);
-               
+
     }
+
     /**
      * Metodo che crea la rete attravero il menu iniziale (o la importa o la
      * carica da file)
@@ -230,15 +230,15 @@ public class ControllerUtente {
         do {
             int selezione = menu.scegliMenuInterno();
             switch (selezione) {
-                case 1:                    
+                case 1:
                     creaSpazioComportamentale(rete);
                     break;
 
-                case 2:                    
+                case 2:
                     creaSpazioComportamentaleDecorato(rete);
                     break;
 
-                case 3:                  
+                case 3:
                     distillaDiagnosi(rete);
                     break;
                 case 4:
@@ -248,6 +248,14 @@ public class ControllerUtente {
                     creaSpazioComportamentale(rete);
                     creaSpazioComportamentaleDecorato(rete);
                     distillaDiagnosiDaDizionarioParziale(rete);
+                    break;
+
+                case 5:
+                    //TO-DO: DA TOGLIERE APPENA VIENE FIXATO IL METODO creaRiconoscitoreEspressione;
+                    creaSpazioComportamentale(rete);
+                    creaSpazioComportamentaleDecorato(rete);
+
+                    distillaDiagnosiDaDizionarioParzialeIncrementale(rete);
                     break;
                 case 0:
                     fineMenu = true;
@@ -279,9 +287,9 @@ public class ControllerUtente {
      * @param rete
      */
     private static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
-        SpazioComportamentale spazioComportamentaleDecorato= null;
+        SpazioComportamentale spazioComportamentaleDecorato = null;
         if (rete.getSpazioC() != null) {
-           spazioComportamentaleDecorato= Controller.creaSpazioComportamentaleDecorato(rete);
+            spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete);
         } else {
             //TO-DO: messaggio di errore
         }
@@ -294,13 +302,13 @@ public class ControllerUtente {
         return dizionario;
     }
 
-    private static void distillaDiagnosi(Rete rete) {        
+    private static void distillaDiagnosi(Rete rete) {
         SpazioComportamentale dizionario;
         if (rete.getDizionario() == null) {
             creaSpazioComportamentale(rete);
             SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
             dizionario = creaDizionario(rete, spazioComportamentaleDecorato);
-        }else{
+        } else {
             dizionario = rete.getDizionario();
         }
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
@@ -315,17 +323,17 @@ public class ControllerUtente {
     private static List<String> acquisisciStringaEtichetteOsservabilita(Rete rete) {
         List<String> daCercare = null;
         View.messaggioAquisizioneEtichettaOsservabilita();
-        
+
         List<String> etichetteOsservabilita = Controller.getEtichetteOsservabilita(rete);
         daCercare = InputDati.leggiInserimentoStringaEtichette(Parametri.MESSAGGIO_INSERISCI, etichetteOsservabilita);
         return daCercare;
     }
 
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
-        //TO-DO: CAMO
         View.stampaLegendaEspressioneRegolare(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
         SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
+        rete.setDizionarioParziale(dizionarioParziale);
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
         if (diagnosi != null) {
@@ -333,8 +341,24 @@ public class ControllerUtente {
         } else {
             //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
         }
-        
-       
+
+    }
+
+    private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
+        View.stampaLegendaEspressioneRegolare(rete);
+        while (true) {
+            String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
+            SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
+            rete.addDizionarioParziale(dizionarioParziale);
+        }
+        SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete.getDizionariParziali());
+        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
+        if (diagnosi != null) {
+            System.out.println(diagnosi);
+        } else {
+            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+        }
     }
 
 }

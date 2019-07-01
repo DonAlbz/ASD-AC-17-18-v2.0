@@ -1005,7 +1005,7 @@ public class Controller {
 //        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, statiSpazioC);
 //        spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
             spazioComportamentaleParzialeDecorato = creaSpazioComportamentaleDecorato(spazioC);
-            rete.addSpazioComportamentaleParziale(spazioComportamentaleParzialeDecorato);
+           
 //        System.out.println(spazioC.toString());
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
 //        stampaCammini(camminiDecorati);
@@ -1649,6 +1649,10 @@ public class Controller {
         spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
 //        System.out.println(spazioComportamentaleDecorato.toString());
         return spazioComportamentaleDecorato;
+    }
+
+    public static SpazioComportamentale unisciDizionari(List<SpazioComportamentale> dizionariParziali) {
+return null;
     }
 
 }
