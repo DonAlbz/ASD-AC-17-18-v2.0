@@ -321,7 +321,7 @@ public class Controller {
 
         if (root.getClass() == StatoReteDecorato.class) {
 
-            String nomeRoot = Parametri.STATO_DECORATO_PREFISSO + Integer.toString(0);
+            String nomeRoot = Character.toString(Parametri.STATO_DECORATO_PREFISSO) + Integer.toString(0);
             root.setNome(nomeRoot);
             root = new StatoReteRidenominato(_stati.get(0));
         }
@@ -532,22 +532,24 @@ public class Controller {
         SpazioComportamentale spazioDFA = new SpazioComportamentale();
         Stack<StatoDFA> stack = new Stack<>();
         List<StatoDFA> verticiSpazio = new ArrayList<>();
-        List<StatoReteRidenominato> statiRaggiunti;
+        List<StatoInterface> statiRaggiunti;
         StatoInterface root = spazioComportamentaleDecorato.getRoot();
         List<String> etichetteOsservabilita = Arrays.asList(rete.getEtichettaOsservabilita());
+
         //statiRaggiuntiDaOsservabilita e' una lista di liste, contiene, per ogni etichetta di osservabilita contenuta nella rete,
         //la lista degli stati NFA raggiunti attraverso quella etichetta
         //
         //es: statiRaggiuntiDaOsservabilita.get(1) restituisce tutti gli stati NFA dello spazio comportamentale doppiamente decorato
         //raggiunti attraverso l'etichetta di osservabilita che si trova in posizione 1
         //ovvero: rete.getEtichettaOsservabilita()[1]
-
-        List<List<StatoReteRidenominato>> statiReggiuntiDaOsservabilita = new ArrayList<List<StatoReteRidenominato>>();
+        List<List<StatoInterface>> statiReggiuntiDaOsservabilita = new ArrayList<List<StatoInterface>>();
         for (String etichettaOsservabilita : etichetteOsservabilita) {
-            statiReggiuntiDaOsservabilita.add(new ArrayList<StatoReteRidenominato>());
+            statiReggiuntiDaOsservabilita.add(new ArrayList<StatoInterface>());
         }
         //creazione dello stato statoDFA root a partire dall'epsilon-CLOSURE
         statiRaggiunti = epsilon_CLOSURE(spazioComportamentaleDecorato, root);
+        
+        
         root = new StatoDFA(statiRaggiunti, null);
         spazioDFA.aggiungiVertice(root);
         spazioDFA.setRoot(root);
@@ -564,7 +566,7 @@ public class Controller {
                 verticiSpazio.add(statoAnalizzato);
                 //rimuovi dalla pila il primo stato DFA e prendi tutti gli stati NDA
                 statiRaggiunti = statoAnalizzato.getStati();
-                for (StatoReteRidenominato statoRaggiunto : statiRaggiunti) {//per ogni stato NDA
+                for (StatoInterface statoRaggiunto : statiRaggiunti) {//per ogni stato NDA
                     //controlla nello spazio doppiamente decorato gli stati adiacenti
                     List<StatoInterface> statiAdiacenti = spazioComportamentaleDecorato.getVerticiAdiacenti(statoRaggiunto);
                     //per ogni stato adiacente
@@ -576,7 +578,7 @@ public class Controller {
                         }
                     }
                 }
-                List<StatoReteRidenominato> statiTemporanei;
+                List<StatoInterface> statiTemporanei;
                 //Per ogni stato raggiunto da una etichetta di osservabilita'
                 for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {
                     if (!statiReggiuntiDaOsservabilita.get(i).isEmpty()) {
@@ -585,7 +587,7 @@ public class Controller {
                         //Esegui l'epsilon-CLOSURE sull'insieme di stati considerato
                         statiTemporanei = epsilon_CLOSURE(spazioComportamentaleDecorato, statiTemporanei);
                         //Il nuovo stato DFA e' l'epsilon-CLOSURE CALCOLATO
-                        StatoDFA nuovoStato = new StatoDFA(new ArrayList<StatoReteRidenominato>(statiTemporanei), etichetteOsservabilita.get(i));
+                        StatoDFA nuovoStato = new StatoDFA(new ArrayList<StatoInterface>(statiTemporanei), etichetteOsservabilita.get(i));
                         //Il nuovo statoDFA viene insierito nella pila
                         stack.push(nuovoStato);
                         //Aggiunta del lato nello spazioDFA
@@ -598,6 +600,7 @@ public class Controller {
             }
         }
 
+        //STAMPA DEL DIZIONARIO
 //        for(StatoDFA s :verticiSpazio){
 //            System.out.println(s.getNome());
 //        }
@@ -613,8 +616,8 @@ public class Controller {
      * @param statoSpazio
      * @return
      */
-    private static List<StatoReteRidenominato> epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoInterface statoSpazio) {
-        List<StatoReteRidenominato> insiemeStati = new ArrayList<>();
+    private static List<StatoInterface> epsilon_CLOSURE(SpazioComportamentale spazioComportamentale, StatoInterface statoSpazio) {
+        List<StatoInterface> insiemeStati = new ArrayList<>();
         Stack<StatoInterface> stack = new Stack<>();
         stack.push(statoSpazio);
         while (!stack.isEmpty()) {
@@ -642,10 +645,10 @@ public class Controller {
      * @param statiRaggiunti
      * @return
      */
-    private static List<StatoReteRidenominato> epsilon_CLOSURE(SpazioComportamentale spazioComportamentaleDecorato, List<StatoReteRidenominato> statiRaggiunti) {
-        List<StatoReteRidenominato> statiDaRitornare = new ArrayList<StatoReteRidenominato>(statiRaggiunti);
-        List<StatoReteRidenominato> epsilonStati = new ArrayList<StatoReteRidenominato>();
-        for (StatoReteRidenominato stato : statiRaggiunti) {
+    private static List<StatoInterface> epsilon_CLOSURE(SpazioComportamentale spazioComportamentaleDecorato, List<StatoInterface> statiRaggiunti) {
+        List<StatoInterface> statiDaRitornare = new ArrayList<StatoInterface>(statiRaggiunti);
+        List<StatoInterface> epsilonStati = new ArrayList<StatoInterface>();
+        for (StatoInterface stato : statiRaggiunti) {
             epsilonStati = epsilon_CLOSURE(spazioComportamentaleDecorato, stato);
             epsilonStati.removeAll(statiDaRitornare);
             statiDaRitornare.addAll(epsilonStati);
@@ -705,8 +708,11 @@ public class Controller {
 
         //TODO Alby
         SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete, automaRiconoscitore);
-        SpazioComportamentale dizionarioParziale = creaDizionario(rete, spazioComportamentaleParziale);
-        rete.addDizionarioParziale(dizionarioParziale);
+        SpazioComportamentale dizionarioParziale = null;
+        if (spazioComportamentaleParziale != null) {
+            dizionarioParziale = creaDizionario(rete, spazioComportamentaleParziale);
+            rete.setDizionarioParziale(dizionarioParziale);
+        }
         return dizionarioParziale;
     }
 
@@ -1005,7 +1011,7 @@ public class Controller {
 //        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, statiSpazioC);
 //        spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
             spazioComportamentaleParzialeDecorato = creaSpazioComportamentaleDecorato(spazioC);
-           
+
 //        System.out.println(spazioC.toString());
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
 //        stampaCammini(camminiDecorati);
@@ -1652,7 +1658,18 @@ public class Controller {
     }
 
     public static SpazioComportamentale unisciDizionari(List<SpazioComportamentale> dizionariParziali) {
-return null;
+        SpazioComportamentale dizionarioIncrementale = new SpazioComportamentale();
+        StatoDFA root = new StatoDFA(Parametri.NOME_ROOT_DIZIONARIO_INCREMENTALE, null);
+        dizionarioIncrementale.aggiungiVertice(root);
+        dizionarioIncrementale.setRoot(root);
+
+        for (SpazioComportamentale daAggiungere : dizionariParziali) {
+            StatoDFA rootDaAggiungere = (StatoDFA) daAggiungere.getRoot();
+            dizionarioIncrementale.unisciSpazi(daAggiungere);
+            dizionarioIncrementale.aggiungiLato(root, rootDaAggiungere);
+        }
+
+        return dizionarioIncrementale;
     }
 
 }

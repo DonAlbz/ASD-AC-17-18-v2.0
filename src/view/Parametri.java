@@ -5,6 +5,9 @@
  */
 package view;
 
+import Model.StatoReteRidenominato;
+import java.util.List;
+
 /**
  *
  * @author Alb
@@ -13,7 +16,8 @@ public class Parametri {
 
     public final static String EVENTO_NULLO = "\u0190";
     public final static String INSIEME_VUOTO = "\u00D8";
-    public final static String STATO_DECORATO_PREFISSO = "a";
+    public static char STATO_DECORATO_PREFISSO = 'a';
+    public final static String NOME_ROOT_DIZIONARIO_INCREMENTALE ="ROOT";
     public final static String SEPARATORE = "-----------------------";
     public final static String NULL = "null";
     public final static String INIZIALIZZAZIONE_RETE = "********* INIZIALIZZAZIONE RETE *********";
@@ -80,7 +84,7 @@ public class Parametri {
     public final static String ESPRESSIONE_REGOLARE_ESEMPIO = "Esempio di espressione regolare: (o2 o3)^+ o3";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
-    public final static String MESSAGGIO_SCP_NULLO = "Non è stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
+    public final static String MESSAGGIO_SCP_NULLO = "Non e' stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
     public final static String TRAIETTORIE_NON_TROVATE = "L'osservazione inserita non produce traiettorie";
         
     
@@ -90,5 +94,14 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
+    
+    //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
+    public static void incrementaPrefissoStatoDecorato(){
+        STATO_DECORATO_PREFISSO = (char) (((int)STATO_DECORATO_PREFISSO )+ 1) ;
+    }
+
+    public static void resettaPrefissoStatoDecorato() {
+        STATO_DECORATO_PREFISSO = 'a';
+    }
     
 }

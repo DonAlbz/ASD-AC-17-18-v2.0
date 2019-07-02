@@ -232,5 +232,13 @@ public class SpazioComportamentale {
     public boolean isEmpty() {
         return verticiAdiacenti.isEmpty();
     }
+    
+    /**Aggiunge tutto uno spazioComportamentale ad un altro SpazioComportamentale
+     *
+     * @param daAggiungere lo spazioComportamentale da aggiungere
+     */
+    public void unisciSpazi(SpazioComportamentale daAggiungere){
+        this.verticiAdiacenti.putAll(daAggiungere.getMap());   
+}
 
 }

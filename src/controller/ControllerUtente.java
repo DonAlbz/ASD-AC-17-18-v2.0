@@ -27,6 +27,7 @@ public class ControllerUtente {
     public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
 
     public static Rete start() {
+        
         Rete rete = menuAvvio();
         if (rete != null) {
             menuRete(rete);
@@ -346,11 +347,29 @@ public class ControllerUtente {
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
         View.stampaLegendaEspressioneRegolare(rete);
-        while (true) {
+        
+        ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
+        boolean condizioneDiFineInserimentoDizionariParziali=true;
+        int contatore = 2;
+        
+        
+        while (condizioneDiFineInserimentoDizionariParziali) {
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
             SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
             rete.addDizionarioParziale(dizionarioParziale);
-        }
+            //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
+            Parametri.incrementaPrefissoStatoDecorato();
+            
+            
+            //DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
+            contatore--;
+            if(contatore == 0){                
+                condizioneDiFineInserimentoDizionariParziali=false;
+                Parametri.resettaPrefissoStatoDecorato();
+            }
+            
+            
+        }        
         SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete.getDizionariParziali());
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
