@@ -10,7 +10,6 @@ import Model.*;
 import Utilita.InputDati;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -548,8 +547,7 @@ public class Controller {
         }
         //creazione dello stato statoDFA root a partire dall'epsilon-CLOSURE
         statiRaggiunti = epsilon_CLOSURE(spazioComportamentaleDecorato, root);
-        
-        
+
         root = new StatoDFA(statiRaggiunti, null);
         spazioDFA.aggiungiVertice(root);
         spazioDFA.setRoot(root);
@@ -597,15 +595,52 @@ public class Controller {
                     }
 
                 }
-            }
+            } 
+        }
+//      Creazione del dizionario ordinato
+        SpazioComportamentale dizionario = new SpazioComportamentale();
+        StatoDFA rootSpazioDFA = (StatoDFA) spazioDFA.getRoot();
+
+        StatoDFA nuovaRoot = new StatoDFA(rootSpazioDFA, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(verticiSpazio.indexOf(rootSpazioDFA)));
+        dizionario.setRoot(nuovaRoot);
+        for (StatoInterface v : spazioDFA.getVertici()) {
+            int numero = verticiSpazio.indexOf(v);
+            dizionario.aggiungiVertice(new StatoDFA((StatoDFA) v, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero)));
         }
 
-        //STAMPA DEL DIZIONARIO
-//        for(StatoDFA s :verticiSpazio){
-//            System.out.println(s.getNome());
+        for (StatoInterface v : spazioDFA.getVertici()) {
+            StatoDFA verticeDizionario = new StatoDFA((StatoDFA) v, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(verticiSpazio.indexOf(v)));
+            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti((StatoDFA)v)) {
+                int numero = verticiSpazio.indexOf(vAdj);
+                StatoDFA statoDaAggiungere = new StatoDFA((StatoDFA) vAdj, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
+                dizionario.aggiungiLato(verticeDizionario, statoDaAggiungere);
+            }
+        }
+////          NON FUNZIONA, CREDO A CAUSA DI UN PROBLEMA CON GLI HASHCODE MODIFICATI DURANTE L'ESECUZIONE DEL CODICE
+//        List<StatoDFA> statiDaRidenominare = new ArrayList<>();       
+//        for (StatoInterface v : spazioDFA.getVertici()) {
+//            statiDaRidenominare.add((StatoDFA) v);
+//            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti(v)) {
+//                statiDaRidenominare.add((StatoDFA)vAdj);
+//            }
 //        }
-        rete.setDizionario(spazioDFA);
-        return spazioDFA;
+//        for(StatoDFA v : statiDaRidenominare){
+//            int numero = verticiSpazio.indexOf(v);
+//            v.setNome(Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
+//        }
+
+//          STAMPA DEL DIZIONARIO
+        for (StatoDFA s : verticiSpazio) {
+            System.out.println(s.getNome());
+        }
+//        StatoInterface statoProva = new StatoDFA("a2", "o2");
+//        List<StatoInterface> prova = spazioDFA.getVerticiAdiacenti(statoProva);
+//        System.out.println(statoProva.getNome() + "\t" + statoProva.hashCode());
+//        System.out.println("a2" + "\t" + new StatoDFA("a2", "o2").hashCode());
+//        System.out.println(verticiSpazio.get(2).getNome() + "\t" +  verticiSpazio.get(2).hashCode());
+
+        rete.setDizionario(dizionario);
+        return dizionario;
     }
 
     /**
@@ -622,9 +657,11 @@ public class Controller {
         stack.push(statoSpazio);
         while (!stack.isEmpty()) {
             StatoInterface statoAnalizzato = stack.pop();
+
             if (statoAnalizzato.getClass() == StatoReteRidenominato.class) {
                 insiemeStati.add((StatoReteRidenominato) statoAnalizzato);
                 List<StatoInterface> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
+
                 for (StatoInterface s : statiAdiacenti) {
                     if (s.getClass() == StatoReteRidenominato.class) {
                         if (((StatoReteAbstract) s).getOsservabilita() == null && !insiemeStati.contains(s)) {
@@ -1670,6 +1707,10 @@ public class Controller {
         }
 
         return dizionarioIncrementale;
+    }
+
+    public static SpazioComportamentale determinizzaDizionarioIncrementale() {
+        return null;
     }
 
 }
