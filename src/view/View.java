@@ -150,4 +150,8 @@ public class View {
     public static void traiettorieNonTrovate() {
         System.out.println(Parametri.TRAIETTORIE_NON_TROVATE);
     }
+
+    public static void stampaDiagnosi(String diagnosi) {
+        System.out.println(diagnosi);
+    }
 }

@@ -595,7 +595,7 @@ public class Controller {
                     }
 
                 }
-            } 
+            }
         }
 //      Creazione del dizionario ordinato
         SpazioComportamentale dizionario = new SpazioComportamentale();
@@ -610,7 +610,7 @@ public class Controller {
 
         for (StatoInterface v : spazioDFA.getVertici()) {
             StatoDFA verticeDizionario = new StatoDFA((StatoDFA) v, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(verticiSpazio.indexOf(v)));
-            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti((StatoDFA)v)) {
+            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti((StatoDFA) v)) {
                 int numero = verticiSpazio.indexOf(vAdj);
                 StatoDFA statoDaAggiungere = new StatoDFA((StatoDFA) vAdj, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
                 dizionario.aggiungiLato(verticeDizionario, statoDaAggiungere);
@@ -660,16 +660,25 @@ public class Controller {
 
             if (statoAnalizzato.getClass() == StatoReteRidenominato.class) {
                 insiemeStati.add((StatoReteRidenominato) statoAnalizzato);
-                List<StatoInterface> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
+            }
+            if (statoAnalizzato.getClass() == StatoDFA.class) {
+                insiemeStati.add((StatoDFA) statoAnalizzato);
+            }
+            List<StatoInterface> statiAdiacenti = spazioComportamentale.getVerticiAdiacenti(statoAnalizzato);
 
-                for (StatoInterface s : statiAdiacenti) {
-                    if (s.getClass() == StatoReteRidenominato.class) {
-                        if (((StatoReteAbstract) s).getOsservabilita() == null && !insiemeStati.contains(s)) {
-                            stack.push((StatoReteRidenominato) s);
-                        }
+            for (StatoInterface s : statiAdiacenti) {
+                if (s.getClass() == StatoReteRidenominato.class) {
+                    if (((StatoReteAbstract) s).getOsservabilita() == null && !insiemeStati.contains(s)) {
+                        stack.push((StatoReteRidenominato) s);
+                    }
+                }
+                if (s.getClass() == StatoDFA.class) {
+                    if (((StatoDFA) s).getOsservabilita() == null && !insiemeStati.contains(s)) {
+                        stack.push((StatoDFA) s);
                     }
                 }
             }
+
         }
 
         return insiemeStati;
@@ -1694,7 +1703,7 @@ public class Controller {
         return spazioComportamentaleDecorato;
     }
 
-    public static SpazioComportamentale unisciDizionari(List<SpazioComportamentale> dizionariParziali) {
+    public static SpazioComportamentale unisciDizionari(Rete rete, List<SpazioComportamentale> dizionariParziali) {
         SpazioComportamentale dizionarioIncrementale = new SpazioComportamentale();
         StatoDFA root = new StatoDFA(Parametri.NOME_ROOT_DIZIONARIO_INCREMENTALE, null);
         dizionarioIncrementale.aggiungiVertice(root);
@@ -1705,12 +1714,125 @@ public class Controller {
             dizionarioIncrementale.unisciSpazi(daAggiungere);
             dizionarioIncrementale.aggiungiLato(root, rootDaAggiungere);
         }
+        dizionarioIncrementale = determinizzaDizionarioIncrementale(rete, dizionarioIncrementale);
 
         return dizionarioIncrementale;
     }
 
-    public static SpazioComportamentale determinizzaDizionarioIncrementale() {
-        return null;
+    public static SpazioComportamentale determinizzaDizionarioIncrementale(Rete rete, SpazioComportamentale dizionarioDaDeterminizzare) {
+        SpazioComportamentale spazioDFA = new SpazioComportamentale();
+        Stack<StatoDFA> stack = new Stack<>();
+        List<StatoDFA> verticiSpazio = new ArrayList<>();
+        List<StatoInterface> statiRaggiunti;
+        StatoInterface root = dizionarioDaDeterminizzare.getRoot();
+        List<String> etichetteOsservabilita = Arrays.asList(rete.getEtichettaOsservabilita());
+
+        //statiRaggiuntiDaOsservabilita e' una lista di liste, contiene, per ogni etichetta di osservabilita contenuta nella rete,
+        //la lista degli stati NFA raggiunti attraverso quella etichetta
+        //
+        //es: statiRaggiuntiDaOsservabilita.get(1) restituisce tutti gli stati NFA dello spazio comportamentale doppiamente decorato
+        //raggiunti attraverso l'etichetta di osservabilita che si trova in posizione 1
+        //ovvero: rete.getEtichettaOsservabilita()[1]
+        List<List<StatoInterface>> statiReggiuntiDaOsservabilita = new ArrayList<List<StatoInterface>>();
+        for (String etichettaOsservabilita : etichetteOsservabilita) {
+            statiReggiuntiDaOsservabilita.add(new ArrayList<StatoInterface>());
+        }
+        //creazione dello stato statoDFA root a partire dall'epsilon-CLOSURE
+        statiRaggiunti = epsilon_CLOSURE(dizionarioDaDeterminizzare, root);
+
+        root = new StatoDFA(statiRaggiunti, null);
+        spazioDFA.aggiungiVertice(root);
+        spazioDFA.setRoot(root);
+        stack.push((StatoDFA) root);
+        //dello stato root NDA
+        //fintanto che la stack e' vuota
+        while (!stack.isEmpty()) {
+            StatoDFA statoAnalizzato = stack.pop();
+//            System.out.println(statoAnalizzato.getNome());
+//            System.out.printf(statoAnalizzato.toString() + " ");
+            if (!verticiSpazio.contains(statoAnalizzato)) {
+                spazioDFA.aggiungiVertice(statoAnalizzato);
+//                System.out.println("non contenuto");
+                verticiSpazio.add(statoAnalizzato);
+                //rimuovi dalla pila il primo stato DFA e prendi tutti i suoi stati FDA
+                statiRaggiunti = statoAnalizzato.getStati();
+                for (StatoInterface statoRaggiunto : statiRaggiunti) {//per ogni stato adiacenti
+                    //controlla nello spazio doppiamente decorato gli stati adiacenti
+                    List<StatoInterface> statiAdiacenti = dizionarioDaDeterminizzare.getVerticiAdiacenti(statoRaggiunto);
+                    //per ogni stato adiacente
+                    for (StatoInterface statoAdiacente : statiAdiacenti) {
+                        //se lo stato raggiunto ha una transizione osservabile
+                        if (((StatoDFA) statoAdiacente).getOsservabilita() != null) {
+                            int posizioneOsservabilita = etichetteOsservabilita.indexOf(((StatoDFA) statoAdiacente).getOsservabilita());
+                            statiReggiuntiDaOsservabilita.get(posizioneOsservabilita).add((StatoDFA) statoAdiacente);
+                        }
+                    }
+                }
+                List<StatoInterface> statiTemporanei;
+                //Per ogni stato raggiunto da una etichetta di osservabilita'
+                for (int i = 0; i < statiReggiuntiDaOsservabilita.size(); i++) {
+                    if (!statiReggiuntiDaOsservabilita.get(i).isEmpty()) {
+                        //prendi l'insieme degli stati DFA raggiunti dall'osservabilita' i 
+                        statiTemporanei = statiReggiuntiDaOsservabilita.get(i);
+                        //Esegui l'epsilon-CLOSURE sull'insieme di stati considerato
+                        //statiTemporanei = epsilon_CLOSURE(spazioComportamentaleDecorato, statiTemporanei);
+                        //Il nuovo stato DFA e' l'epsilon-CLOSURE CALCOLATO
+                        StatoDFA nuovoStato = new StatoDFA(new ArrayList<StatoInterface>(statiTemporanei), etichetteOsservabilita.get(i));
+                        //Il nuovo statoDFA viene insierito nella pila
+                        stack.push(nuovoStato);
+                        //Aggiunta del lato nello spazioDFA
+                        spazioDFA.aggiungiLato(statoAnalizzato, nuovoStato);
+                        //si svuota l'insieme degli stati raggiunti dall'osservabilita' i
+                        statiReggiuntiDaOsservabilita.get(i).clear();
+                    }
+
+                }
+            }
+        }
+////      Creazione del dizionario ordinato
+//        SpazioComportamentale dizionario = new SpazioComportamentale();
+//        StatoDFA rootSpazioDFA = (StatoDFA) spazioDFA.getRoot();
+//
+//        StatoDFA nuovaRoot = new StatoDFA(rootSpazioDFA, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(verticiSpazio.indexOf(rootSpazioDFA)));
+//        dizionario.setRoot(nuovaRoot);
+//        for (StatoInterface v : spazioDFA.getVertici()) {
+//            int numero = verticiSpazio.indexOf(v);
+//            dizionario.aggiungiVertice(new StatoDFA((StatoDFA) v, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero)));
+//        }
+//
+//        for (StatoInterface v : spazioDFA.getVertici()) {
+//            StatoDFA verticeDizionario = new StatoDFA((StatoDFA) v, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(verticiSpazio.indexOf(v)));
+//            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti((StatoDFA) v)) {
+//                int numero = verticiSpazio.indexOf(vAdj);
+//                StatoDFA statoDaAggiungere = new StatoDFA((StatoDFA) vAdj, Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
+//                dizionario.aggiungiLato(verticeDizionario, statoDaAggiungere);
+//            }
+//        }
+////          NON FUNZIONA, CREDO A CAUSA DI UN PROBLEMA CON GLI HASHCODE MODIFICATI DURANTE L'ESECUZIONE DEL CODICE
+//        List<StatoDFA> statiDaRidenominare = new ArrayList<>();       
+//        for (StatoInterface v : spazioDFA.getVertici()) {
+//            statiDaRidenominare.add((StatoDFA) v);
+//            for (StatoInterface vAdj : spazioDFA.getVerticiAdiacenti(v)) {
+//                statiDaRidenominare.add((StatoDFA)vAdj);
+//            }
+//        }
+//        for(StatoDFA v : statiDaRidenominare){
+//            int numero = verticiSpazio.indexOf(v);
+//            v.setNome(Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
+//        }
+
+//          STAMPA DEL DIZIONARIO
+        for (StatoDFA s : verticiSpazio) {
+            System.out.println(s.getNome());
+        }
+//        StatoInterface statoProva = new StatoDFA("a2", "o2");
+//        List<StatoInterface> prova = spazioDFA.getVerticiAdiacenti(statoProva);
+//        System.out.println(statoProva.getNome() + "\t" + statoProva.hashCode());
+//        System.out.println("a2" + "\t" + new StatoDFA("a2", "o2").hashCode());
+//        System.out.println(verticiSpazio.get(2).getNome() + "\t" +  verticiSpazio.get(2).hashCode());
+        rete.setDizionarioParziale(spazioDFA);
+
+        return spazioDFA;
     }
 
 }

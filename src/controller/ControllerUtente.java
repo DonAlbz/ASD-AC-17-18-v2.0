@@ -338,7 +338,7 @@ public class ControllerUtente {
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
         if (diagnosi != null) {
-            System.out.println(diagnosi);
+            View.stampaDiagnosi(diagnosi);
         } else {
             //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
         }
@@ -370,7 +370,7 @@ public class ControllerUtente {
             
             
         }        
-        SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete.getDizionariParziali());
+        SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
         if (diagnosi != null) {

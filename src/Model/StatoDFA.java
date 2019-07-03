@@ -38,6 +38,9 @@ public class StatoDFA implements StatoInterface, Serializable {
             java.util.Collections.sort(statiRidenominati);
             this.stati.addAll(stati);
         }
+        if (stati.get(0).getClass() == StatoDFA.class) {
+            this.stati.addAll(stati);
+        }
         this.osservabilita = osservabilita;
         this.nome = creaNome();
         this.isFinale = calcolaIsFinale();
@@ -118,7 +121,7 @@ public class StatoDFA implements StatoInterface, Serializable {
             return false;
         }
         StatoDFA stato2 = (StatoDFA) o;
-        
+
         if (getOsservabilita() == null ^ stato2.getOsservabilita() == null) { //^ e' l'operatore logico XOR
             return false;
         }
@@ -153,6 +156,11 @@ public class StatoDFA implements StatoInterface, Serializable {
                     return true;
                 }
             }
+            if (s.getClass() == StatoDFA.class) {
+                if (((StatoDFA) s).isFinale()) {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -172,6 +180,22 @@ public class StatoDFA implements StatoInterface, Serializable {
                 }
 
 //            }
+            }
+            if (s.getClass() == StatoDFA.class) {
+                if (((StatoDFA) s).isFinale()) {
+                    List<List<String>> diagnosiDaInserire = ((StatoDFA) s).getDiagnosi();
+
+//                if (diagnosiDaInserire == null) {
+//                    diagnosiDaInserire = new ArrayList<>();
+//                    diagnosiDaInserire.add(Parametri.INSIEME_VUOTO);
+//                }
+                    for (List<String> diagnosiDiUnoStatoDFA : diagnosiDaInserire) {
+                        if (!daRitornare.contains(diagnosiDiUnoStatoDFA)) {
+                            daRitornare.add(diagnosiDiUnoStatoDFA);
+                        }
+                    }
+//            }
+                }
             }
         }
         return daRitornare;
