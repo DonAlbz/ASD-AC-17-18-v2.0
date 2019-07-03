@@ -32,7 +32,8 @@ public class Rete implements Serializable {
     private List<SpazioComportamentale> spazioComportamentaleParaziale;
     private SpazioComportamentale spazioComportamentaleDecorato;
     private SpazioComportamentale dizionario;
-    private List<SpazioComportamentale> dizionarioParziale;
+    private SpazioComportamentale dizionarioParziale;
+    private List<SpazioComportamentale> dizionariParziali;
     private LinkedList<StatoReteAbstract> stati;
     private String[] etichettaOsservabilita;
     private String[] etichettaRilevanza;
@@ -633,8 +634,8 @@ public class Rete implements Serializable {
     public void setDizionario(SpazioComportamentale dizionario) {
         this.dizionario = dizionario;
     }
-    
-    public void addSpazioComportamentaleParziale(SpazioComportamentale daAggiungere){
+
+    public void addSpazioComportamentaleParziale(SpazioComportamentale daAggiungere) {
         spazioComportamentaleParaziale.add(daAggiungere);
     }
 
@@ -643,14 +644,24 @@ public class Rete implements Serializable {
     }
 
     public void addDizionarioParziale(SpazioComportamentale dizionarioParziale) {
-        if(this.dizionarioParziale==null){
-            this.dizionarioParziale = new ArrayList<>();                   
+        if (this.dizionariParziali == null) {
+            this.dizionariParziali = new ArrayList<>();
         }
-        this.dizionarioParziale.add(dizionarioParziale);
+        this.dizionariParziali.add(dizionarioParziale);
+    }
+
+    public SpazioComportamentale getDizionarioParziale() {
+        return dizionarioParziale;
+    }
+
+    public void setDizionarioParziale(SpazioComportamentale dizionarioParziale) {
+        this.dizionarioParziale = dizionarioParziale;
+    }
+
+    public List<SpazioComportamentale> getDizionariParziali() {
+        return dizionariParziali;
     }
 
     
-
-
-
+    
 }

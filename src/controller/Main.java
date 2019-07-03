@@ -29,7 +29,7 @@ public class Main {
 //        Import.primoScenario();
 //        Import.caricaReteDaFile();
 
-
+        
         Rete rete = ControllerUtente.start();
 //     Rete rete = Import.primoScenario();
 //     ControllerUtente.startDebug(rete);

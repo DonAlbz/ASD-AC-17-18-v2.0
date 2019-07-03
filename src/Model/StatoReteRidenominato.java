@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoReteRidenominato extends StatoReteAbstract implements Comparable<StatoReteRidenominato>, Serializable{
+public class StatoReteRidenominato extends StatoReteAbstract implements StatoInterface, Comparable<StatoReteRidenominato>, Serializable{
 
     /**
      * Crea uno StatoRete ridenominato

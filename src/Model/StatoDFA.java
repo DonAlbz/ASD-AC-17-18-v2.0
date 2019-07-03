@@ -17,18 +17,30 @@ import view.Parametri;
  */
 public class StatoDFA implements StatoInterface, Serializable {
 
-    private List<StatoReteRidenominato> stati;
+    private List<StatoInterface> stati;
     private String osservabilita;
     private String nome;
     private boolean isFinale;
     private List<List<String>> diagnosi;
     private String statoRiconoscitoreEspressione;
+    //Da controllare nel debug
+    int hashCode;
 
-    
+    public StatoDFA(List<StatoInterface> stati, String osservabilita) {
+        this.stati = new ArrayList<>();
 
-    public StatoDFA(List<StatoReteRidenominato> stati, String osservabilita) {
-        this.stati = stati;
-        java.util.Collections.sort(stati);
+        if (stati.get(0).getClass() == StatoReteRidenominato.class) {
+            //Metodo un po' ripetitivo, cercando alternative non e' trato trovato nulla.       
+            List<StatoReteRidenominato> statiRidenominati = new ArrayList<>();
+            for (StatoInterface s : stati) {
+                statiRidenominati.add((StatoReteRidenominato) s);
+            }
+            java.util.Collections.sort(statiRidenominati);
+            this.stati.addAll(stati);
+        }
+        if (stati.get(0).getClass() == StatoDFA.class) {
+            this.stati.addAll(stati);
+        }
         this.osservabilita = osservabilita;
         this.nome = creaNome();
         this.isFinale = calcolaIsFinale();
@@ -44,6 +56,15 @@ public class StatoDFA implements StatoInterface, Serializable {
         this.osservabilita = osservabilita;
     }
 
+    public StatoDFA(StatoDFA statoDaCopiare, String nome) {
+        this.stati = statoDaCopiare.getStati();
+        this.isFinale = statoDaCopiare.isFinale();
+        this.diagnosi = statoDaCopiare.getDiagnosi();
+        this.osservabilita = statoDaCopiare.getOsservabilita();
+        this.nome = nome;
+        //hashCode = hashCode();
+    }
+
     public String toString() {
 //        StringBuilder s = new StringBuilder();
 //        s.append(Parametri.PARENTESI_TONDA_A);
@@ -56,7 +77,7 @@ public class StatoDFA implements StatoInterface, Serializable {
         return nome;
     }
 
-    public List<StatoReteRidenominato> getStati() {
+    public List<StatoInterface> getStati() {
         return stati;
     }
 
@@ -101,6 +122,15 @@ public class StatoDFA implements StatoInterface, Serializable {
         }
         StatoDFA stato2 = (StatoDFA) o;
 
+        if (getOsservabilita() == null ^ stato2.getOsservabilita() == null) { //^ e' l'operatore logico XOR
+            return false;
+        }
+        if (getOsservabilita() == null && stato2.getOsservabilita() == null) {
+            if (getNome().equals(stato2.getNome())) {
+                return true;
+            }
+            return false;
+        }
         if (this.getNome().equals(stato2.getNome()) && this.getOsservabilita().equals(stato2.getOsservabilita())) {
             return true;
         }
@@ -109,14 +139,27 @@ public class StatoDFA implements StatoInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = Objects.hash(getNome() + getOsservabilita());
+        int hash;
+        if (this.osservabilita != null) {
+            hash = Objects.hash(getNome() + getOsservabilita());
+        } else {
+            hash = Objects.hash(getNome());
+        }
+        hashCode = hash;
         return hash;
     }
 
     private boolean calcolaIsFinale() {
-        for (StatoReteRidenominato s : stati) {
-            if (s.isFinale()) {
-                return true;
+        for (StatoInterface s : stati) {
+            if (s.getClass() == StatoReteRidenominato.class) {
+                if (((StatoReteRidenominato) s).isFinale()) {
+                    return true;
+                }
+            }
+            if (s.getClass() == StatoDFA.class) {
+                if (((StatoDFA) s).isFinale()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -124,18 +167,36 @@ public class StatoDFA implements StatoInterface, Serializable {
 
     private List<List<String>> effettuaDiagnosi() {
         List<List<String>> daRitornare = new ArrayList<>();
-        for (StatoReteRidenominato s : stati) {
+        for (StatoInterface s : stati) {
 //            if (s.getDecorazione() != null) {
-            List<String> decorazioneDaInserire = s.getDecorazione();
-            if (decorazioneDaInserire == null) {
-                decorazioneDaInserire = new ArrayList<>();
-                decorazioneDaInserire.add(Parametri.INSIEME_VUOTO);
-            }
-            if (!daRitornare.contains(decorazioneDaInserire)) {
-                daRitornare.add(decorazioneDaInserire);
-            }
+            if (s.getClass() == StatoReteRidenominato.class) {
+                List<String> decorazioneDaInserire = ((StatoReteRidenominato) s).getDecorazione();
+                if (decorazioneDaInserire == null) {
+                    decorazioneDaInserire = new ArrayList<>();
+                    decorazioneDaInserire.add(Parametri.INSIEME_VUOTO);
+                }
+                if (!daRitornare.contains(decorazioneDaInserire)) {
+                    daRitornare.add(decorazioneDaInserire);
+                }
 
 //            }
+            }
+            if (s.getClass() == StatoDFA.class) {
+                if (((StatoDFA) s).isFinale()) {
+                    List<List<String>> diagnosiDaInserire = ((StatoDFA) s).getDiagnosi();
+
+//                if (diagnosiDaInserire == null) {
+//                    diagnosiDaInserire = new ArrayList<>();
+//                    diagnosiDaInserire.add(Parametri.INSIEME_VUOTO);
+//                }
+                    for (List<String> diagnosiDiUnoStatoDFA : diagnosiDaInserire) {
+                        if (!daRitornare.contains(diagnosiDiUnoStatoDFA)) {
+                            daRitornare.add(diagnosiDiUnoStatoDFA);
+                        }
+                    }
+//            }
+                }
+            }
         }
         return daRitornare;
     }
@@ -147,16 +208,15 @@ public class StatoDFA implements StatoInterface, Serializable {
     public List<List<String>> getDiagnosi() {
         return diagnosi;
     }
-    
-    public void setIsFinale(boolean valore){
+
+    public void setIsFinale(boolean valore) {
         isFinale = valore;
     }
-    
-    public void setNome(String nuovoNome){
+
+    public void setNome(String nuovoNome) {
         this.nome = nuovoNome;
     }
 
-    
     public String getStatoRiconoscitoreEspressione() {
         return statoRiconoscitoreEspressione;
     }
