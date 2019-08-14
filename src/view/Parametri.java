@@ -27,6 +27,8 @@ public class Parametri {
     public final static String SPAZIO_COMPORTAMENTALE_PARZIALE = "********* SPAZIO COMPORTAMENTALE PARZIALE *********";
     public final static String TRAIETTORIE_ETICHETTA = "********* TRAIETTORIE *********";
     public final static String CAMMINI_ETICHETTA = "********* CAMMINI *********";
+    public final static String DETERMINIZZAZIONE_ETICHETTA = "********* DETERMINIZZAZIONE *********";
+    public final static String DETERMINIZZAZIONE_DIZIONARI = "********* DETERMINIZZAZIONE (FUSIONE DI DUE DIZIONARI) *********";
     public final static String CAMMINI_NUMERO_ETICHETTA = "numero cammino: ";
     public final static String TRAIETTORIA_NUMERO_ETICHETTA = "numero traiettoria: " ;
     public final static String TAB = "\t";
@@ -71,8 +73,9 @@ public class Parametri {
     public final static String VOCI_MENU_COMPITI[] = {"Crea spazio comportamentale",
                                                         "Crea spazio comportamentale decorato",
                                                         "Distilla diagnosi",
-                                                        "Distilla diagnosi da dizionario parziale",
-                                                        "Crea dizionario incrementale"};
+                                                        "Distillazione delle diagnosi da dizionario parziale",
+                                                        "Creazione incrementale del dizionario",
+                                                        "Costruzione di spazi vincolati"};
     public final static String MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Inserisci una stringa come nell'esempio sottostante per effetturare una ricerca nel dizionario:";
     public final static String ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Esempio di ingresso: <o3,o2,o3,o2>";
     public final static String MESSAGGIO_INSERISCI = "Inserisci la stringa desiderata: ";

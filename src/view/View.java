@@ -154,4 +154,98 @@ public class View {
     public static void stampaDiagnosi(String diagnosi) {
         System.out.println(diagnosi);
     }
+    
+    public static void stampaDeterminizzazione(List<StatoDFA> vertici){
+        System.out.println(Parametri.DETERMINIZZAZIONE_ETICHETTA);
+        // modifico il nome del vertice lasciando soltanto il numero e togliendo la "a" e aggiungendo una unità al nome
+        List<String> daStampare = new ArrayList<>();
+        for (StatoDFA s : vertici) {
+            String nomeStato = s.getNome();
+            String[] listaNomi = nomeStato.split(" ");
+            if(listaNomi.length==1){
+                String nomeDaStampare = listaNomi[0];
+                nomeDaStampare = nomeDaStampare.replace("a", "");
+                nomeDaStampare = nomeDaStampare.replace("b", "");
+                int num = Integer.parseInt(nomeDaStampare);
+                num++;
+                nomeDaStampare = String.valueOf(num);
+                daStampare.add(nomeDaStampare);
+            } else {
+                String totale = "";
+                for (int i = 0; i < listaNomi.length; i++) {
+                    String nomeSingolo = listaNomi[i];
+                    nomeSingolo = nomeSingolo.replace("a", "");
+                    nomeSingolo = nomeSingolo.replace("b", "");
+                    nomeSingolo = nomeSingolo.replace(Parametri.TAB, "");
+                    int num = Integer.parseInt(nomeSingolo);
+                    num++;
+                    nomeSingolo = String.valueOf(num);
+                    totale = totale.concat(nomeSingolo + " ");
+                }
+                daStampare.add(totale);
+            }
+        }
+        
+        // stampa
+        int count = 0;
+        String stampa = "";
+        String ultimoStato = "";
+        for(String s : daStampare){
+            if(count == 0){
+                ultimoStato = s;
+                count++;
+            } else {
+                stampa = stampa.concat(ultimoStato);
+                stampa = stampa.concat(Parametri.TAB);
+                if(ultimoStato.length()<10){
+                    stampa = stampa.concat(Parametri.TAB);
+                }
+                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.FRECCIA);
+                stampa = stampa.concat(" " + vertici.get(count).getOsservabilita() + " ");
+                stampa = stampa.concat(Parametri.FRECCIA);
+                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.TAB);
+//                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(s);
+                stampa = stampa.concat(Parametri.A_CAPO);
+                count++;
+                ultimoStato = s;
+            }
+        }
+        System.out.println(stampa);
+    }
+    
+    public static void stampaDeterminizzazioneFusioneDizionari(List<StatoDFA> vertici){
+        System.out.println(Parametri.DETERMINIZZAZIONE_DIZIONARI);
+        List<String> daStampare = new ArrayList<>();
+        int count = 0;
+        String stampa = "";
+        String ultimoStato = "";
+        for (StatoDFA s : vertici) {
+            String nomeStato = s.getNome();
+            if(count==0){
+                ultimoStato = nomeStato;
+                count++;
+            } else {
+                stampa = stampa.concat(ultimoStato);
+                stampa = stampa.concat(Parametri.TAB);
+                if(ultimoStato.length()<10){
+                    stampa = stampa.concat(Parametri.TAB);
+                }
+                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.FRECCIA);
+                stampa = stampa.concat(" " + vertici.get(count).getOsservabilita() + " ");
+                stampa = stampa.concat(Parametri.FRECCIA);
+                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.TAB);
+//                stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(s.getNome());
+                stampa = stampa.concat(Parametri.A_CAPO);
+                count++;
+                ultimoStato = nomeStato;
+            }
+        }
+        System.out.println(stampa);
+    }
 }

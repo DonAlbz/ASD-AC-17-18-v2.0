@@ -630,9 +630,15 @@ public class Controller {
 //        }
 
 //          STAMPA DEL DIZIONARIO
-        for (StatoDFA s : verticiSpazio) {
-            System.out.println(s.getNome());
-        }
+//        for (StatoDFA s : verticiSpazio) {
+//            System.out.println(s.getNome());
+//            
+//        }
+        
+        // NUOVO METODO STAMPA 
+        View.stampaDeterminizzazione(verticiSpazio);
+        
+        
 //        StatoInterface statoProva = new StatoDFA("a2", "o2");
 //        List<StatoInterface> prova = spazioDFA.getVerticiAdiacenti(statoProva);
 //        System.out.println(statoProva.getNome() + "\t" + statoProva.hashCode());
@@ -1672,6 +1678,7 @@ public class Controller {
         spazioComportamentaleDecorato = inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
         spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
 //        System.out.println(spazioComportamentaleDecorato.toString());
+        
         return spazioComportamentaleDecorato;
     }
 
@@ -1793,10 +1800,14 @@ public class Controller {
 //            v.setNome(Parametri.STATO_DECORATO_PREFISSO + Integer.toString(numero));
 //        }
 
-//          STAMPA DEL DIZIONARIO
-        for (StatoDFA s : verticiSpazio) {
-            System.out.println(s.getNome());
-        }
+//          STAMPA (VECCHIA) DEL DIZIONARIO
+//        for (StatoDFA s : verticiSpazio) {
+//            System.out.println(s.getNome());
+//        }
+        
+//      STAMPA DEL DIZIONARIO
+        View.stampaDeterminizzazioneFusioneDizionari(verticiSpazio);
+        
 //        StatoInterface statoProva = new StatoDFA("a2", "o2");
 //        List<StatoInterface> prova = spazioDFA.getVerticiAdiacenti(statoProva);
 //        System.out.println(statoProva.getNome() + "\t" + statoProva.hashCode());

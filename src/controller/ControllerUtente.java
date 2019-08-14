@@ -250,6 +250,10 @@ public class ControllerUtente {
                     distillaDiagnosiDaDizionarioParzialeIncrementale(rete);
                     break;
                     
+                case 6:
+                    costruzioneDiSpaziVincolati(rete);
+                    break;
+                    
                 case 0:
                     fineMenu = true;
             }
@@ -338,7 +342,7 @@ public class ControllerUtente {
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
-        View.stampaLegendaEspressioneRegolare(rete);
+        
         
         ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
         boolean condizioneDiFineInserimentoDizionariParziali=true;
@@ -346,6 +350,7 @@ public class ControllerUtente {
         
         
         while (condizioneDiFineInserimentoDizionariParziali) {
+            View.stampaLegendaEspressioneRegolare(rete);
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
             SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
             rete.addDizionarioParziale(dizionarioParziale);
@@ -361,7 +366,7 @@ public class ControllerUtente {
             }
             
             
-        }        
+        }
         SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
@@ -370,6 +375,10 @@ public class ControllerUtente {
         } else {
             //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
         }
+    }
+    
+    private static void costruzioneDiSpaziVincolati(Rete rete){
+        System.out.println("ANCORA DA FARE");
     }
 
 }
