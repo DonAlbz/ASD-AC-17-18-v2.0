@@ -1046,170 +1046,6 @@ public class Controller {
         return spazioComportamentaleParzialeDecorato;
     }
 
-    /*private static SpazioComportamentale creaSpazioComportamentaleParziale(Rete rete, SpazioComportamentale automaRiconoscitore) {
-        //TO-DO: CAMO
-        SpazioComportamentale spazioComportamentaleParzialeDecorato = new SpazioComportamentale(); //da formare
-        SpazioComportamentale spazioComportamentaleIntero = rete.getSpazioComportamentaleDecorato(); // in sola lettura
-        
-        // SCP = Spazio Comportamentale Parziale
-        // SCI = Spazio Comportamentale Intero
-        // AR = Automa Riconoscitore
-        
-        StatoInterface rootSCI = spazioComportamentaleIntero.getRoot();
-        StatoInterface rootAR = automaRiconoscitore.getRoot();
-        
-        //INIZIO ALGORITMO
-        
-        // variabile che identifica se c'è stato almeno un inserimento nell'algoritmo. Se rimane falsa
-        // significa che non ho avuto inserimenti nel SCP e quindi l'automa riconoscitore non identifica correttmente uno
-        // spazio comportamentale parziale.
-        boolean presenzaModifica = false;
-        int indiceStato = 0;
-        spazioComportamentaleParzialeDecorato.aggiungiVertice(rootAR);
-        spazioComportamentaleParzialeDecorato.setRoot(rootAR);;
-        
-        Stack<StatoInterface> pilaAR = new Stack<>(); // pila che contiene i vertici dell'automa riconoscitore
-        Stack<StatoInterface> pilaSCI = new Stack<>(); // pila che contiene i vertici del SCI
-        Stack<StatoInterface> pilaSCP = new Stack<>(); // pila che contiene i vertici da analizzare
-        ArrayList<StatoInterface> statiInseritiSCP = new ArrayList<>(); // array che man mano va a contenere tutti gli stati inseriti nel SCP
-        StatoInterface primoStatoNellaPilaAR = (StatoInterface) automaRiconoscitore.getRoot();
-        StatoInterface primoStatoNellaPilaSCI = (StatoInterface) spazioComportamentaleIntero.getRoot();
-
-        pilaAR.push(primoStatoNellaPilaAR);
-        pilaSCI.push(primoStatoNellaPilaSCI);
-        pilaSCP.push(spazioComportamentaleParzialeDecorato.getRoot());
-//        statiInseritiSCP.add(spazioComportamentaleParzialeDecorato.getRoot());
-
-        StatoInterface statoPrecedenteAR = rootAR;
-        StatoInterface statoPrecedenteSCI = rootSCI;
-        StatoInterface statoPrecedenteSCP = spazioComportamentaleParzialeDecorato.getRoot();
-
-        while (!pilaAR.empty()) {
-
-            statoPrecedenteSCP = pilaSCP.pop();
-            statoPrecedenteAR = pilaAR.pop();
-            statoPrecedenteSCI = pilaSCI.pop();
-
-            // controllo se statoFinaleAR è l'ultimo stato
-            StatoDFA statoFinaleAR = (StatoDFA) statoPrecedenteAR;
-            if (statoFinaleAR.isFinale()) {
-                // interrompo il while ed esco
-                break;
-            }
-
-            spazioComportamentaleParzialeDecorato = epsilon_CLOSURE_SCP(spazioComportamentaleParzialeDecorato, spazioComportamentaleIntero, statoPrecedenteSCI, statoPrecedenteSCP, statoPrecedenteAR.getNome());
-
-            if (controlloPresenzaNuoviStati(statiInseritiSCP, spazioComportamentaleParzialeDecorato)) {
-
-                ArrayList<StatoInterface> statiEpsilon = getStatiDaArchiEpsilon(spazioComportamentaleParzialeDecorato, statoPrecedenteSCP);
-                pilaSCP = inserisciTerminazioni(statiEpsilon, pilaSCP);
-
-                List<StatoInterface> verticiAdiacentiAR = automaRiconoscitore.getVerticiAdiacenti(statoPrecedenteAR);
-                ArrayList<StatoInterface> nuoviStatiSCP = new ArrayList<>();
-                for (StatoInterface verticeAR : verticiAdiacentiAR) {
-                    StatoDFA verticeDFA = (StatoDFA) verticeAR;
-                    String etichettaDFA = verticeDFA.getOsservabilita();
-
-                    while (!pilaSCP.empty()) {
-                        
-                        StatoInterface statoDaPilaSCP = pilaSCP.pop();
-                        StatoDFA statoDaPilaSCP_DFA = (StatoDFA) statoDaPilaSCP;
-                        StatoInterface statoCercato = cercaInSpazioComportamentaleIntero(statoDaPilaSCP_DFA.getNome(), spazioComportamentaleIntero);
-                        List<StatoInterface> verticiAdiacentiSCI = spazioComportamentaleIntero.getVerticiAdiacenti(statoCercato);
-                        
-                        for (StatoInterface verticeSCI : verticiAdiacentiSCI) {
-                            StatoReteAbstract verticeABS = (StatoReteAbstract) verticeSCI;
-                            if (verticeABS.getOsservabilita() == null) {
-                                // niente
-                            } else {
-                                if (verticeABS.getOsservabilita().equalsIgnoreCase(etichettaDFA)) {
-                                    StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), verticeDFA.getOsservabilita());
-                                    int temp = Integer.parseInt(verticeDFA.getNome());
-                                    if (temp >= indiceStato) {
-                                        indiceStato = temp;
-                                    }
-                                    spazioComportamentaleParzialeDecorato.aggiungiVertice(statoDaAggiungere);
-                                    spazioComportamentaleParzialeDecorato.aggiungiLato(statoDaPilaSCP, statoDaAggiungere);
-                                    if (verticeABS.isFinale()) {
-                                        statoDaAggiungere.setIsFinale(true);
-                                    }
-                                    statoDaAggiungere.setStatoRiconoscitoreEspressione(statoPrecedenteAR.getNome());
-                                    //aggiorno le pile
-                                    pilaAR.push(verticeAR); // aggiungo il vertice che segue il percorso di AR
-                                    pilaSCI.push(verticeSCI);
-                                    nuoviStatiSCP.add(statoDaAggiungere); // aggiorno la lista degli stati inseriti nel SCP
-                                    presenzaModifica = true; // c'è stato un inserimento
-                                }
-                            }
-                        }
-                    }
-
-                }
-
-                pilaSCP = inserisciTerminazioni(nuoviStatiSCP, pilaSCP);
-
-            } else {
-
-                List<StatoInterface> verticiAdiacentiAR = automaRiconoscitore.getVerticiAdiacenti(statoPrecedenteAR);
-                // qui mettere il controllo se lo stato considerato non sia già contenuto nello spazio comportamentale parziale 
-
-                List<StatoInterface> verticiAdiacentiSCI = spazioComportamentaleIntero.getVerticiAdiacenti(statoPrecedenteSCI);
-
-                for (StatoInterface verticeAR : verticiAdiacentiAR) {
-                    StatoDFA verticeDFA = (StatoDFA) verticeAR;
-                    String etichettaDFA = verticeDFA.getOsservabilita();
-                    // confronto su spazio intero
-                    for (StatoInterface verticeSCI : verticiAdiacentiSCI) {
-                        StatoReteAbstract verticeABS = (StatoReteAbstract) verticeSCI;
-                        if (verticeABS.getOsservabilita() == null) {
-                            // niente
-                        } else {
-                            if (verticeABS.getOsservabilita().equalsIgnoreCase(etichettaDFA)) {
-                                StatoDFA statoDaAggiungere = new StatoDFA(verticeABS.getNome(), verticeDFA.getOsservabilita());
-                                int temp = Integer.parseInt(verticeDFA.getNome());
-                                if (temp >= indiceStato) {
-                                    indiceStato = temp;
-                                }
-                                spazioComportamentaleParzialeDecorato.aggiungiVertice(statoDaAggiungere);
-                                spazioComportamentaleParzialeDecorato.aggiungiLato(statoPrecedenteSCP, statoDaAggiungere);
-                                if (verticeABS.isFinale()) {
-                                    statoDaAggiungere.setIsFinale(true);
-                                }
-                                statoDaAggiungere.setStatoRiconoscitoreEspressione(statoPrecedenteAR.getNome());
-                                //aggiorno le pile
-                                pilaAR.push(verticeAR); // aggiungo il vertice che segue il percorso di AR
-                                pilaSCI.push(verticeSCI);
-                                pilaSCP.push(statoDaAggiungere); // aggiungo lo stato appena creato e aggiunto a SCP
-                                statiInseritiSCP.add(statoDaAggiungere); // aggiorno la lista degli stati inseriti nel SCP
-                                presenzaModifica = true; // c'è stato un inserimento
-                            }
-                        }
-                    }
-                }
-
-            }
-     
-            if (presenzaModifica) {
-                presenzaModifica = false;
-            } else {
-                spazioComportamentaleParzialeDecorato = null;
-                System.out.println(Parametri.MESSAGGIO_SCP_NULLO);
-                return spazioComportamentaleParzialeDecorato;
-            }
-
-        }
-
-        System.out.println(spazioComportamentaleParzialeDecorato.toStringSpazioComportamentaleParziale());
-        System.out.println("ULTIMO GIRO");
-        ArrayList<StatoInterface> terminazioni = getTerminazioni(spazioComportamentaleParzialeDecorato);
-        for (StatoInterface terminazioneSCP : terminazioni) {
-            StatoInterface terminazioneSCI = cercaInSpazioComportamentaleIntero(terminazioneSCP.getNome(), spazioComportamentaleIntero);
-            spazioComportamentaleParzialeDecorato = epsilon_CLOSURE_SCP(spazioComportamentaleParzialeDecorato, spazioComportamentaleIntero, terminazioneSCI, terminazioneSCP, statoPrecedenteAR.getNome());
-        }
-        System.out.println(spazioComportamentaleParzialeDecorato.toStringSpazioComportamentaleParziale());
-        return spazioComportamentaleParzialeDecorato;
-    }
-     */
     private static ArrayList<StatoInterface> getTerminazioni(SpazioComportamentale spazioComportamentaleParziale) {
         ArrayList<StatoInterface> terminazioni = new ArrayList<>();
         StatoInterface root = spazioComportamentaleParziale.getRoot();
@@ -1816,6 +1652,251 @@ public class Controller {
         rete.setDizionarioParziale(spazioDFA);
 
         return spazioDFA;
+    }
+    
+    public static SpazioComportamentale creaSpaziVincolati(Rete rete, String osservazione) {
+        SpazioComportamentale automaRiconoscitore = new SpazioComportamentale();
+        int nomeStatoDFA = 0;
+        StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita
+        automaRiconoscitore.setRoot(root);
+        automaRiconoscitore.aggiungiVertice(root);
+
+        Stack<StatoDFA> pilaDFA = new Stack<StatoDFA>(); // usata in caso di loop
+        pilaDFA.push(root);
+//        String[] listaOsservazioni = osservazione.split(Parametri.SPAZIO);
+        String[] listaOsservazioni = osservazione.split(Parametri.SPAZIO);
+
+        // INIZIO ALGORITMO CREAZIONE AUTOMA RICONOSCITORE DELL'ESPRESSIONE
+        if (osservazione.contains(Parametri.APICE)) {
+            if (osservazione.contains(Parametri.PARENTESI_TONDA_A)) {
+                // ALGORITMO NON LINEARE CON OPZIONALITÀ/MULTIPLICITÀ
+                StatoDFA statoPrecedente = root;
+                StatoDFA primoStatoNellaParentesi = null;
+                StatoDFA ultimoStatoFuoriParentesi = root;
+                int controlloUltimaOsservazioneLoop = 0;
+                boolean internoParentesi = false;
+                for (int i = 0; i < listaOsservazioni.length; i++) {
+                    if (listaOsservazioni[i].contains(Parametri.PARENTESI_TONDA_A)) {
+                        internoParentesi = true;
+                        String singolaOsservazione = listaOsservazioni[i];
+                        singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
+                        nomeStatoDFA++;
+                        StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                        statoPrecedente = statoDaAggiungere;
+                        primoStatoNellaParentesi = statoDaAggiungere;
+                    } else if (internoParentesi) {
+                        if (listaOsservazioni[i].contains(Parametri.PARENTESI_TONDA_C)) {
+                            internoParentesi = false;
+                            if (listaOsservazioni[i].contains(Parametri.ASTERISCO)) {
+                                // parte opzionale
+                                String singolaOsservazione = listaOsservazioni[i];
+                                singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
+//                                    nomeStatoDFA++;
+
+                                StatoDFA statoDaAggiungere = new StatoDFA(ultimoStatoFuoriParentesi.getNome(), singolaOsservazione);
+                                automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                                automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                                //collego all'ultimo stato fuori parentesi
+//                                    automaRiconoscitore.aggiungiLato(statoDaAggiungere, ultimoStatoFuoriParentesi);
+
+                                // collego allo stato precedente per loop
+//                                    automaRiconoscitore.aggiungiLato(statoDaAggiungere, statoPrecedente);
+                                statoPrecedente = statoDaAggiungere;
+//                                    statoPrecedente = ultimoStatoFuoriParentesi;
+                                int controlloUltimaOsservazione = i + 1;
+                                if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                                    // lo stato finale è l'ultimo stato valido fuori dalla parentesi
+                                    ultimoStatoFuoriParentesi.setIsFinale(true);
+                                }
+
+                            } else if (listaOsservazioni[i].contains(Parametri.PIU)) {
+                                // parte multipla
+                                String singolaOsservazione = listaOsservazioni[i];
+                                singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
+                                nomeStatoDFA++;
+
+                                StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                                automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                                automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                                controlloUltimaOsservazioneLoop = i + 1;
+                                if (controlloUltimaOsservazioneLoop == listaOsservazioni.length) {
+                                    // se è l'ultimo della lista deve essere finale
+                                    statoDaAggiungere.setIsFinale(true);
+                                }
+                                automaRiconoscitore.aggiungiLato(statoDaAggiungere, primoStatoNellaParentesi);
+                                statoPrecedente = statoDaAggiungere;
+                            }
+                        } else {
+                            String singolaOsservazione = listaOsservazioni[i];
+                            singolaOsservazione = InputDati.pulisciOsservazione(singolaOsservazione);
+                            nomeStatoDFA++;
+                            StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                            automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                            automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                            statoPrecedente = statoDaAggiungere;
+                        }
+                    } else {
+                        // inserimento normale
+                        String osservazionePulita = null;
+                        String singolaOsservazione = listaOsservazioni[i];
+                        osservazionePulita = InputDati.pulisciOsservazione(singolaOsservazione);
+                        if (singolaOsservazione.contains(Parametri.ASTERISCO)) {
+                            automaRiconoscitore.aggiungiLato(statoPrecedente, statoPrecedente);
+                            int controllaNumeroOsservazioni = i + 1;
+                            if (controllaNumeroOsservazioni == listaOsservazioni.length) {
+                                statoPrecedente.setIsFinale(true);
+                            }
+                        }
+                        if (singolaOsservazione.contains(Parametri.PIU)) {
+                            nomeStatoDFA++;
+                            osservazionePulita = InputDati.pulisciOsservazione(singolaOsservazione);
+                            StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), osservazionePulita);
+                            automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                            automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                            int controlloUltimaOsservazione = i + 1;
+                            if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                                // se è l'ultimo della lista deve essere finale
+                                statoDaAggiungere.setIsFinale(true);
+                            }
+                            // loop
+                            automaRiconoscitore.aggiungiLato(statoDaAggiungere, statoDaAggiungere);
+                            statoPrecedente = statoDaAggiungere;
+                            ultimoStatoFuoriParentesi = statoDaAggiungere;
+                        }
+                        if (!singolaOsservazione.contains(Parametri.ASTERISCO) && !singolaOsservazione.contains(Parametri.PIU)) {
+                            nomeStatoDFA++;
+                            StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                            automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                            // controllo che lo stato precedente non sia uno stato loop opzionale
+                            if (i > 0) {
+                                // se si collego l'ultimo stato fuori parentesi
+                                int temp = i - 1;
+                                if (listaOsservazioni[temp].contains(Parametri.PARENTESI_TONDA_C) && listaOsservazioni[temp].contains(Parametri.ASTERISCO)) {
+                                    automaRiconoscitore.aggiungiLato(ultimoStatoFuoriParentesi, statoDaAggiungere);
+                                }
+                            }
+                            automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                            int controlloUltimaOsservazione = i + 1;
+                            if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                                // se è l'ultimo della lista deve essere finale
+                                statoDaAggiungere.setIsFinale(true);
+                            }
+                            statoPrecedente = statoDaAggiungere;
+                            ultimoStatoFuoriParentesi = statoDaAggiungere;
+                        }
+                    }
+                }
+
+            } else {
+                // ALGORITMO LINEARE CON OPZIONALITÀ/MULTIPLICITÀ
+                StatoDFA statoPrecedente = root;
+                StatoDFA statoDaAggiungere = null;
+                StatoDFA penultimoStatoOpzionale = null;
+                StatoDFA ultimoStatoValido = root; // è l'ultimo stato non opzionale
+                StatoDFA statoPrecedenteOpzionale = null;
+                int indicePrecedenteOpzionale = -1; // diverso da null se il precedente è opzionale
+                int controlloUltimaOsservazione = 0;
+                for (int i = 0; i < listaOsservazioni.length; i++) {
+                    String singolaOsservazione = listaOsservazioni[i];
+                    if (singolaOsservazione.contains(Parametri.ASTERISCO)) {
+                        // loop sullo stato precedente
+                        statoDaAggiungere = new StatoDFA(statoPrecedente.getNome(), InputDati.pulisciOsservazione(singolaOsservazione));
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedente, statoPrecedente);
+                        //controllo se il precedente è opzionale
+                        if (i > 0) {
+                            if (indicePrecedenteOpzionale == (i - 1)) {
+                                String etichettaPrecedente = listaOsservazioni[i - 1];
+                                etichettaPrecedente = InputDati.pulisciOsservazione(etichettaPrecedente);
+                                nomeStatoDFA++;
+                                statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), etichettaPrecedente);
+                                automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                                automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                                // loop
+                                automaRiconoscitore.aggiungiLato(statoDaAggiungere, statoDaAggiungere);
+                                controlloUltimaOsservazione = i + 1;
+                                if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                                    // se è l'ultimo della lista deve essere finale
+                                    statoDaAggiungere.setIsFinale(true);
+                                }
+                                // collegamento con l'ultimo stato valido
+                                automaRiconoscitore.aggiungiLato(ultimoStatoValido, statoDaAggiungere);
+                                statoPrecedenteOpzionale = statoDaAggiungere;
+                            }
+                            controlloUltimaOsservazione = i + 1;
+                            if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                                // se è l'ultimo della lista deve essere finale
+                                statoPrecedente.setIsFinale(true);
+                            }
+                            indicePrecedenteOpzionale = i;
+                        }
+                    }
+                    if (singolaOsservazione.contains(Parametri.PIU)) {
+                        //aggiunta dello stato
+                        nomeStatoDFA++;
+                        statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), InputDati.pulisciOsservazione(singolaOsservazione));
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                        controlloUltimaOsservazione = i + 1;
+                        if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                            // se è l'ultimo della lista deve essere finale
+                            statoDaAggiungere.setIsFinale(true);
+                        }
+                        statoPrecedente = statoDaAggiungere;
+                        ultimoStatoValido = statoDaAggiungere;
+                        //lopp sullo stato creato
+                        statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), InputDati.pulisciOsservazione(singolaOsservazione));
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                    }
+                    if (!singolaOsservazione.contains(Parametri.ASTERISCO) && !singolaOsservazione.contains(Parametri.PIU)) {
+                        nomeStatoDFA++;
+                        statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                        automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                        automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                        controlloUltimaOsservazione = i + 1;
+                        if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                            // se è l'ultimo della lista deve essere finale
+                            statoDaAggiungere.setIsFinale(true);
+                        }
+                        statoPrecedente = statoDaAggiungere;
+                        if (i != 0) {
+                            ultimoStatoValido = statoDaAggiungere;
+                        }
+                        //controllo se prima ho più di uno stato opzionale indietro in modo da collegare tutti gli stati passati con quello nuovo
+                        if (penultimoStatoOpzionale != null) {
+                            automaRiconoscitore.aggiungiLato(penultimoStatoOpzionale, statoDaAggiungere);
+                        }
+                        // nel caso di due opzionalità collego l'ultima opzionalità
+                        if (statoPrecedenteOpzionale != null) {
+                            automaRiconoscitore.aggiungiLato(statoPrecedenteOpzionale, statoDaAggiungere);
+                            statoPrecedenteOpzionale = null;
+                        }
+                    }
+                }
+            }
+        } else {
+            // ALGORITMO LINEARE DELLE TRANSIZIONI
+            StatoDFA statoPrecedente = root;
+            for (int i = 0; i < listaOsservazioni.length; i++) {
+                String singolaOsservazione = listaOsservazioni[i];
+                nomeStatoDFA++;
+                StatoDFA statoDaAggiungere = new StatoDFA(String.valueOf(nomeStatoDFA), singolaOsservazione);
+                automaRiconoscitore.aggiungiVertice(statoDaAggiungere);
+                automaRiconoscitore.aggiungiLato(statoPrecedente, statoDaAggiungere);
+                int controlloUltimaOsservazione = i + 1;
+                if (controlloUltimaOsservazione == listaOsservazioni.length) {
+                    // se è l'ultimo della lista deve essere finale
+                    statoDaAggiungere.setIsFinale(true);
+                }
+                statoPrecedente = statoDaAggiungere;
+            }
+        }
+
+        System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
+        return automaRiconoscitore;
     }
 
 }

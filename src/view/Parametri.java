@@ -79,12 +79,14 @@ public class Parametri {
     public final static String MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Inserisci una stringa come nell'esempio sottostante per effetturare una ricerca nel dizionario:";
     public final static String ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Esempio di ingresso: <o3,o2,o3,o2>";
     public final static String MESSAGGIO_INSERISCI = "Inserisci la stringa desiderata: ";
-    public final static String LEGENDA_ESPRESSIONE_REGOLARE = "LEGENDA ESPRESSIONE REGOLARE";
+    public final static String LEGENDA_ESPRESSIONE_REGOLARE_OSSERVAZIONI = "LEGENDA INSERIMENTO ESPRESSIONE REGOLARE (OSSERVAZIONI)";
+    public final static String LEGENDA_ESPRESSIONE_REGOLARE_TRANSIZIONI = "LEGENDA INSERIMENTO ESPRESSIONE REGOLARE (TRANSIZIONI)";
     public final static String VOCI_LEGENDA_ESPRESSIONE_REGOLARE[] = {"^ = apice per l'elevamento a potenza",
                                                                         "* = da mettere in seguito a ^ per definire opzionalità multipla",
                                                                         "+ = da mettere in seguito a ^ per definire multiplicità",
                                                                         "( ) = sono da considerarsi solo le parentesi tonde per definire l'espressione"};
-    public final static String ESPRESSIONE_REGOLARE_ESEMPIO = "Esempio di espressione regolare: (o2 o3)^+ o3";
+    public final static String ESPRESSIONE_REGOLARE_ESEMPIO_OSSERVAZIONI = "Esempio di espressione regolare: (o2 o3)^+ o3";
+    public final static String ESPRESSIONE_REGOLARE_ESEMPIO_TRANSIZIONI = "Esempio di espressione regolare: (t2a t2b)^+ t3a";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
     public final static String MESSAGGIO_SCP_NULLO = "Non e' stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";

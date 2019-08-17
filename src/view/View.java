@@ -128,10 +128,10 @@ public class View {
         System.out.println(Parametri.ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
     }
 
-    public static void stampaLegendaEspressioneRegolare(Rete rete) {
+    public static void stampaLegendaEspressioneRegolareOsservazioni(Rete rete) {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.SEPARATORE);
-        System.out.println(Parametri.LEGENDA_ESPRESSIONE_REGOLARE);
+        System.out.println(Parametri.LEGENDA_ESPRESSIONE_REGOLARE_OSSERVAZIONI);
         System.out.print(Parametri.A_CAPO);
         System.out.print("L'alfabeto è composto da queste etichette: [ ");
         String[] etichetteOsservabilita = rete.getEtichettaOsservabilita();
@@ -142,7 +142,7 @@ public class View {
         for (String legenda : Parametri.VOCI_LEGENDA_ESPRESSIONE_REGOLARE) {
             System.out.println(legenda);
         }
-        System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO);
+        System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO_OSSERVAZIONI);
         System.out.println(Parametri.SEPARATORE);
         System.out.print(Parametri.A_CAPO);
     }
@@ -166,9 +166,9 @@ public class View {
                 String nomeDaStampare = listaNomi[0];
                 nomeDaStampare = nomeDaStampare.replace("a", "");
                 nomeDaStampare = nomeDaStampare.replace("b", "");
-                int num = Integer.parseInt(nomeDaStampare);
-                num++;
-                nomeDaStampare = String.valueOf(num);
+//                int num = Integer.parseInt(nomeDaStampare);
+//                num++;
+//                nomeDaStampare = String.valueOf(num);
                 daStampare.add(nomeDaStampare);
             } else {
                 String totale = "";
@@ -177,9 +177,9 @@ public class View {
                     nomeSingolo = nomeSingolo.replace("a", "");
                     nomeSingolo = nomeSingolo.replace("b", "");
                     nomeSingolo = nomeSingolo.replace(Parametri.TAB, "");
-                    int num = Integer.parseInt(nomeSingolo);
-                    num++;
-                    nomeSingolo = String.valueOf(num);
+//                    int num = Integer.parseInt(nomeSingolo);
+//                    num++;
+//                    nomeSingolo = String.valueOf(num);
                     totale = totale.concat(nomeSingolo + " ");
                 }
                 daStampare.add(totale);
@@ -247,5 +247,30 @@ public class View {
             }
         }
         System.out.println(stampa);
+    }
+    
+    public static void stampaLegendaEspressioneRegolareTransizioni(Rete rete) {
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.SEPARATORE);
+        System.out.println(Parametri.LEGENDA_ESPRESSIONE_REGOLARE_TRANSIZIONI);
+        System.out.print(Parametri.A_CAPO);
+        System.out.print("L'alfabeto è composto da queste transizioni: [ ");
+        List<Automa> automi = rete.getAutomi();
+        for(Automa automa : automi){
+            List<Stato> stati = automa.getStati();
+            for(Stato stato : stati){
+                List<Transizione> transizioni = stato.getTransizioni();
+                for(Transizione transizione : transizioni){
+                    System.out.print(transizione.getDescrizione() + " ");
+                }
+            }
+        }
+        System.out.print("]" + Parametri.A_CAPO);
+        for (String legenda : Parametri.VOCI_LEGENDA_ESPRESSIONE_REGOLARE) {
+            System.out.println(legenda);
+        }
+        System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO_TRANSIZIONI);
+        System.out.println(Parametri.SEPARATORE);
+        System.out.print(Parametri.A_CAPO);
     }
 }

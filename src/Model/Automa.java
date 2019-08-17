@@ -143,5 +143,8 @@ public class Automa implements Serializable{
         return cercato;
     }
     
+    public ArrayList<Transizione> getTransizioni(){
+        return transizioniAbilitate;
+    }
     
 }
