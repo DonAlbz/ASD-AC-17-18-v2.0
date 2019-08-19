@@ -33,6 +33,7 @@ public class Rete implements Serializable {
     private SpazioComportamentale spazioComportamentaleDecorato;
     private SpazioComportamentale dizionario;
     private SpazioComportamentale dizionarioParziale;
+    private SpazioComportamentale dizionarioParzialeVincolato;
     private List<SpazioComportamentale> dizionariParziali;
     private LinkedList<StatoReteAbstract> stati;
     private String[] etichettaOsservabilita;
@@ -660,6 +661,14 @@ public class Rete implements Serializable {
 
     public List<SpazioComportamentale> getDizionariParziali() {
         return dizionariParziali;
+    }
+
+    public SpazioComportamentale getDizionarioParzialeVincolato() {
+        return dizionarioParzialeVincolato;
+    }
+
+    public void setDizionarioParzialeVincolato(SpazioComportamentale dizionarioParzialeVincolato) {
+        this.dizionarioParzialeVincolato = dizionarioParzialeVincolato;
     }
 
     

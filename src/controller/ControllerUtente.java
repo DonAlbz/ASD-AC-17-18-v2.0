@@ -232,6 +232,7 @@ public class ControllerUtente {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_COMPITI, Parametri.VOCI_MENU_COMPITI);
         do {
             int selezione = menu.scegliMenuInterno();
+
             switch (selezione) {
                 case 1:
                     creaSpazioComportamentale(rete);
@@ -397,9 +398,17 @@ public class ControllerUtente {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
-        SpazioComportamentale spaziVincolati = Controller.creaSpaziVincolati(rete, osservazione);
-        
+        SpazioComportamentale automaRiconoscitoreScenario = Controller.creaAutomaRiconoscitoreScenario(rete, osservazione);       
         // MI SONO FERMATO QUA COME NEL COMPITO 4 - DA QUA FA IL MITICO ALBY
+         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
+        rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita);
+        if (diagnosi != null) {
+            View.stampaDiagnosi(diagnosi);
+        } else {
+            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+        }
     }
 
 }
