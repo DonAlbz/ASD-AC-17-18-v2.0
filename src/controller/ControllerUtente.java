@@ -13,6 +13,8 @@ import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -243,21 +245,17 @@ public class ControllerUtente {
                     distillaDiagnosi(rete);
                     break;
                 case 4:
-                    // PARTE DA CANCELLARE APPENA FINISCE IL COMPITO 4
-                    // HO FATTO COSì COSì NON RICHIAMO TUTTE LE VOLTE IL COMPITO 1 E POI IL 2
-                    //
-                    creaSpazioComportamentale(rete);
-                    creaSpazioComportamentaleDecorato(rete);
                     distillaDiagnosiDaDizionarioParziale(rete);
                     break;
 
                 case 5:
-                    //TO-DO: DA TOGLIERE APPENA VIENE FIXATO IL METODO creaRiconoscitoreEspressione;
-                    creaSpazioComportamentale(rete);
-                    creaSpazioComportamentaleDecorato(rete);
-
                     distillaDiagnosiDaDizionarioParzialeIncrementale(rete);
                     break;
+                    
+                case 6:
+                    costruzioneDiSpaziVincolati(rete);
+                    break;
+                    
                 case 0:
                     fineMenu = true;
             }
@@ -331,7 +329,7 @@ public class ControllerUtente {
     }
 
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
-        View.stampaLegendaEspressioneRegolare(rete);
+        View.stampaLegendaEspressioneRegolareOsservazioni(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
         SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
         rete.setDizionarioParziale(dizionarioParziale);
@@ -346,7 +344,7 @@ public class ControllerUtente {
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
-        View.stampaLegendaEspressioneRegolare(rete);
+        
         
         ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
         boolean condizioneDiFineInserimentoDizionariParziali=true;
@@ -354,6 +352,7 @@ public class ControllerUtente {
         
         
         while (condizioneDiFineInserimentoDizionariParziali) {
+            View.stampaLegendaEspressioneRegolareOsservazioni(rete);
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
             SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
             rete.addDizionarioParziale(dizionarioParziale);
@@ -369,7 +368,7 @@ public class ControllerUtente {
             }
             
             
-        }        
+        }
         SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
         String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
@@ -378,6 +377,29 @@ public class ControllerUtente {
         } else {
             //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
         }
+    }
+    
+    private static void costruzioneDiSpaziVincolati(Rete rete){
+        View.stampaLegendaEspressioneRegolareTransizioni(rete);
+        List<Transizione> transizioni = new ArrayList<Transizione>();
+        List<Automa> automi = rete.getAutomi();
+        for(Automa automa : automi){
+            List<Stato> stati = automa.getStati();
+            for(Stato stato : stati){
+                List<Transizione> transizioniParziali = stato.getTransizioni();
+                for(Transizione transizione : transizioniParziali){
+                    transizioni.add(transizione);
+                }
+            }
+        }
+        String[] nomiTransizioni = new String[transizioni.size()];
+        for(int i = 0; i<transizioni.size(); i++){
+            nomiTransizioni[i] = transizioni.get(i).getDescrizione();
+        }
+        String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
+        SpazioComportamentale spaziVincolati = Controller.creaSpaziVincolati(rete, osservazione);
+        
+        // MI SONO FERMATO QUA COME NEL COMPITO 4 - DA QUA FA IL MITICO ALBY
     }
 
 }
