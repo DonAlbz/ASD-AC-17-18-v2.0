@@ -46,7 +46,7 @@ public class Rete implements Serializable {
         eventi = _eventi;
         link = _link;
         cammini = new ArrayList<Cammino>();
-        spazioC = new SpazioComportamentale();
+//        spazioC = new SpazioComportamentale();
         spazioComportamentaleParaziale = new ArrayList<>();
     }
 
@@ -617,6 +617,9 @@ public class Rete implements Serializable {
     }
 
     public void setSpazioC(SpazioComportamentale spazioC) {
+        if(this.spazioC==null){
+            this.spazioC=new SpazioComportamentale();
+        }
         this.spazioC = spazioC;
     }
 

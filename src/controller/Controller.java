@@ -34,12 +34,20 @@ public class Controller {
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
         cammini = trovaCammini(rete, statiSpazioC);
 //        View.stampaCammini(cammini);
-        List<Cammino> traiettorie = potatura(cammini);
-        traiettorie = ridenominazione(traiettorie, statiSpazioC);
+//        List<Cammino> traiettorie = potatura(cammini);
+//        traiettorie = ridenominazione(traiettorie, statiSpazioC);
 //        View.stampaTraiettorie(traiettorie);
+//        SpazioComportamentale spazioC = new SpazioComportamentale();
+//        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, statiSpazioC);
+//        spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
         SpazioComportamentale spazioC = new SpazioComportamentale();
-        spazioC = inserisciVerticiSpazioComportamentale(spazioC, traiettorie, statiSpazioC);
-        spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
+        spazioC = creaSpazioDaCammini(spazioC, cammini, statiSpazioC);
+        spazioC = potatura3(spazioC, statiSpazioC);
+        if (!spazioC.isEmpty()) {
+            spazioC = numeraStati(spazioC, statiSpazioC);
+            spazioC = ridenominaStati(spazioC);
+        }
+
         rete.setSpazioC(spazioC);
 //        System.out.println(spazioC.toString());
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
@@ -50,11 +58,17 @@ public class Controller {
     public static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
         List<Cammino> camminiDecorati;
         LinkedList<StatoReteAbstract> statiDecoratiSpazioC = new LinkedList<>();
+        if(rete.getSpazioC()==null){
+            creaSpazioComportamentale(rete);
+        }
         camminiDecorati = trovaCamminiDecorati(rete.getSpazioC(), statiDecoratiSpazioC);
 //        View.stampaCammini(camminiDecorati);
         SpazioComportamentale spazioComportamentaleDecorato = new SpazioComportamentale();
         spazioComportamentaleDecorato = inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
         spazioComportamentaleDecorato = inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
+//        spazioComportamentaleDecorato = creaSpazioDaCammini(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
+//        spazioComportamentaleDecorato = potatura3(spazioComportamentaleDecorato, statiDecoratiSpazioC);
+//        
         spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
         rete.setSpazioComportamentaleDecorato(spazioComportamentaleDecorato);
         System.out.println(spazioComportamentaleDecorato.toString());
