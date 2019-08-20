@@ -768,7 +768,7 @@ public class Controller {
         return dizionarioParziale;
     }
     
-    private static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione) {
+    public static SpazioComportamentale creaRiconoscitoreEspressione(Rete rete, String osservazione) {
         SpazioComportamentale automaRiconoscitore = new SpazioComportamentale();
         int nomeStatoDFA = 0;
         StatoDFA root = new StatoDFA(String.valueOf(nomeStatoDFA), null);   // la root non ha etichette di osservabilita

@@ -397,7 +397,7 @@ public class ControllerUtente {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
-        SpazioComportamentale spaziVincolati = Controller.creaSpaziVincolati(rete, osservazione);
+        SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
         
         // MI SONO FERMATO QUA COME NEL COMPITO 4 - DA QUA FA IL MITICO ALBY
     }
