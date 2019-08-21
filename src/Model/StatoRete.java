@@ -80,6 +80,38 @@ public class StatoRete extends StatoReteAbstract implements Serializable {
         return false;
     }
 
+    
+    
+    public boolean isAbilitatoScenario(List<Automa> automi, List<StatoInterface> statiAutomaRiconoscitore) {
+        boolean abilitato = false;
+        List<List<Transizione>> transizioniAbilitate = new ArrayList<>();
+        for (int i = 0; i < automi.size(); i++) {
+            if (automi.get(i).isAbilitato(this.getLink())) {
+                abilitato = true;
+                transizioniAbilitate.add(automi.get(i).getTransizioneAbilitata());
+            }
+        }
+        //Controllo se le transizioni abilitate soddisfano l'automa riconoscitore dell'espressione
+        if(statiAutomaRiconoscitore.size()!=0){
+        for(int i=0; i< statiAutomaRiconoscitore.size() && abilitato; i++){
+            StatoDFA statoConsiderato = (StatoDFA) statiAutomaRiconoscitore.get(i);
+            for(int j = 0 ; j< transizioniAbilitate.size(); j++){
+                for ( int k = 0; k< transizioniAbilitate.get(j).size(); k++){
+                    String descrizioneTransizione = transizioniAbilitate.get(j).get(k).getDescrizione();
+                    if (descrizioneTransizione.equals(statoConsiderato.getOsservabilita()))
+                        return true;
+                }
+            }
+        }
+        }       
+        return false;
+    }
+    
+    
+    
+    
+    
+    
     /**
      * Override del metodo per poter implementare il metodo contains() in un
      * arrayList di cammini

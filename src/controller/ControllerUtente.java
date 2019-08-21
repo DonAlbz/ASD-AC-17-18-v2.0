@@ -29,7 +29,7 @@ public class ControllerUtente {
     public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
 
     public static Rete start() {
-        
+
         Rete rete = menuAvvio();
         if (rete != null) {
             menuRete(rete);
@@ -232,6 +232,7 @@ public class ControllerUtente {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_COMPITI, Parametri.VOCI_MENU_COMPITI);
         do {
             int selezione = menu.scegliMenuInterno();
+
             switch (selezione) {
                 case 1:
                     creaSpazioComportamentale(rete);
@@ -251,11 +252,11 @@ public class ControllerUtente {
                 case 5:
                     distillaDiagnosiDaDizionarioParzialeIncrementale(rete);
                     break;
-                    
+
                 case 6:
                     costruzioneDiSpaziVincolati(rete);
                     break;
-                    
+
                 case 0:
                     fineMenu = true;
             }
@@ -287,11 +288,8 @@ public class ControllerUtente {
      */
     private static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
         SpazioComportamentale spazioComportamentaleDecorato = null;
-        if (rete.getSpazioC() != null) {
-            spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete);
-        } else {
-            //TO-DO: messaggio di errore
-        }
+        spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete);
+
         return spazioComportamentaleDecorato;
     }
 
@@ -303,8 +301,7 @@ public class ControllerUtente {
 
     private static void distillaDiagnosi(Rete rete) {
         SpazioComportamentale dizionario;
-        if (rete.getDizionario() == null) {
-            creaSpazioComportamentale(rete);
+        if (rete.getDizionario() == null) {            
             SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
             dizionario = creaDizionario(rete, spazioComportamentaleDecorato);
         } else {
@@ -344,13 +341,11 @@ public class ControllerUtente {
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
-        
-        
+
         ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
-        boolean condizioneDiFineInserimentoDizionariParziali=true;
+        boolean condizioneDiFineInserimentoDizionariParziali = true;
         int contatore = 2;
-        
-        
+
         while (condizioneDiFineInserimentoDizionariParziali) {
             View.stampaLegendaEspressioneRegolareOsservazioni(rete);
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
@@ -358,16 +353,14 @@ public class ControllerUtente {
             rete.addDizionarioParziale(dizionarioParziale);
             //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
             Parametri.incrementaPrefissoStatoDecorato();
-            
-            
+
             //DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
             contatore--;
-            if(contatore == 0){                
-                condizioneDiFineInserimentoDizionariParziali=false;
+            if (contatore == 0) {
+                condizioneDiFineInserimentoDizionariParziali = false;
                 Parametri.resettaPrefissoStatoDecorato();
             }
-            
-            
+
         }
         SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
@@ -378,28 +371,37 @@ public class ControllerUtente {
             //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
         }
     }
-    
-    private static void costruzioneDiSpaziVincolati(Rete rete){
+
+    private static void costruzioneDiSpaziVincolati(Rete rete) {
         View.stampaLegendaEspressioneRegolareTransizioni(rete);
         List<Transizione> transizioni = new ArrayList<Transizione>();
         List<Automa> automi = rete.getAutomi();
-        for(Automa automa : automi){
+        for (Automa automa : automi) {
             List<Stato> stati = automa.getStati();
-            for(Stato stato : stati){
+            for (Stato stato : stati) {
                 List<Transizione> transizioniParziali = stato.getTransizioni();
-                for(Transizione transizione : transizioniParziali){
+                for (Transizione transizione : transizioniParziali) {
                     transizioni.add(transizione);
                 }
             }
         }
         String[] nomiTransizioni = new String[transizioni.size()];
-        for(int i = 0; i<transizioni.size(); i++){
+        for (int i = 0; i < transizioni.size(); i++) {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
         SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
-        
+
         // MI SONO FERMATO QUA COME NEL COMPITO 4 - DA QUA FA IL MITICO ALBY
+        SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
+        rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita);
+        if (diagnosi != null) {
+            View.stampaDiagnosi(diagnosi);
+        } else {
+            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+        }
     }
 
 }
