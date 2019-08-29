@@ -1018,7 +1018,7 @@ public class Controller {
                 statoPrecedente = statoDaAggiungere;
             }
         }
-
+        
         System.out.println(automaRiconoscitore.toStringAutomaRiconoscitore());
         return automaRiconoscitore;
     }
