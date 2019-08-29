@@ -57,7 +57,8 @@ public class ControllerUtente {
                 break;
 
             case 2:
-                rete = carica();
+//                rete = carica();
+                rete = caricaNuovo();
                 break;
 
         }
@@ -108,6 +109,54 @@ public class ControllerUtente {
         Rete rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
 
         View.messaggioImportCorretto(rete);
+        return rete;
+    }
+    
+    private static Rete caricaNuovo(){
+        Rete rete = null;
+        File cartella = new File(Parametri.PATH_FILE_INPUT);
+
+        // inizializzazione della classe che mi permette di filtrare i dat
+        FilenameFilter textFilter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(Parametri.FORMATO_DAT)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        File[] listaFile = cartella.listFiles(textFilter);
+        String[] nomiFile = new String[listaFile.length];
+        for (int i = 0; i < listaFile.length; i++) {
+            nomiFile[i] = listaFile[i].getName();
+        }
+        
+        MyMenu menuSelezione = new MyMenu(Parametri.CARICAMENTO_SELEZIONE, nomiFile);
+        int selezione = menuSelezione.scegliSenzaUscita();
+        File fileScelto = listaFile[selezione - 1];
+        String pathCompletoFile = fileScelto.getAbsolutePath();
+        Import nuovoImport = new Import();
+//        rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
+        File fileSalvataggio = new File(pathCompletoFile);
+        if (fileSalvataggio.exists()) {
+            try {
+                rete = (Rete) ServizioFile.caricaSingoloOggetto(fileSalvataggio);
+            } catch (ClassCastException exc) {
+                System.out.println("Non c'è il cast");
+            } finally {
+                if (rete != null) {
+                    View.messaggioCaricamentoCorretto(rete);
+                } else {
+                    System.out.println("Problemi con il caricameto");
+                }
+            }
+        } else {
+            System.out.println("Problemi con il file");
+        }
+        
         return rete;
     }
 
@@ -312,7 +361,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             System.out.println(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 
@@ -335,7 +385,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             View.stampaDiagnosi(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
 
     }
@@ -368,7 +419,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             System.out.println(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 
@@ -390,7 +442,12 @@ public class ControllerUtente {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
+
+       
+        
+
         //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
+
 
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
         rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
@@ -399,7 +456,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             View.stampaDiagnosi(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 

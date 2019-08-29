@@ -765,11 +765,9 @@ public class Controller {
     }
 
     public static SpazioComportamentale creaDizionarioParziale(Rete rete, String osservazione) {
-        //TODO CAMO
         // parte relativa alla creazione dell'automa riconoscitore
         SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione(rete, osservazione);
 
-        //TODO Alby
         SpazioComportamentale spazioComportamentaleParziale = creaSpazioComportamentaleParziale(rete, automaRiconoscitore);
         SpazioComportamentale dizionarioParziale = null;
         if (spazioComportamentaleParziale != null) {

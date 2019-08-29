@@ -5,6 +5,7 @@
  */
 package Model;
 
+import java.io.Serializable;
 import view.Parametri;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * @author alber
  */
-public class SpazioComportamentale {
+public class SpazioComportamentale implements Serializable{
 
     private StatoInterface root;
     private Map<StatoInterface, List<StatoInterface>> verticiAdiacenti;

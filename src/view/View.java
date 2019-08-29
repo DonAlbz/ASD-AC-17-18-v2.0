@@ -122,6 +122,12 @@ public class View {
         System.out.println("L'import della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
         System.out.println("");
     }
+    
+    public static void messaggioCaricamentoCorretto(Rete rete) {
+        System.out.println("");
+        System.out.println("Il caricamento della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
+        System.out.println("");
+    }
 
     public static void messaggioAquisizioneEtichettaOsservabilita() {
         System.out.println(Parametri.MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE);
@@ -271,6 +277,12 @@ public class View {
         }
         System.out.println(Parametri.ESPRESSIONE_REGOLARE_ESEMPIO_TRANSIZIONI);
         System.out.println(Parametri.SEPARATORE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreDiagnosi(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI);
         System.out.print(Parametri.A_CAPO);
     }
 }

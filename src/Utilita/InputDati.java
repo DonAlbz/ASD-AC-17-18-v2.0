@@ -17,6 +17,7 @@ public class InputDati {
     private final static String ERRORE_ALFABETO_DIZIONARIO = "Attenzione: l'inserimento dell'espressione regolare non contiene i caratteri dell'alfabeto delle etichette";
     private final static String ERRORE_ALFABETO_PARENTESI = "Attenzione: le parentesi inserite non sono corrette";
     private final static String ERRORE_ALFABETO_SINTASSI ="Attenzione: la sintassi dell'espressione regolare non è corretta";
+    private final static String ERRORE_FORMATO_VUOTO = "Attenzione: il dato inserito è vuoto";
 
     private final static char RISPOSTA_SI = 'S';
     private final static char RISPOSTA_NO = 'N';
@@ -192,48 +193,69 @@ public class InputDati {
         do {
             lettura = leggiStringa(messaggio);
             lettura = lettura.trim();
-            String carattereIniziale = lettura.substring(0, 1);
-            String carattereFinale = lettura.substring(lettura.length()-1, lettura.length());
-            if(carattereIniziale.equalsIgnoreCase(Parametri.CARATTERE_MINORE) && carattereFinale.equalsIgnoreCase(Parametri.CARATTERE_MAGGIORE)){
-                if(lettura.contains(Parametri.VIRGOLA)){
-                    // rimozione del minore e maggiore
-                    lettura = lettura.substring(1,lettura.length()-1);
-                    // split
-                    String[] temp = lettura.split(Parametri.VIRGOLA);
-                    // controllo che i caratteri facciano parte dell'osservabilita
-                    boolean controlloEsterno = true;
-                    for(int i = 0; i<temp.length; i++){
-                        boolean controlloInterno = false;
-                        for (String etic : etichetteOsservabilita) {
-                            if (etic.equalsIgnoreCase(temp[i])) {
-                                controlloInterno = true;
+            // controllo inserimento stringa NULL
+            if (lettura.length() != 0) {
+                String carattereIniziale = lettura.substring(0, 1);
+                String carattereFinale = lettura.substring(lettura.length() - 1, lettura.length());
+                if (carattereIniziale.equalsIgnoreCase(Parametri.CARATTERE_MINORE) && carattereFinale.equalsIgnoreCase(Parametri.CARATTERE_MAGGIORE)) {
+                    if (lettura.contains(Parametri.VIRGOLA)) {
+                        // rimozione del minore e maggiore
+                        lettura = lettura.substring(1, lettura.length() - 1);
+                        // split
+                        String[] temp = lettura.split(Parametri.VIRGOLA);
+                        // controllo che i caratteri facciano parte dell'osservabilita
+                        boolean controlloEsterno = true;
+                        for (int i = 0; i < temp.length; i++) {
+                            boolean controlloInterno = false;
+                            for (String etic : etichetteOsservabilita) {
+                                if (etic.equalsIgnoreCase(temp[i])) {
+                                    controlloInterno = true;
+                                }
+                            }
+                            if (!controlloInterno) {
+                                controlloEsterno = false;
+                                break;
                             }
                         }
-                        if (!controlloInterno) {
-                            controlloEsterno = false;
-                            break;
+                        if (controlloEsterno) {
+                            for (int i = 0; i < temp.length; i++) {
+                                etichette.add(temp[i]);
+                            }
+                            finito = true;
+                        } else {
+                            System.out.println(ERRORE_DIZIONARIO);
                         }
-                    }
-                    if (controlloEsterno) {
-                        for (int i = 0; i < temp.length; i++) {
-                            etichette.add(temp[i]);
-                        }
-                        finito = true;
                     } else {
-                        System.out.println(ERRORE_DIZIONARIO);
+                        // rimozione del minore e maggiore
+                        lettura = lettura.substring(1, lettura.length() - 1);
+                        boolean controlloAppartenenzaEtichette = false;
+                        for(int i = 0; i<etichetteOsservabilita.size(); i++){
+                            if(lettura.equalsIgnoreCase(etichetteOsservabilita.get(i))){
+                                controlloAppartenenzaEtichette = true;
+                            }
+                        }
+                        if(controlloAppartenenzaEtichette){
+                            etichette.add(lettura);
+                            finito = true;
+                        } else {
+                            System.out.println(ERRORE_DIZIONARIO);
+                        }
                     }
                 } else {
-                    System.out.println(ERRORE_SEPARATORE);
+                    System.out.println(ERRORE_FORMATO);
                 }
             } else {
-                System.out.println(ERRORE_FORMATO);
+                System.out.println(ERRORE_FORMATO_VUOTO);
             }
 
         } while (!finito);
-
+        
+        for(int j = 0; j<etichette.size(); j++){
+            System.out.println(etichette.get(j));
+        }
         return etichette;
     }
-    
+
     
     public static String inserimentoEspressioneRegolare(String messaggio, String[] alfabetoEspressione){
         String espressione = null;

@@ -1,5 +1,6 @@
 package Model;
 
+import java.io.Serializable;
 import view.Parametri;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoReteDecorato extends StatoRete {
+public class StatoReteDecorato extends StatoRete implements Serializable{
 
   
 
