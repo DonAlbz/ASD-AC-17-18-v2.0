@@ -442,8 +442,13 @@ public class ControllerUtente {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
-        SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
+
+       
         
+
+        //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
+
+
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
         rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
