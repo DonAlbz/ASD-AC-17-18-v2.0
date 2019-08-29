@@ -279,4 +279,10 @@ public class View {
         System.out.println(Parametri.SEPARATORE);
         System.out.print(Parametri.A_CAPO);
     }
+    
+    public static void messaggioErroreDiagnosi(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI);
+        System.out.print(Parametri.A_CAPO);
+    }
 }

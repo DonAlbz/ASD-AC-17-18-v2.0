@@ -148,7 +148,7 @@ public class ControllerUtente {
                 System.out.println("Non c'è il cast");
             } finally {
                 if (rete != null) {
-//                    System.out.println("Caricamento corretto");
+                    View.messaggioCaricamentoCorretto(rete);
                 } else {
                     System.out.println("Problemi con il caricameto");
                 }
@@ -156,8 +156,7 @@ public class ControllerUtente {
         } else {
             System.out.println("Problemi con il file");
         }
-
-        View.messaggioCaricamentoCorretto(rete);
+        
         return rete;
     }
 
@@ -362,7 +361,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             System.out.println(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 
@@ -385,7 +385,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             View.stampaDiagnosi(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
 
     }
@@ -418,7 +419,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             System.out.println(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 
@@ -441,8 +443,7 @@ public class ControllerUtente {
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
         SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
-
-        // MI SONO FERMATO QUA COME NEL COMPITO 4 - DA QUA FA IL MITICO ALBY
+        
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
         rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
         List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
@@ -450,7 +451,8 @@ public class ControllerUtente {
         if (diagnosi != null) {
             View.stampaDiagnosi(diagnosi);
         } else {
-            //TO-DO: messaggio errore: SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+            View.messaggioErroreDiagnosi();
         }
     }
 
