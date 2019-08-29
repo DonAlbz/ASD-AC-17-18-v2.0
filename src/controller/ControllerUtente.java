@@ -13,7 +13,6 @@ import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -111,8 +110,8 @@ public class ControllerUtente {
         View.messaggioImportCorretto(rete);
         return rete;
     }
-    
-    private static Rete caricaNuovo(){
+
+    private static Rete caricaNuovo() {
         Rete rete = null;
         File cartella = new File(Parametri.PATH_FILE_INPUT);
 
@@ -133,7 +132,7 @@ public class ControllerUtente {
         for (int i = 0; i < listaFile.length; i++) {
             nomiFile[i] = listaFile[i].getName();
         }
-        
+
         MyMenu menuSelezione = new MyMenu(Parametri.CARICAMENTO_SELEZIONE, nomiFile);
         int selezione = menuSelezione.scegliSenzaUscita();
         File fileScelto = listaFile[selezione - 1];
@@ -156,7 +155,7 @@ public class ControllerUtente {
         } else {
             System.out.println("Problemi con il file");
         }
-        
+
         return rete;
     }
 
@@ -350,7 +349,7 @@ public class ControllerUtente {
 
     private static void distillaDiagnosi(Rete rete) {
         SpazioComportamentale dizionario;
-        if (rete.getDizionario() == null) {            
+        if (rete.getDizionario() == null) {
             SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
             dizionario = creaDizionario(rete, spazioComportamentaleDecorato);
         } else {
@@ -378,17 +377,22 @@ public class ControllerUtente {
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
         View.stampaLegendaEspressioneRegolareOsservazioni(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
+        rete.setDizionarioParziale(null);
         SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
-        rete.setDizionarioParziale(dizionarioParziale);
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
-        if (diagnosi != null) {
-            View.stampaDiagnosi(diagnosi);
-        } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
-        }
+        if (dizionarioParziale != null) {
+            rete.setDizionarioParziale(dizionarioParziale);
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
+            if (diagnosi != null) {
+                View.stampaDiagnosi(diagnosi);
+            } else {
+                //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                View.messaggioErroreDiagnosi();
+            }
 
+        } else {
+            //TODO CAMO: non e' possibile eseguire una diagnosi
+        }
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
@@ -443,21 +447,21 @@ public class ControllerUtente {
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
 
-       
-        
-
         //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
-
-
+        rete.setDizionarioParzialeVincolato(null);
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
-        rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita);
-        if (diagnosi != null) {
-            View.stampaDiagnosi(diagnosi);
+        if (dizionarioParzialeVincolato != null) {
+            rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita);
+            if (diagnosi != null) {
+                View.stampaDiagnosi(diagnosi);
+            } else {
+                //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                View.messaggioErroreDiagnosi();
+            }
         } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
+            //TODO CAMO: "non è possibile eseguire una diagnosi
         }
     }
 

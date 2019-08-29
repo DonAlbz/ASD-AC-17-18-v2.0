@@ -81,7 +81,7 @@ public class Controller {
 
     static String distillaDiagnosi(SpazioComportamentale dizionario, List<String> osservazioni) {
         String diagnosi;
-        StatoDFA statoRaggiunto = raggiungiStatoOsservabile(dizionario, osservazioni);
+        StatoDFA statoRaggiunto = raggiungiStatoOsservabile(dizionario, osservazioni);     
         diagnosi = getDiagnosi(statoRaggiunto);
         return diagnosi;
     }
@@ -747,12 +747,16 @@ public class Controller {
     }
 
     private static String getDiagnosi(StatoDFA statoRaggiunto) {
+        String daRitornare=null;
         List<List<String>> diagnosi = statoRaggiunto.getDiagnosi();
+        if(diagnosi!=null){
         StringBuilder s = new StringBuilder();
         for (List<String> decorazione : diagnosi) {
             s.append(decorazione.toString());
         }
-        return s.toString();
+        daRitornare = s.toString();
+        }
+        return daRitornare;
     }
 
     public static List<String> getEtichetteOsservabilita(Rete rete) {
