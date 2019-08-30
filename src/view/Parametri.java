@@ -92,6 +92,8 @@ public class Parametri {
     public final static String MESSAGGIO_SCP_NULLO = "Non e' stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
     public final static String TRAIETTORIE_NON_TROVATE = "L'osservazione inserita non produce traiettorie";
     public final static String MESSAGGIO_ERRORE_DIAGNOSI = "La diagnosi ricavata è nulla";
+    public final static String RICHIESTA_CAMBIO_RETE = "Si è sicuri di voler cambiare la rete?";
+    public final static String RICHIESTA_SALVATAGGIO_RETE = "Si vuole salvare la rete attuale?";
         
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;

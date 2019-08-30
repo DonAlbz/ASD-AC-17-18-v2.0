@@ -123,6 +123,12 @@ public class View {
         System.out.println("");
     }
     
+    public static void messaggioSalvataggioCorretto(Rete rete){
+        System.out.println("");
+        System.out.println("Il salvataggio della rete è avvenuto in maniera corretta");
+        System.out.println("");
+    }
+    
     public static void messaggioCaricamentoCorretto(Rete rete) {
         System.out.println("");
         System.out.println("Il caricamento della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");

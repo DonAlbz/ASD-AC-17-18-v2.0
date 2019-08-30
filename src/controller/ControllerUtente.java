@@ -25,7 +25,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class ControllerUtente {
 
-    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
+//    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
+    
 
     public static Rete start() {
 
@@ -159,7 +160,7 @@ public class ControllerUtente {
         return rete;
     }
 
-    // DA SISTEMARE
+    // metodo deprecato
     private static Rete carica() {
         Rete rete = null;
         File fileSalvataggio = null;
@@ -218,7 +219,7 @@ public class ControllerUtente {
                 break;
 
             case 4:
-                System.out.println("Cambia rete");
+                cambiaRete(rete);
                 break;
 
             case 0:
@@ -317,7 +318,9 @@ public class ControllerUtente {
      * @param rete
      */
     private static void salva(Rete rete) {
+        File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/" + rete.getDescrizione() + ".dat");
         ServizioFile.salvaSingoloOggetto(fileSalvataggio, rete);
+        View.messaggioSalvataggioCorretto(rete);
     }
 
     /**
@@ -547,6 +550,15 @@ public class ControllerUtente {
         //TODO CAMO     QUESTO METODO DEVE CHIEDERE ALL'UTENTE QUANTI DIZIONARI PARZIALI DEVE INSERIRE
 
         return 2; // per i test ho impostato 2 di default
+    }
+
+    public static void cambiaRete(Rete rete) {
+        if (InputDati.yesOrNo(Parametri.RICHIESTA_CAMBIO_RETE)) {
+            if(InputDati.yesOrNo(Parametri.RICHIESTA_SALVATAGGIO_RETE)){
+                salva(rete);
+            }
+            caricaNuovo();
+        } 
     }
 
 }
