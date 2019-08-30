@@ -596,6 +596,10 @@ public class Rete implements Serializable {
         this.camminiDecorati = camminiDecorati;
     }
 
+    /**
+     *
+     * @return il metodo ritorna il nome della rete
+     */
     public String getDescrizione() {
         return descrizione;
     }

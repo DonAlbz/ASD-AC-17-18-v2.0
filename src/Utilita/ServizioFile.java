@@ -45,6 +45,7 @@ public class ServizioFile {
             uscita = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
 
             uscita.writeObject(daSalvare);
+            
 
         } catch (IOException excScrittura) {
             System.out.println(MSG_NO_SCRITTURA + f.getName());
@@ -59,5 +60,7 @@ public class ServizioFile {
         } // finally
 
     } // metodo salvaSingoloOggetto
+    
+    
 
 }
