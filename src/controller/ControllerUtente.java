@@ -13,7 +13,6 @@ import Utilita.ServizioFile;
 import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -111,8 +110,8 @@ public class ControllerUtente {
         View.messaggioImportCorretto(rete);
         return rete;
     }
-    
-    private static Rete caricaNuovo(){
+
+    private static Rete caricaNuovo() {
         Rete rete = null;
         File cartella = new File(Parametri.PATH_FILE_INPUT);
 
@@ -133,7 +132,7 @@ public class ControllerUtente {
         for (int i = 0; i < listaFile.length; i++) {
             nomiFile[i] = listaFile[i].getName();
         }
-        
+
         MyMenu menuSelezione = new MyMenu(Parametri.CARICAMENTO_SELEZIONE, nomiFile);
         int selezione = menuSelezione.scegliSenzaUscita();
         File fileScelto = listaFile[selezione - 1];
@@ -156,7 +155,7 @@ public class ControllerUtente {
         } else {
             System.out.println("Problemi con il file");
         }
-        
+
         return rete;
     }
 
@@ -327,7 +326,11 @@ public class ControllerUtente {
      * @param rete
      */
     private static void creaSpazioComportamentale(Rete rete) {
-        Controller.creaSpazioComportamentale(rete);
+        long tempoIniziale = System.currentTimeMillis();
+        Controller.creaSpazioComportamentale(rete, tempoIniziale);
+        long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+
+        System.out.println("TEMPO COSTRUZIONE SPAZIO COMPORTAMENTALE: " + tempoTotale + "ms");
     }
 
     /**
@@ -336,33 +339,53 @@ public class ControllerUtente {
      * @param rete
      */
     private static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
-        SpazioComportamentale spazioComportamentaleDecorato = null;
-        spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete);
+        long tempoIniziale = System.currentTimeMillis();
 
+        SpazioComportamentale spazioComportamentaleDecorato = null;
+        spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete, tempoIniziale);
+
+        long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+        System.out.println("TEMPO COSTRUZIONE SPAZIO COMPORTAMENTALE DECORATO: " + tempoTotale + "ms");
         return spazioComportamentaleDecorato;
     }
 
-    private static SpazioComportamentale creaDizionario(Rete rete, SpazioComportamentale spazioComportamentaleDecorato) {
-        SpazioComportamentale dizionario = Controller.creaDizionario(rete, spazioComportamentaleDecorato);
+    private static SpazioComportamentale creaDizionario(Rete rete, SpazioComportamentale spazioComportamentaleDecorato, long tempoIniziale) {
+        SpazioComportamentale dizionario = Controller.creaDizionario(rete, spazioComportamentaleDecorato, tempoIniziale);
         rete.setDizionario(dizionario);
         return dizionario;
     }
 
     private static void distillaDiagnosi(Rete rete) {
-        SpazioComportamentale dizionario;
-        if (rete.getDizionario() == null) {            
+        long tempoIniziale = System.currentTimeMillis();
+
+        SpazioComportamentale dizionario = null;
+        if (rete.getDizionario() == null) {
             SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
-            dizionario = creaDizionario(rete, spazioComportamentaleDecorato);
+            if (spazioComportamentaleDecorato != null) {
+                dizionario = creaDizionario(rete, spazioComportamentaleDecorato, tempoIniziale);
+            }
         } else {
             dizionario = rete.getDizionario();
         }
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionario, etichetteOsservabilita);
-        if (diagnosi != null) {
-            System.out.println(diagnosi);
-        } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
+        if (dizionario != null) {
+            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+            System.out.println("TEMPO COSTRUZIONE DIZIONARIO: " + tempoTotale + "ms");
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            tempoIniziale = System.currentTimeMillis();
+            String diagnosi = Controller.distillaDiagnosi(dizionario, etichetteOsservabilita, tempoIniziale);
+            if (diagnosi != null) {
+                System.out.println(diagnosi);
+                tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+            } else {
+                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                    //TODO CAMO SCRIVERE CHE IL TEMPO NON E' BASTATO PER FARE LA DIAGNOSI
+
+                } else {
+                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                    View.messaggioErroreDiagnosi();
+                }
+            }
         }
     }
 
@@ -378,54 +401,95 @@ public class ControllerUtente {
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
         View.stampaLegendaEspressioneRegolareOsservazioni(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
-        SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
-        rete.setDizionarioParziale(dizionarioParziale);
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita);
-        if (diagnosi != null) {
-            View.stampaDiagnosi(diagnosi);
-        } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
-        }
+        rete.setDizionarioParziale(null);
+        long tempoIniziale = System.currentTimeMillis();
 
+        SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione, tempoIniziale);
+        if (dizionarioParziale != null) {
+            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+            System.out.println("TEMPO COSTRUZIONE DIZIONARIO PARZIALE: " + tempoTotale + "ms");
+            rete.setDizionarioParziale(dizionarioParziale);
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            tempoIniziale = System.currentTimeMillis();
+            String diagnosi = Controller.distillaDiagnosi(dizionarioParziale, etichetteOsservabilita, tempoIniziale);
+            if (diagnosi != null) {
+                View.stampaDiagnosi(diagnosi);
+                tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+            } else {
+                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+
+                    //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                } else {
+
+                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                    View.messaggioErroreDiagnosi();
+                }
+            }
+
+        } else {
+            //TODO CAMO: non e' possibile eseguire una diagnosi
+        }
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
 
         ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
         boolean condizioneDiFineInserimentoDizionariParziali = true;
-        int contatore = 2;
+        int contatore = numeroDizionariParzialiDaInserire();
 
         while (condizioneDiFineInserimentoDizionariParziali) {
             View.stampaLegendaEspressioneRegolareOsservazioni(rete);
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
-            SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione);
-            rete.addDizionarioParziale(dizionarioParziale);
-            //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
-            Parametri.incrementaPrefissoStatoDecorato();
-
-            //DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
-            contatore--;
-            if (contatore == 0) {
+            long tempoIniziale = System.currentTimeMillis();
+            SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione, tempoIniziale);
+            if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
                 condizioneDiFineInserimentoDizionariParziali = false;
-                Parametri.resettaPrefissoStatoDecorato();
-            }
+                //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+            } else {
+                rete.addDizionarioParziale(dizionarioParziale);
+                //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
+                Parametri.incrementaPrefissoStatoDecorato();
 
+                //DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
+                contatore--;
+                if (contatore == 0) {
+                    condizioneDiFineInserimentoDizionariParziali = false;
+                    Parametri.resettaPrefissoStatoDecorato();
+                }
+
+            }
         }
+        if(rete.getDizionariParziali()!=null && rete.getDizionariParziali().size()>1){ 
+        long tempoIniziale = System.currentTimeMillis();
+
         SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita);
-        if (diagnosi != null) {
-            System.out.println(diagnosi);
+        if (dizionarioParzialeIncrementale != null) {
+            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+            System.out.println("TEMPO UNIONE DIZIONARI: " + tempoTotale + "ms");
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            tempoIniziale = System.currentTimeMillis();
+            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita, tempoIniziale);
+            if (diagnosi != null) {
+                System.out.println(diagnosi);
+                tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+            } else {
+                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                } else {
+                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                    View.messaggioErroreDiagnosi();
+                }
+            }
         } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
-        }
+            System.out.println("NON E' STATO POSSIBILE CREARE IL DIZIONARIO INCREMENTALE");
+        }}
     }
 
     private static void costruzioneDiSpaziVincolati(Rete rete) {
         View.stampaLegendaEspressioneRegolareTransizioni(rete);
+
         List<Transizione> transizioni = new ArrayList<Transizione>();
         List<Automa> automi = rete.getAutomi();
         for (Automa automa : automi) {
@@ -442,23 +506,47 @@ public class ControllerUtente {
             nomiTransizioni[i] = transizioni.get(i).getDescrizione();
         }
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, nomiTransizioni);
-
-       
-        
-
+        long tempoIniziale = System.currentTimeMillis();
         //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
+        rete.setDizionarioParzialeVincolato(null);
+        SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione, tempoIniziale);
+         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                } else {
+        if (dizionarioParzialeVincolato != null) {
 
-
-        SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione);
-        rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
-        List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-        String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita);
-        if (diagnosi != null) {
-            View.stampaDiagnosi(diagnosi);
+            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+            System.out.println("TEMPO COSTRUZIONE DIZIONARIO VINCOLATO: " + tempoTotale + "ms");
+            rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+            tempoIniziale = System.currentTimeMillis();
+            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita, tempoIniziale);
+            if (diagnosi != null) {
+                View.stampaDiagnosi(diagnosi);
+                tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+            } else {
+                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                    //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                } else {
+                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                    View.messaggioErroreDiagnosi();
+                }
+            }
         } else {
-            //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-            View.messaggioErroreDiagnosi();
-        }
+            //TODO CAMO: "non è possibile eseguire una diagnosi
+        }}
+    }
+
+    /**
+     * Chiede all'utente quanti dizionari parziali vuole inserire
+     *
+     * @return il numero di dizionari parziali
+     */
+    private static int numeroDizionariParzialiDaInserire() {
+        //TODO CAMO     QUESTO METODO DEVE CHIEDERE ALL'UTENTE QUANTI DIZIONARI PARZIALI DEVE INSERIRE
+
+        return 2; // per i test ho impostato 2 di default
     }
 
 }
