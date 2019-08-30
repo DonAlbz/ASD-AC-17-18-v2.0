@@ -13,7 +13,7 @@ import java.util.List;
  * @author Alb
  */
 public class Parametri {
-
+   
     public final static String EVENTO_NULLO = "\u0190";
     public final static String INSIEME_VUOTO = "\u00D8";
     public static char STATO_DECORATO_PREFISSO = 'a';
@@ -100,6 +100,7 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
+    public static long tempoEsecuzioneMax=2;// >=100
     
     //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
     public static void incrementaPrefissoStatoDecorato(){
@@ -109,5 +110,22 @@ public class Parametri {
     public static void resettaPrefissoStatoDecorato() {
         STATO_DECORATO_PREFISSO = 'a';
     }
+
+    public static char getSTATO_DECORATO_PREFISSO() {
+        return STATO_DECORATO_PREFISSO;
+    }
+
+    public static void setSTATO_DECORATO_PREFISSO(char STATO_DECORATO_PREFISSO) {
+        Parametri.STATO_DECORATO_PREFISSO = STATO_DECORATO_PREFISSO;
+    }
+
+    public static long getTempoEsecuzioneMax() {
+        return tempoEsecuzioneMax;
+    }
+
+    public static void setTempoEsecuzioneMax(long tempoEsecuzioneMax) {
+        Parametri.tempoEsecuzioneMax = tempoEsecuzioneMax;
+    }
+    
     
 }
