@@ -65,8 +65,7 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable 
         {
             s.append(Parametri.TAB);
         }
-        s.append(descrizione);
-        s.toString();
+        s.append(descrizione);       
         return s.toString();
     }
 

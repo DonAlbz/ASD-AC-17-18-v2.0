@@ -14,9 +14,7 @@ import java.util.Objects;
  *
  * @author alber
  */
-public class StatoReteDecorato extends StatoRete implements Serializable{
-
-  
+public class StatoReteDecorato extends StatoRete implements Serializable {
 
     public StatoReteDecorato(Evento[] link, Stato[] stati, int _numero, List<String> _decorazione) {
         super(link, stati, _numero);
@@ -44,8 +42,6 @@ public class StatoReteDecorato extends StatoRete implements Serializable{
         }
     }
 
-    
-    
     public StatoReteDecorato(StatoReteDecorato statoReteDecorato) {
         super(statoReteDecorato);
         setDecorazione(statoReteDecorato.getDecorazione());
@@ -101,17 +97,23 @@ public class StatoReteDecorato extends StatoRete implements Serializable{
         if (getDecorazione() == null ^ stato2.getDecorazione() == null) { //^ e' l'operatore logico XOR
             return false;
         }
-        if (getDecorazione() == null && stato2.getDecorazione() == null) {
-            if (getNumero() == stato2.getNumero()) {
+        if (getNumero() != -1 && stato2.getNumero() != -1) {//AGGIUNTO DI RECENTE
+            if (getDecorazione() == null && stato2.getDecorazione() == null) {
+                if (getNumero() == stato2.getNumero()) {
+                    return true;
+                }
+                return false;
+            }
+
+            if (getNumero() == stato2.getNumero() && getDecorazione().equals(stato2.getDecorazione())) {
                 return true;
             }
-            return false;
         }
-
-        if (getNumero() == stato2.getNumero() && getDecorazione().equals(stato2.getDecorazione())) {
+        if(getDescrizione().equals(stato2.getDescrizione()) && getDecorazione().equals(stato2.getDecorazione())){
             return true;
         }
         return false;
+
     }
 
     @Override
@@ -119,9 +121,26 @@ public class StatoReteDecorato extends StatoRete implements Serializable{
         int hash = Objects.hash(getNumero(), getDecorazione());
         return hash;
     }
+    
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        if (super.getTransizionePrecedente() != null) {
+            s.append(super.getTransizionePrecedente());
+            s.append(Parametri.VIRGOLA);
+            s.append(Parametri.SPAZIO);
+        }
+        s.append(Parametri.PARENTESI_QUADRA_A);
+        s.append(getNomeToString());
+        s.append(Parametri.PARENTESI_QUADRA_C);
+        s.append(Parametri.TAB);
+        if (s.length() < 9) // serve per intabellare lo spazio decorato se ha uno stato iniziale più lungo di 9 caratteri
+        {
+            s.append(Parametri.TAB);
+        }
+        s.append(super.getDescrizione());
+        s.append(" ");
+        s.append(getDecorazione());
+        return s.toString();
+    }
 
-    
-
-    
-    
 }

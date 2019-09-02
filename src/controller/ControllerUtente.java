@@ -14,6 +14,7 @@ import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -54,6 +55,8 @@ public class ControllerUtente {
         switch (selezione) {
             case 1:
                 rete = importa();
+                Controller.creaSpazioComportamentaleDecoratoMetodoAlternativo(rete, System.currentTimeMillis());
+                
                 break;
 
             case 2:
