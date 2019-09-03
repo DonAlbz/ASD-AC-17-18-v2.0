@@ -221,12 +221,25 @@ public class ControllerUtente {
             case 4:
                 cambiaRete(rete);
                 break;
+                
+            case 5:inserimentoLimiteTemporale();
+                break;
 
             case 0:
                 end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
         return end;
     }
+    
+    public static void inserimentoLimiteTemporale(){
+        View.stampaLimiteTemporale();
+        System.out.println(Parametri.MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_1);
+        int nuovoLimiteTemporale = InputDati.leggiInteroConMinimo(Parametri.MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_2, (int) Parametri.LIMITE_MINIMO_TEMPORALE);
+        Parametri.setTempoEsecuzioneMax(nuovoLimiteTemporale);
+        System.out.println(Parametri.MESSAGGIO_CAMBIO_LIMITE_EFFETTUATO);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
 
     /**
      * Permette di visualizzare varie informazioni sulla rete
@@ -382,11 +395,10 @@ public class ControllerUtente {
                 System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
             } else {
                 if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    //TODO CAMO SCRIVERE CHE IL TEMPO NON E' BASTATO PER FARE LA DIAGNOSI
-
+                    View.messaggioErroreTempoInsufficiente();
                 } else {
                     //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
+                    View.messaggioErroreDiagnosiImpossibile();
                 }
             }
         }
@@ -421,23 +433,18 @@ public class ControllerUtente {
                 System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
             } else {
                 if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-
-                    //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                    View.messaggioErroreTempoInsufficiente();
                 } else {
-
                     //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
+                    View.messaggioErroreDiagnosiImpossibile();
                 }
             }
-
         } else {
-            //TODO CAMO: non e' possibile eseguire una diagnosi
+            View.messaggioImpossibileDiagnosi();
         }
     }
 
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
-
-        ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
         boolean condizioneDiFineInserimentoDizionariParziali = true;
         int contatore = numeroDizionariParzialiDaInserire();
 
@@ -448,13 +455,14 @@ public class ControllerUtente {
             SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
                 condizioneDiFineInserimentoDizionariParziali = false;
-                //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                View.messaggioErroreTempoInsufficiente();
             } else {
+                long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO COSTRUZIONE DIZIONARIO PARZIALE: " + tempoTotale + "ms");
                 rete.addDizionarioParziale(dizionarioParziale);
                 //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
                 Parametri.incrementaPrefissoStatoDecorato();
-
-                //DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
+                
                 contatore--;
                 if (contatore == 0) {
                     condizioneDiFineInserimentoDizionariParziali = false;
@@ -479,14 +487,14 @@ public class ControllerUtente {
                 System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
             } else {
                 if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                    View.messaggioErroreTempoInsufficiente();
                 } else {
                     //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
+                    View.messaggioErroreDiagnosiImpossibile();
                 }
             }
         } else {
-            System.out.println("NON E' STATO POSSIBILE CREARE IL DIZIONARIO INCREMENTALE");
+            View.messaggioImpossibileCreareDizionarioIncrementale();
         }}
     }
 
@@ -513,32 +521,33 @@ public class ControllerUtente {
         //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
         rete.setDizionarioParzialeVincolato(null);
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione, tempoIniziale);
-         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
-                } else {
-        if (dizionarioParzialeVincolato != null) {
-
-            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
-            System.out.println("TEMPO COSTRUZIONE DIZIONARIO VINCOLATO: " + tempoTotale + "ms");
-            rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
-            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-            tempoIniziale = System.currentTimeMillis();
-            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita, tempoIniziale);
-            if (diagnosi != null) {
-                View.stampaDiagnosi(diagnosi);
-                tempoTotale = System.currentTimeMillis() - tempoIniziale;
-                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
-            } else {
-                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
-                } else {
-                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
-                }
-            }
+        if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+            View.messaggioErroreTempoInsufficiente();
         } else {
-            //TODO CAMO: "non è possibile eseguire una diagnosi
-        }}
+            if (dizionarioParzialeVincolato != null) {
+
+                long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO COSTRUZIONE DIZIONARIO VINCOLATO: " + tempoTotale + "ms");
+                rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+                List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+                tempoIniziale = System.currentTimeMillis();
+                String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita, tempoIniziale);
+                if (diagnosi != null) {
+                    View.stampaDiagnosi(diagnosi);
+                    tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                    System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+                } else {
+                    if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                        View.messaggioErroreTempoInsufficiente();
+                    } else {
+                        //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                        View.messaggioErroreDiagnosiImpossibile();
+                    }
+                }
+            } else {
+                View.messaggioImpossibileDiagnosi();
+            }
+        }
     }
 
     /**
@@ -547,9 +556,8 @@ public class ControllerUtente {
      * @return il numero di dizionari parziali
      */
     private static int numeroDizionariParzialiDaInserire() {
-        //TODO CAMO     QUESTO METODO DEVE CHIEDERE ALL'UTENTE QUANTI DIZIONARI PARZIALI DEVE INSERIRE
-
-        return 2; // per i test ho impostato 2 di default
+        int numeroDizionari = InputDati.leggiInteroConMinimo(Parametri.MESSAGGIO_RICHIESTA_NUMERO_DIZIONARI, Parametri.NUMERO_MINIMO_INSERIMENTO_DIZIONARI);
+        return numeroDizionari;
     }
 
     public static void cambiaRete(Rete rete) {

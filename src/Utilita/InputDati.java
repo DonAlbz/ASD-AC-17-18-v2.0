@@ -249,10 +249,7 @@ public class InputDati {
             }
 
         } while (!finito);
-        
-        for(int j = 0; j<etichette.size(); j++){
-            System.out.println(etichette.get(j));
-        }
+
         return etichette;
     }
 

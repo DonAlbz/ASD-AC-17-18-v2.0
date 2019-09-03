@@ -457,11 +457,13 @@ public class Import {
                             String separatore = transizioneIntera.substring(5, 6);
                             if (!separatore.equalsIgnoreCase("/")) {
                                 // cerco il linkIn della transizione nella posizione 8-10
-                                String linkIn = transizioneIntera.substring(8, 10);
-                                // controllo nel vettore Link in che posizione sia e modifico posizioneLink
-                                for (int j = 0; j < elencoLink.length; j++) {
-                                    if (linkIn.equalsIgnoreCase(elencoLink[j])) {
-                                        posizioneLink = j;
+                                if (!transizioneIntera.contains(Parametri.NULL)) {
+                                    String linkIn = transizioneIntera.substring(8, 10);
+                                    // controllo nel vettore Link in che posizione sia e modifico posizioneLink
+                                    for (int j = 0; j < elencoLink.length; j++) {
+                                        if (linkIn.equalsIgnoreCase(elencoLink[j])) {
+                                            posizioneLink = j;
+                                        }
                                     }
                                 }
                             }

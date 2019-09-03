@@ -209,10 +209,14 @@ public class View {
             } else {
                 stampa = stampa.concat(ultimoStato);
                 stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.TAB);
                 if(ultimoStato.length()<10){
                     stampa = stampa.concat(Parametri.TAB);
                 }
-                stampa = stampa.concat(Parametri.TAB);
+                if(ultimoStato.length()<15){
+                    stampa = stampa.concat(Parametri.TAB);
+                }
+//                stampa = stampa.concat(Parametri.TAB);
                 stampa = stampa.concat(Parametri.FRECCIA);
                 stampa = stampa.concat(" " + vertici.get(count).getOsservabilita() + " ");
                 stampa = stampa.concat(Parametri.FRECCIA);
@@ -286,9 +290,96 @@ public class View {
         System.out.print(Parametri.A_CAPO);
     }
     
-    public static void messaggioErroreDiagnosi(){
+    public static void messaggioErroreDiagnosiImpossibile(){
         System.out.print(Parametri.A_CAPO);
-        System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI_IMPOSSIBILE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void stampaLimiteTemporale(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println("Il tempo di esecuzione massimo impostato nel progetto è di: " + Parametri.tempoEsecuzioneMax + "ms");
+    }
+    
+    public static void messaggioErroreTempoInsufficiente(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_TEMPO_INSUFFICIENTE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioImpossibileDiagnosi(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI_IMPOSSIBILE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioImpossibileCreareDizionarioIncrementale(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_CREAZIONE_DIZIONARIO_INCREMENTALE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreCamminiParziali(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_CAMMINI_PARZIALI);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioCreazioneSpazioCompNoNumeratoNoRidenominato(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NO_NUMERATO_NO_RIDENOMINATO);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioCreazioneSpazioCompNumeratoNoRidenominato(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NUMERATO_NO_RIDENOMINATO);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreSpazioComportamentaleDecorato(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreSpazioComportamentaleDecoratoCamminiParziali(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_CAMMINI_PARZIALI);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreSpazioComportamentaleCamminiParziali(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CAMMINI_PARZIALI);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreSpazioComportamentaleDecoratoVerticiParziali(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_VERTICI_PARZIALI);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreSpazioComportamentaleVerticiParziali(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_VERTICI_PARZIALI);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreNoSpazioDaOsservazione(){
+        System.out.println(Parametri.MESSAGGIO_ERRORE_NO_STATO_DA_OSSERVAZIONE);
+    }
+    
+    public static void messaggioErroreInserimentoSpazioComportamentale(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioErroreCreazioneSpazioMancanzaTempo(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE);
         System.out.print(Parametri.A_CAPO);
     }
 }

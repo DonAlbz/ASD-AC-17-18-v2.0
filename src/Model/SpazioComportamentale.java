@@ -103,6 +103,15 @@ public class SpazioComportamentale implements Serializable{
         s.append(Parametri.A_CAPO);
         for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
             s.append(statoPartenza.toString());
+            
+            // aggiunta della decorazione
+//            StatoReteAbstract statoReteAbstract = (StatoReteAbstract) statoPartenza;
+//            List<String> decorazioni = statoReteAbstract.getDecorazione();
+//            for(String d : decorazioni){
+//                s.append(d);
+//            }
+//            s.append(statoReteAbstract.getDecorazione());
+            
             s.append(Parametri.TAB);
             s.append(Parametri.FRECCIA);
             s.append(Parametri.TAB);
