@@ -96,6 +96,9 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_DIAGNOSI = "La diagnosi ricavata è nulla";
     public final static String RICHIESTA_CAMBIO_RETE = "Si è sicuri di voler cambiare la rete?";
     public final static String RICHIESTA_SALVATAGGIO_RETE = "Si vuole salvare la rete attuale?";
+
+    public final static String NUMERO_VERTICI_RIMOSSI = "Il numero di stati potati e': ";
+
     public final static String MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_1 = "(Per una corretta esecuzione il limite minimo temporale è di 1000ms)";
     public final static String MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_2 = "Si inserisca il nuovo tempo limite di esecuzione che si vuole impostare (in ms):";
     public final static String MESSAGGIO_CAMBIO_LIMITE_EFFETTUATO = "Il cambio del tempo di esecuzione minimo è stato completato con successo";
@@ -114,6 +117,7 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CAMMINI_PARZIALI = "Non è stato possibile completare la costruzione completa dello spazio comportamentale";
     public final static String MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE = "Non è stato possibile inserire tutto lo spazio comportamentale";
     public final static String MESSAGGIO_ERRORE_NO_SPAZIO_MANCANZA_TEMPO = "La creazione dello spazio comportamentale è stata interrotta per mancanza di tempo";
+
         
     
     public final static int NUMERO_MINIMO_INSERIMENTO_DIZIONARI = 2;
@@ -123,9 +127,12 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
-    public static long tempoEsecuzioneMax=2000;// >=1000 millisecondi
+
+    public static long tempoEsecuzioneMax=Long.MAX_VALUE;// >=1000
+    public static boolean metodoAlternativiCreazioneSpaziDecorati=true;
     public final static long LIMITE_MINIMO_TEMPORALE=1000; // in millisecondi
     
+
     
     //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
     public static void incrementaPrefissoStatoDecorato(){
@@ -151,6 +158,15 @@ public class Parametri {
     public static void setTempoEsecuzioneMax(long tempoEsecuzioneMax) {
         Parametri.tempoEsecuzioneMax = tempoEsecuzioneMax;
     }
+
+    public static boolean getMetodoAlternativiCreazioneSpaziDecorati() {
+        return metodoAlternativiCreazioneSpaziDecorati;
+    }
+
+    public static void setMetodoAlternativoCreazioneSpaziDecorati(boolean metodoAlternativiCreazioneSpaziDecorati) {
+        Parametri.metodoAlternativiCreazioneSpaziDecorati = metodoAlternativiCreazioneSpaziDecorati;
+    }
+    
     
     
 }

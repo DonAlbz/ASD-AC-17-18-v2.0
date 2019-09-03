@@ -382,4 +382,13 @@ public class View {
         System.out.println(Parametri.MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE);
         System.out.print(Parametri.A_CAPO);
     }
+
+    public static void numeroVerticiRimossi(int numeroVerticiRimossi) {
+        System.out.print(Parametri.NUMERO_VERTICI_RIMOSSI);
+        System.out.print(numeroVerticiRimossi);
+        System.out.println();
+        System.out.println();
+    }
+    
+    
 }
