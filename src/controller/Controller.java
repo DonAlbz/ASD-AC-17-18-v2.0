@@ -2595,5 +2595,162 @@ public class Controller {
         return cammini;
 
     }
+    
+    private static List<Cammino> trovaCamminiParzialiVincolatiMetodoAlternativo(Rete rete, List<StatoReteAbstract> stati, SpazioComportamentale automaRiconoscitore, long tempoIniziale) {
+        //  TO-DO inserire l'automa riconoscitore 
+
+        List<Cammino> cammini = new ArrayList<>();
+        Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
+
+        Stack<StatoRete> pilaDiramazioni = new Stack<StatoRete>();//pila degli stati che hanno più di una transizione in uscita
+
+        //Stack<Cammino> pilaCammino = new Stack<>();
+        Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
+        int numeroStati = -1;
+        StatoDFA statoRadiceRiconoscitore = (StatoDFA) automaRiconoscitore.getRoot();
+        StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
+        statoRadice.setStatoAutomaRiconoscitore(statoRadiceRiconoscitore);
+        statoRadice.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+        pilaStato.push(statoRadice);
+
+        while (!pilaStato.isEmpty() && System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
+            StatoRete statoAttuale = pilaStato.pop();
+            StatoDFA statoAutomaRiconoscitoreAttuale = statoAttuale.getStatoAutomaRiconoscitore();
+//            
+
+            if (!stati.contains(statoAttuale)) {//se non è uno stato nuovo
+                //statoAttuale.setNumero(stati.size());
+                stati.add(statoAttuale);
+                camminoAttuale.add(statoAttuale);
+                //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
+//                System.out.println(statoAttuale.toString());
+                rete.setRete(statoAttuale);
+                if (statoAttuale.isAbilitatoScenario(rete.getAutomi(), automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale))) {
+                    List<List<Transizione>> transizioniAbilitate = new ArrayList<List<Transizione>>(rete.getAutomi().size());
+                    int numeroTransizioniAbilitate = 0;
+                    for (int i = 0; i < rete.getAutomi().size(); i++) {//se nessun automa è già scattato, si itera su tutti gli automi                        
+                        rete.getAutomi().get(i).isAbilitato(rete.getLink());
+                        ArrayList<Transizione> transizioniAbilitateDaControllare = rete.getAutomi().get(i).getTransizioneAbilitata();
+                        /*//controllo che le transizioni abilitate soddisfino l'automa riconoscitore
+                        for ( int z=0; z < transizioniAbilitateDaControllare.size(); z++){
+                            boolean alitata = transizioniAbilitateDaControllare.get(z).getOsservabilita()==null;
+                            
+                            
+                        }*/
+                        transizioniAbilitate.add(transizioniAbilitateDaControllare);//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
+                        numeroTransizioniAbilitate += transizioniAbilitate.get(i).size();
+                    }
+                    ArrayList<StatoRete> statiDopoLoScatto = new ArrayList<>();
+                    Transizione transizioneEseguita;
+                    StatoRete copiaStatoAttuale;
+                    if (numeroTransizioniAbilitate == 1) {
+                        for (int i = 0; i < rete.getAutomi().size(); i++) {
+                            if (rete.getAutomi().get(i).isAbilitato(rete.getLink())) {
+                                //la prima e unica transizione abilitata allo scatto
+                                Transizione transizioneDaEseguire = rete.getAutomi().get(i).getTransizioneAbilitata().get(0);
+                                boolean abilitata = false;
+                                StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
+                                List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
+
+                                for (int z = 0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata; z++) {
+                                    StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
+                                    //controllo che il nome della transizione corrisponda a quello della transizione selezionata dall'automa
+                                    if (transizioneDaEseguire.getDescrizione().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())) {
+                                        abilitata = true;
+                                        statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreConsiderato;
+                                    }
+                                }
+                                if (abilitata) {
+                                    transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
+//                                statoAttuale.setTransizionePrecedente(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
+                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                    statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                    //lo stato dell'automa riconoscitore viene aggiunto al nome dello stato della rete
+                                    statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+                                    statiDopoLoScatto.add(statoDopoLoScatto);
+                                    rete.setRete(statoAttuale);
+                                }
+                            }
+                        }
+                    } else {
+                        //Se sono abilitate piu' transizioni:
+                        //Provare a sostituire con creaStatoCorrente(rete)
+                        copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                        copiaStatoAttuale.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreAttuale);
+                        copiaStatoAttuale.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+
+                        for (int i = 0; i < rete.getAutomi().size(); i++) {
+                            for (int j = 0; j < transizioniAbilitate.get(i).size(); j++) {//vengono fatte scattare tutte, ognuna su un nuovo cammino
+                                rete.setRete(statoAttuale);
+                                Transizione transizioneDaEseguire = transizioniAbilitate.get(i).get(j);
+
+                                boolean abilitata = false;
+                                StatoDFA statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreAttuale;
+                                List<StatoInterface> statiAdiacentiAutomaRiconoscitore = automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale);
+
+                                for (int z = 0; z < statiAdiacentiAutomaRiconoscitore.size() && !abilitata; z++) {
+                                    StatoDFA statoAutomaRiconoscitoreConsiderato = (StatoDFA) statiAdiacentiAutomaRiconoscitore.get(z);
+                                    if (transizioneDaEseguire.getDescrizione().equals(statoAutomaRiconoscitoreConsiderato.getOsservabilita())) {
+                                        abilitata = true;
+                                        statoAutomaRiconoscitoreDopoLoScatto = statoAutomaRiconoscitoreConsiderato;
+                                    }
+                                }
+
+                                if (abilitata) {
+                                    transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
+                                    copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
+                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
+                                    statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
+                                    statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
+                                    statiDopoLoScatto.add(statoDopoLoScatto);
+                                    pilaDiramazioni.add(statoAttuale);
+                                }
+                            }
+                        }
+                        if (pilaDiramazioni.size() > 0) {
+                            pilaDiramazioni.pop();
+                        }
+                    }
+
+                    for (StatoRete s : statiDopoLoScatto) {
+                        pilaStato.push(s);
+//                       
+                    }
+                } else {
+                    //stato senza transizioni abilitate
+                    Cammino nuovoCammino = new Cammino();
+//                    statoAttuale.setNumero(stati.size() - 1);
+                    nuovoCammino.copiaCammino(camminoAttuale);
+                    cammini.add(nuovoCammino);
+                    if (!pilaDiramazioni.isEmpty()) {
+                        camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());//gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+                    }
+                }
+            } else {
+                //Il cammino si interrompe perche' e' stato trovato uno stato gia' visitato, quindi e' un cammino o ciclico
+                //o che si ricongiunge nello stato di un altro cammino gia' trovato
+                Cammino nuovoCammino = new Cammino();
+//                statoAttuale.setNumero(stati.indexOf(statoAttuale));
+                StatoRete statoPrecedente = (StatoRete) camminoAttuale.getUltimoStato();
+                camminoAttuale.add(statoAttuale);//                
+                nuovoCammino.copiaCammino(camminoAttuale);
+                nuovoCammino.setIsCiclo(true);
+                cammini.add(nuovoCammino);
+                if (!pilaDiramazioni.isEmpty()) {
+                    //gli ultimi elementi del cammini vengono rimossi finchè non si incontra il primo elemento della coda
+                    camminoAttuale.togliFinoAPrimaDelloStato(pilaDiramazioni.pop());
+                }
+
+            }
+        }
+        rete.setCammini(cammini);
+        return cammini;
+
+    }
+    
+    
+    
 
 }
