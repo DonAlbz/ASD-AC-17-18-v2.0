@@ -253,27 +253,27 @@ public class ControllerUtente {
             int selezione = menu.scegliMenuInterno();
             switch (selezione) {
                 case 1:
-                    System.out.println("");
+                    System.out.println();
                     View.stampaNomeRete(rete);
                     break;
                 
                 case 2:
-                    System.out.println("");
+                    System.out.println();
                     View.stampaAutomi(rete);
                     break;
                 
                 case 3:
-                    System.out.println("");
+                    System.out.println();
                     View.stampaStati(rete);
                     break;
                 
                 case 4:
-                    System.out.println("");
+                    System.out.println();
                     View.stampaTransizioni(rete);
                     break;
                 
                 case 5:
-                    System.out.println("");
+                    System.out.println();
                     View.stampaGlobaleRete(rete);
                     break;
                 

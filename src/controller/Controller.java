@@ -1288,7 +1288,8 @@ public class Controller {
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
 //        stampaCammini(camminiDecorati);
                         if (spazioComportamentaleParzialeDecorato != null) {
-                            System.out.println(spazioComportamentaleParzialeDecorato.toString());
+                            View.stampaSpazioComportamentaleDecorato(spazioComportamentaleParzialeDecorato);
+//                            System.out.println(spazioComportamentaleParzialeDecorato.toString());
                         }
                     }
                 } else {
