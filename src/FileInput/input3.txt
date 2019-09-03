@@ -44,7 +44,7 @@ C2
 21	t2c	21
 
 t2a: e2(L2)
-t2b: /{e1(L1)}
+t2b: /e1(L1)
 t2c: null
 
 OSSERVABILITA

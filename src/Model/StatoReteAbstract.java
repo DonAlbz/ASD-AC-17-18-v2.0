@@ -53,7 +53,7 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable 
     public String toString() {
         StringBuilder s = new StringBuilder();
         if (transizionePrecedente != null) {
-            s.append(transizionePrecedente);
+            s.append(transizionePrecedente.toString());
             s.append(Parametri.VIRGOLA);
             s.append(Parametri.SPAZIO);
         }
