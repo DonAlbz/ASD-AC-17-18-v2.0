@@ -1934,10 +1934,10 @@ public class Controller {
             if (!visited.contains(vertex)) {
 
                 visited.add(vertex);
-                StatoReteAbstract vertexDaControllareVicinato = (StatoRete)vertex;
+                StatoReteAbstract vertexDaControllareVicinato = (StatoRete) vertex;
                 if (vertex.getClass() == StatoReteDecorato.class) {
                     vertexDaControllareVicinato = new StatoReteDecorato((StatoReteDecorato) vertex, -1);
-                    vertexDaControllareVicinato.setDescrizione(((StatoReteAbstract)vertex).getDescrizione());
+                    vertexDaControllareVicinato.setDescrizione(((StatoReteAbstract) vertex).getDescrizione());
 
                 }
                 List<StatoInterface> verticiAdiacenti = spazioC.getVerticiAdiacenti(vertexDaControllareVicinato);
@@ -1970,7 +1970,7 @@ public class Controller {
             if (v.getClass() == StatoReteDecorato.class) {
                 //in questo caso lo spazio comportamentale e' stato inserito con le key aventi numero=-1, pertanto la funzione hash e' già stata calcolata
                 verticeDaControllareVicinato = new StatoReteDecorato((StatoReteDecorato) v, -1);
-                verticeDaControllareVicinato.setDescrizione(((StatoReteAbstract)v).getDescrizione());
+                verticeDaControllareVicinato.setDescrizione(((StatoReteAbstract) v).getDescrizione());
             }
             verticiAdiacenti = spazioC.getVerticiAdiacenti(verticeDaControllareVicinato);
             StatoReteRidenominato vRidenominato = new StatoReteRidenominato((StatoReteAbstract) v);
@@ -2408,7 +2408,11 @@ public class Controller {
         List<Cammino> cammini;
         List<StatoReteAbstract> statiSpazioC = new ArrayList<>();
         SpazioComportamentale spazioComportamentaleParzialeDecorato = null;
-        cammini = trovaCamminiParzialiVincolati(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
+        if(!Parametri.getMetodoAlternativiCreazioneSpaziDecorati()){
+        cammini = trovaCamminiParzialiVincolati(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);}
+        else{
+            cammini=trovaCamminiParzialiVincolatiMetodoAlternativo(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
+        }
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
 
             //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO, SONO STATI TROVATI SOLO ALCUNI CAMMINI, STAMPARLI
@@ -2595,26 +2599,26 @@ public class Controller {
         return cammini;
 
     }
-    
+
     private static List<Cammino> trovaCamminiParzialiVincolatiMetodoAlternativo(Rete rete, List<StatoReteAbstract> stati, SpazioComportamentale automaRiconoscitore, long tempoIniziale) {
         //  TO-DO inserire l'automa riconoscitore 
 
         List<Cammino> cammini = new ArrayList<>();
-        Stack<StatoRete> pilaStato = new Stack<>();//pila dei nuovi stati
+        Stack<StatoReteDecorato> pilaStato = new Stack<>();//pila dei nuovi stati
 
-        Stack<StatoRete> pilaDiramazioni = new Stack<StatoRete>();//pila degli stati che hanno più di una transizione in uscita
-
+        Stack<StatoReteDecorato> pilaDiramazioni = new Stack<StatoReteDecorato>();//pila degli stati che hanno più di una transizione in uscita
+        ArrayList<String> decorazione = new ArrayList<>();
         //Stack<Cammino> pilaCammino = new Stack<>();
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
         StatoDFA statoRadiceRiconoscitore = (StatoDFA) automaRiconoscitore.getRoot();
-        StatoRete statoRadice = creaStatoCorrente(rete, numeroStati);
+        StatoReteDecorato statoRadice = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete, numeroStati), null);
         statoRadice.setStatoAutomaRiconoscitore(statoRadiceRiconoscitore);
         statoRadice.aggiungiStatoAutomaRinocitoreAllaDescrizione();
         pilaStato.push(statoRadice);
 
         while (!pilaStato.isEmpty() && System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
-            StatoRete statoAttuale = pilaStato.pop();
+            StatoReteDecorato statoAttuale = pilaStato.pop();
             StatoDFA statoAutomaRiconoscitoreAttuale = statoAttuale.getStatoAutomaRiconoscitore();
 //            
 
@@ -2624,6 +2628,7 @@ public class Controller {
                 camminoAttuale.add(statoAttuale);
                 //spazioC.aggiungiVertice(new StatoReteRidenominato(statoAttuale));
 //                System.out.println(statoAttuale.toString());
+                decorazione = (ArrayList<String>) statoAttuale.getDecorazione();
                 rete.setRete(statoAttuale);
                 if (statoAttuale.isAbilitatoScenario(rete.getAutomi(), automaRiconoscitore.getVerticiAdiacenti(statoAutomaRiconoscitoreAttuale))) {
                     List<List<Transizione>> transizioniAbilitate = new ArrayList<List<Transizione>>(rete.getAutomi().size());
@@ -2640,9 +2645,10 @@ public class Controller {
                         transizioniAbilitate.add(transizioniAbilitateDaControllare);//transizione abilitata diventa la transizione abilitata allo scatto nell'automa attuale                   
                         numeroTransizioniAbilitate += transizioniAbilitate.get(i).size();
                     }
-                    ArrayList<StatoRete> statiDopoLoScatto = new ArrayList<>();
+                    ArrayList<StatoReteDecorato> statiDopoLoScatto = new ArrayList<>();
                     Transizione transizioneEseguita;
-                    StatoRete copiaStatoAttuale;
+                    StatoReteDecorato copiaStatoAttuale;
+                    List<String> decorazioneAggiornata = null;
                     if (numeroTransizioniAbilitate == 1) {
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
                             if (rete.getAutomi().get(i).isAbilitato(rete.getLink())) {
@@ -2661,9 +2667,12 @@ public class Controller {
                                     }
                                 }
                                 if (abilitata) {
+                                    if (decorazione != null) {
+                                        decorazioneAggiornata = new ArrayList<String>(decorazione);
+                                    }
                                     transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
 //                                statoAttuale.setTransizionePrecedente(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
-                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    StatoReteDecorato statoDopoLoScatto = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati), decorazioneAggiornata);
                                     statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
                                     statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
                                     //lo stato dell'automa riconoscitore viene aggiunto al nome dello stato della rete
@@ -2676,7 +2685,7 @@ public class Controller {
                     } else {
                         //Se sono abilitate piu' transizioni:
                         //Provare a sostituire con creaStatoCorrente(rete)
-                        copiaStatoAttuale = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                        copiaStatoAttuale = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati), decorazione);
                         copiaStatoAttuale.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreAttuale);
                         copiaStatoAttuale.aggiungiStatoAutomaRinocitoreAllaDescrizione();
 
@@ -2697,10 +2706,16 @@ public class Controller {
                                     }
                                 }
 
+
                                 if (abilitata) {
+                                    if (decorazione != null) {
+                                        decorazioneAggiornata = new ArrayList<String>(decorazione);
+                                    } else {
+                                        decorazioneAggiornata = null;
+                                    }
                                     transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
                                     copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
-                                    StatoRete statoDopoLoScatto = creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati);
+                                    StatoReteDecorato statoDopoLoScatto =new StatoReteDecorato((StatoReteAbstract)  creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati), decorazioneAggiornata);
                                     statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
                                     statoDopoLoScatto.setStatoAutomaRiconoscitore(statoAutomaRiconoscitoreDopoLoScatto);
                                     statoDopoLoScatto.aggiungiStatoAutomaRinocitoreAllaDescrizione();
@@ -2714,7 +2729,7 @@ public class Controller {
                         }
                     }
 
-                    for (StatoRete s : statiDopoLoScatto) {
+                    for (StatoReteDecorato s : statiDopoLoScatto) {
                         pilaStato.push(s);
 //                       
                     }
@@ -2733,7 +2748,7 @@ public class Controller {
                 //o che si ricongiunge nello stato di un altro cammino gia' trovato
                 Cammino nuovoCammino = new Cammino();
 //                statoAttuale.setNumero(stati.indexOf(statoAttuale));
-                StatoRete statoPrecedente = (StatoRete) camminoAttuale.getUltimoStato();
+                StatoReteDecorato statoPrecedente = (StatoReteDecorato) camminoAttuale.getUltimoStato();
                 camminoAttuale.add(statoAttuale);//                
                 nuovoCammino.copiaCammino(camminoAttuale);
                 nuovoCammino.setIsCiclo(true);
@@ -2749,8 +2764,5 @@ public class Controller {
         return cammini;
 
     }
-    
-    
-    
 
 }
