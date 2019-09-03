@@ -135,7 +135,7 @@ public class Parametri {
         return metodoAlternativiCreazioneSpaziDecorati;
     }
 
-    public static void eseguiMetodoAlternativoCreazioneSpaziDecorati(boolean metodoAlternativiCreazioneSpaziDecorati) {
+    public static void setMetodoAlternativoCreazioneSpaziDecorati(boolean metodoAlternativiCreazioneSpaziDecorati) {
         Parametri.metodoAlternativiCreazioneSpaziDecorati = metodoAlternativiCreazioneSpaziDecorati;
     }
     

@@ -567,4 +567,8 @@ public class ControllerUtente {
         }        
     }
     
+    public static void cambiaMetodoCreazioneSpazi(){
+        boolean metodoAlternativoDaEseguire = true;//SE TRUE ESEGUE METODO ALTERNATIVO, SE FALSE ESEGUE METODO NORMALE
+        Parametri.setMetodoAlternativoCreazioneSpaziDecorati(metodoAlternativoDaEseguire);
+    }
 }
