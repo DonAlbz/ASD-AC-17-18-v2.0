@@ -48,19 +48,19 @@ public class Controller {
             SpazioComportamentale spazioC = new SpazioComportamentale();
             spazioC = creaSpazioDaCammini(spazioC, cammini, statiSpazioC, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                View.messaggioCreazioneSpazioCompNoNumeratoNoRidenominato();
+                View.messaggioErroreCreazioneSpazioCompNoNumeratoNoRidenominato();
                 View.stampaCammini(cammini);
             } else {
                 spazioC = potatura3(spazioC, statiSpazioC, tempoIniziale);
                 if (!spazioC.isEmpty()) {
                     spazioC = numeraStati(spazioC, statiSpazioC, tempoIniziale);
                     if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                        View.messaggioCreazioneSpazioCompNumeratoNoRidenominato();
+                        View.messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato();
                         View.stampaCammini(cammini);
                     } else {
                         spazioC = ridenominaStati(spazioC);
                         if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
-                            View.messaggioCreazioneSpazioCompNumeratoNoRidenominato();
+                            View.messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato();
                             View.stampaCammini(cammini);
                         }
                         rete.setSpazioC(spazioC);
@@ -121,8 +121,8 @@ public class Controller {
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
         cammini = trovaCamminiDecoratiMetodoAlternativo(rete, statiSpazioC, tempoIniziale);
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE SONO STATI FATTI ALCUNI CAMMINI, ANCORA DA FARE LO SPAZIO COMPORTAMENTALE
-            //STAMPARE CAMMINI FATTI
+            View.messaggioErroreCamminiParziali();
+            View.stampaCammini(cammini);
         } else {
 
 //        View.stampaCammini(cammini);
@@ -135,25 +135,26 @@ public class Controller {
             spazioComportamentaleDecorato = new SpazioComportamentale();
             spazioComportamentaleDecorato = creaSpazioDaCammini(spazioComportamentaleDecorato, cammini, statiSpazioC, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE MA DEVE ANCORA AVERE STATI NUMERATI E RIDENOMINATI
-                //STAMPARE CAMMINI FATTI
+                View.messaggioErroreCreazioneSpazioCompNoNumeratoNoRidenominato();
+                View.stampaCammini(cammini);
             } else {
                 spazioComportamentaleDecorato = potatura3(spazioComportamentaleDecorato, statiSpazioC, tempoIniziale);
                 if (!spazioComportamentaleDecorato.isEmpty()) {
                     spazioComportamentaleDecorato = numeraStati(spazioComportamentaleDecorato, statiSpazioC, tempoIniziale);
                     if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                        //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE E NUMERATO MA NON RIDENOMINATO
-                        //STAMPARE CAMMINI FATTI
+                        View.messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato();
+                        View.stampaCammini(cammini);
                     } else {
                         spazioComportamentaleDecorato = ridenominaStati(spazioComportamentaleDecorato);
                         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE 
-                            //STAMPARE CAMMINI FATTI
-                        }else{
+                            View.messaggioConfermaSpazioComportamentaleDecoratoCreato();
+                            View.stampaCammini(cammini);
+                        } else {
                             spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
-                        } if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
-                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE 
-                            //STAMPARE CAMMINI FATTI
+                        }
+                        if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
+                            View.messaggioConfermaSpazioComportamentaleDecoratoCreato();
+                            View.stampaCammini(cammini);
                         }
                         rete.setSpazioC(spazioComportamentaleDecorato);
 

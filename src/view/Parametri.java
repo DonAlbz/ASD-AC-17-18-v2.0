@@ -77,7 +77,8 @@ public class Parametri {
                                                         "Distilla diagnosi",
                                                         "Distillazione delle diagnosi da dizionario parziale",
                                                         "Creazione incrementale del dizionario",
-                                                        "Costruzione di spazi vincolati"};
+                                                        "Costruzione di spazi vincolati",
+                                                        "Cambio del metodo creazione spazi decorati"};
     public final static String MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Inserisci una stringa come nell'esempio sottostante per effetturare una ricerca nel dizionario:";
     public final static String ESEMPIO_MESSAGGIO_INSERIMENTO_STRINGA_ETICHETTE = "Esempio di ingresso: <o3,o2,o3,o2>";
     public final static String MESSAGGIO_INSERISCI = "Inserisci la stringa desiderata: ";
@@ -96,6 +97,8 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_DIAGNOSI = "La diagnosi ricavata è nulla";
     public final static String RICHIESTA_CAMBIO_RETE = "Si è sicuri di voler cambiare la rete?";
     public final static String RICHIESTA_SALVATAGGIO_RETE = "Si vuole salvare la rete attuale?";
+    public final static String RICHIESTA_CAMBIO_METODO_ALTERNATIVO = "Si vuole usare il metodo alternativo per la creazione degli spazi comportamentali decorati?";
+    public final static String MESSAGGIO_METODO_ALTERNATIVO_ATTIVO = "Il metodo alternativo è stato attivato";
 
     public final static String NUMERO_VERTICI_RIMOSSI = "Il numero di stati potati e': ";
 
@@ -117,6 +120,7 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CAMMINI_PARZIALI = "Non è stato possibile completare la costruzione completa dello spazio comportamentale";
     public final static String MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE = "Non è stato possibile inserire tutto lo spazio comportamentale";
     public final static String MESSAGGIO_ERRORE_NO_SPAZIO_MANCANZA_TEMPO = "La creazione dello spazio comportamentale è stata interrotta per mancanza di tempo";
+    public final static String MESSAGGIO_SPAZIO_COMPORTAMENTALE_DECORATO_CREATO = "È stato creato lo spazio comportamentale decorato";
 
         
     
