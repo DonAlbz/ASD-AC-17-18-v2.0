@@ -209,10 +209,14 @@ public class View {
             } else {
                 stampa = stampa.concat(ultimoStato);
                 stampa = stampa.concat(Parametri.TAB);
+                stampa = stampa.concat(Parametri.TAB);
                 if(ultimoStato.length()<10){
                     stampa = stampa.concat(Parametri.TAB);
                 }
-                stampa = stampa.concat(Parametri.TAB);
+                if(ultimoStato.length()<15){
+                    stampa = stampa.concat(Parametri.TAB);
+                }
+//                stampa = stampa.concat(Parametri.TAB);
                 stampa = stampa.concat(Parametri.FRECCIA);
                 stampa = stampa.concat(" " + vertici.get(count).getOsservabilita() + " ");
                 stampa = stampa.concat(Parametri.FRECCIA);
