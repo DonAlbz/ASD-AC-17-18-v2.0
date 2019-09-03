@@ -43,9 +43,9 @@ C2
 21	t2b	20
 21	t2c	21
 
-t3a: e1(L2)
-t3b: e1(L1)
-t3c: null
+t2a: e2(L2)
+t2b: /e1(L1)
+t2c: null
 
 OSSERVABILITA
 t2a: o1

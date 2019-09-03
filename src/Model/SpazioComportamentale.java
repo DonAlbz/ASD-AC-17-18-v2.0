@@ -102,6 +102,12 @@ public class SpazioComportamentale implements Serializable{
         s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
         s.append(Parametri.A_CAPO);
         for (StatoInterface statoPartenza : verticiAdiacenti.keySet()) {
+            if(isDecorato){
+                statoPartenza=(StatoReteDecorato)statoPartenza;
+            }
+             if(statoPartenza.getClass()==StatoReteRidenominato.class){
+                statoPartenza=(StatoReteRidenominato)statoPartenza;
+            }
             s.append(statoPartenza.toString());
             
             // aggiunta della decorazione
