@@ -94,6 +94,7 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_DIAGNOSI = "La diagnosi ricavata è nulla";
     public final static String RICHIESTA_CAMBIO_RETE = "Si è sicuri di voler cambiare la rete?";
     public final static String RICHIESTA_SALVATAGGIO_RETE = "Si vuole salvare la rete attuale?";
+    public final static String NUMERO_VERTICI_RIMOSSI = "Il numero di stati potati e': ";
         
     
     public final static int NUMERO_RIGA_NOME_RETE = 0;
@@ -103,6 +104,7 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
     public static long tempoEsecuzioneMax=2000000000;// >=100
+    public static boolean metodoAlternativiCreazioneSpaziDecorati=false;
     
     //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
     public static void incrementaPrefissoStatoDecorato(){
@@ -128,6 +130,15 @@ public class Parametri {
     public static void setTempoEsecuzioneMax(long tempoEsecuzioneMax) {
         Parametri.tempoEsecuzioneMax = tempoEsecuzioneMax;
     }
+
+    public static boolean getMetodoAlternativiCreazioneSpaziDecorati() {
+        return metodoAlternativiCreazioneSpaziDecorati;
+    }
+
+    public static void eseguiMetodoAlternativoCreazioneSpaziDecorati(boolean metodoAlternativiCreazioneSpaziDecorati) {
+        Parametri.metodoAlternativiCreazioneSpaziDecorati = metodoAlternativiCreazioneSpaziDecorati;
+    }
+    
     
     
 }

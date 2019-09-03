@@ -291,4 +291,13 @@ public class View {
         System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI);
         System.out.print(Parametri.A_CAPO);
     }
+
+    public static void numeroVerticiRimossi(int numeroVerticiRimossi) {
+        System.out.print(Parametri.NUMERO_VERTICI_RIMOSSI);
+        System.out.print(numeroVerticiRimossi);
+        System.out.println();
+        System.out.println();
+    }
+    
+    
 }

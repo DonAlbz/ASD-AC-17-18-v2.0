@@ -14,7 +14,6 @@ import view.Parametri;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -27,21 +26,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class ControllerUtente {
 
 //    public static File fileSalvataggio = new File(Parametri.PATH_FILE_INPUT + "/salvataggio.dat");
-    
-
     public static Rete start() {
-
+        
         Rete rete = menuAvvio();
         if (rete != null) {
             menuRete(rete);
         }
-
+        
         return rete;
     }
-
+    
     public static void startDebug(Rete rete) {
         distillaDiagnosiDaDizionarioParziale(rete);
-
+        
     }
 
     /**
@@ -58,12 +55,12 @@ public class ControllerUtente {
                 Controller.creaSpazioComportamentaleDecoratoMetodoAlternativo(rete, System.currentTimeMillis());
                 
                 break;
-
+            
             case 2:
 //                rete = carica();
                 rete = caricaNuovo();
                 break;
-
+            
         }
         return rete;
     }
@@ -82,7 +79,7 @@ public class ControllerUtente {
             fineProgramma = selezioneMenuRete(rete, selezione);
         } while (!fineProgramma);
     }
-
+    
     private static Rete importa() {
         File cartella = new File(Parametri.PATH_FILE_INPUT);
 
@@ -97,24 +94,24 @@ public class ControllerUtente {
                 }
             }
         };
-
+        
         File[] listaFile = cartella.listFiles(textFilter);
         String[] nomiFile = new String[listaFile.length];
         for (int i = 0; i < listaFile.length; i++) {
             nomiFile[i] = listaFile[i].getName();
         }
-
+        
         MyMenu menuSelezione = new MyMenu(Parametri.IMPORT_SELEZIONE, nomiFile);
         int selezione = menuSelezione.scegliSenzaUscita();
         File fileScelto = listaFile[selezione - 1];
         String pathCompletoFile = fileScelto.getAbsolutePath();
         Import nuovoImport = new Import();
         Rete rete = nuovoImport.caricaReteDaFile(pathCompletoFile);
-
+        
         View.messaggioImportCorretto(rete);
         return rete;
     }
-
+    
     private static Rete caricaNuovo() {
         Rete rete = null;
         File cartella = new File(Parametri.PATH_FILE_INPUT);
@@ -130,13 +127,13 @@ public class ControllerUtente {
                 }
             }
         };
-
+        
         File[] listaFile = cartella.listFiles(textFilter);
         String[] nomiFile = new String[listaFile.length];
         for (int i = 0; i < listaFile.length; i++) {
             nomiFile[i] = listaFile[i].getName();
         }
-
+        
         MyMenu menuSelezione = new MyMenu(Parametri.CARICAMENTO_SELEZIONE, nomiFile);
         int selezione = menuSelezione.scegliSenzaUscita();
         File fileScelto = listaFile[selezione - 1];
@@ -159,7 +156,7 @@ public class ControllerUtente {
         } else {
             System.out.println("Problemi con il file");
         }
-
+        
         return rete;
     }
 
@@ -178,7 +175,7 @@ public class ControllerUtente {
         fileScelto.setFileFilter(filtroDat);
         // imposto di default il nome del file da cercare
         fileScelto.setSelectedFile(new File("salvataggio.dat"));
-
+        
         int selezione = fileScelto.showDialog(null, "Seleziona il file da caricare");
         if (selezione == JFileChooser.APPROVE_OPTION) {
             String path = fileScelto.getSelectedFile().getPath();
@@ -187,7 +184,7 @@ public class ControllerUtente {
 //            rete = nuovoImport.caricaReteDaFile(path);
             fileSalvataggio = new File(path);
         }
-
+        
         if (fileSalvataggio.exists()) {
             try {
                 rete = (Rete) ServizioFile.caricaSingoloOggetto(fileSalvataggio);
@@ -205,26 +202,26 @@ public class ControllerUtente {
         }
         return rete;
     }
-
+    
     private static boolean selezioneMenuRete(Rete rete, int selezione) {
         boolean end = false;
         switch (selezione) {
             case 1:
                 menuInformazioniRete(rete);
                 break;
-
+            
             case 2:
                 menuCompiti(rete);
                 break;
-
+            
             case 3:
                 salva(rete);
                 break;
-
+            
             case 4:
                 cambiaRete(rete);
                 break;
-
+            
             case 0:
                 end = InputDati.yesOrNo(Parametri.MESSAGGIO_FINE_PROGRAMMA);
         }
@@ -246,30 +243,30 @@ public class ControllerUtente {
                     System.out.println("");
                     View.stampaNomeRete(rete);
                     break;
-
+                
                 case 2:
                     System.out.println("");
                     View.stampaAutomi(rete);
                     break;
-
+                
                 case 3:
                     System.out.println("");
                     View.stampaStati(rete);
                     break;
-
+                
                 case 4:
                     System.out.println("");
                     View.stampaTransizioni(rete);
                     break;
-
+                
                 case 5:
                     System.out.println("");
                     View.stampaGlobaleRete(rete);
                     break;
-
+                
                 case 0:
                     fineMenu = true;
-
+                
             }
         } while (!fineMenu);
     }
@@ -284,31 +281,31 @@ public class ControllerUtente {
         MyMenu menu = new MyMenu(Parametri.TITOLO_MENU_COMPITI, Parametri.VOCI_MENU_COMPITI);
         do {
             int selezione = menu.scegliMenuInterno();
-
+            
             switch (selezione) {
                 case 1:
                     creaSpazioComportamentale(rete);
                     break;
-
+                
                 case 2:
                     creaSpazioComportamentaleDecorato(rete);
                     break;
-
+                
                 case 3:
                     distillaDiagnosi(rete);
                     break;
                 case 4:
                     distillaDiagnosiDaDizionarioParziale(rete);
                     break;
-
+                
                 case 5:
                     distillaDiagnosiDaDizionarioParzialeIncrementale(rete);
                     break;
-
+                
                 case 6:
                     costruzioneDiSpaziVincolati(rete);
                     break;
-
+                
                 case 0:
                     fineMenu = true;
             }
@@ -335,7 +332,7 @@ public class ControllerUtente {
         long tempoIniziale = System.currentTimeMillis();
         Controller.creaSpazioComportamentale(rete, tempoIniziale);
         long tempoTotale = System.currentTimeMillis() - tempoIniziale;
-
+        
         System.out.println("TEMPO COSTRUZIONE SPAZIO COMPORTAMENTALE: " + tempoTotale + "ms");
     }
 
@@ -346,24 +343,28 @@ public class ControllerUtente {
      */
     private static SpazioComportamentale creaSpazioComportamentaleDecorato(Rete rete) {
         long tempoIniziale = System.currentTimeMillis();
-
+        
         SpazioComportamentale spazioComportamentaleDecorato = null;
-        spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete, tempoIniziale);
-
+        if (!Parametri.getMetodoAlternativiCreazioneSpaziDecorati()) {
+            spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecorato(rete, tempoIniziale);
+        } else {
+            spazioComportamentaleDecorato = Controller.creaSpazioComportamentaleDecoratoMetodoAlternativo(rete, tempoIniziale);
+        }
+        
         long tempoTotale = System.currentTimeMillis() - tempoIniziale;
         System.out.println("TEMPO COSTRUZIONE SPAZIO COMPORTAMENTALE DECORATO: " + tempoTotale + "ms");
         return spazioComportamentaleDecorato;
     }
-
+    
     private static SpazioComportamentale creaDizionario(Rete rete, SpazioComportamentale spazioComportamentaleDecorato, long tempoIniziale) {
         SpazioComportamentale dizionario = Controller.creaDizionario(rete, spazioComportamentaleDecorato, tempoIniziale);
         rete.setDizionario(dizionario);
         return dizionario;
     }
-
+    
     private static void distillaDiagnosi(Rete rete) {
         long tempoIniziale = System.currentTimeMillis();
-
+        
         SpazioComportamentale dizionario = null;
         if (rete.getDizionario() == null) {
             SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(rete);
@@ -394,22 +395,22 @@ public class ControllerUtente {
             }
         }
     }
-
+    
     private static List<String> acquisisciStringaEtichetteOsservabilita(Rete rete) {
         List<String> daCercare = null;
         View.messaggioAquisizioneEtichettaOsservabilita();
-
+        
         List<String> etichetteOsservabilita = Controller.getEtichetteOsservabilita(rete);
         daCercare = InputDati.leggiInserimentoStringaEtichette(Parametri.MESSAGGIO_INSERISCI, etichetteOsservabilita);
         return daCercare;
     }
-
+    
     private static void distillaDiagnosiDaDizionarioParziale(Rete rete) {
         View.stampaLegendaEspressioneRegolareOsservazioni(rete);
         String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
         rete.setDizionarioParziale(null);
         long tempoIniziale = System.currentTimeMillis();
-
+        
         SpazioComportamentale dizionarioParziale = Controller.creaDizionarioParziale(rete, osservazione, tempoIniziale);
         if (dizionarioParziale != null) {
             long tempoTotale = System.currentTimeMillis() - tempoIniziale;
@@ -432,18 +433,18 @@ public class ControllerUtente {
                     View.messaggioErroreDiagnosi();
                 }
             }
-
+            
         } else {
             //TODO CAMO: non e' possibile eseguire una diagnosi
         }
     }
-
+    
     private static void distillaDiagnosiDaDizionarioParzialeIncrementale(Rete rete) {
 
         ////DA TOGLIERE: Per il momento faccio acquisire 2 soli dizionari parziali
         boolean condizioneDiFineInserimentoDizionariParziali = true;
         int contatore = numeroDizionariParzialiDaInserire();
-
+        
         while (condizioneDiFineInserimentoDizionariParziali) {
             View.stampaLegendaEspressioneRegolareOsservazioni(rete);
             String osservazione = InputDati.inserimentoEspressioneRegolare(Parametri.MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE, rete.getEtichettaOsservabilita());
@@ -463,39 +464,40 @@ public class ControllerUtente {
                     condizioneDiFineInserimentoDizionariParziali = false;
                     Parametri.resettaPrefissoStatoDecorato();
                 }
-
+                
             }
         }
-        if(rete.getDizionariParziali()!=null && rete.getDizionariParziali().size()>1){ 
-        long tempoIniziale = System.currentTimeMillis();
-
-        SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
-        if (dizionarioParzialeIncrementale != null) {
-            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
-            System.out.println("TEMPO UNIONE DIZIONARI: " + tempoTotale + "ms");
-            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-            tempoIniziale = System.currentTimeMillis();
-            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita, tempoIniziale);
-            if (diagnosi != null) {
-                System.out.println(diagnosi);
-                tempoTotale = System.currentTimeMillis() - tempoIniziale;
-                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
-            } else {
-                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+        if (rete.getDizionariParziali() != null && rete.getDizionariParziali().size() > 1) {            
+            long tempoIniziale = System.currentTimeMillis();
+            
+            SpazioComportamentale dizionarioParzialeIncrementale = Controller.unisciDizionari(rete, rete.getDizionariParziali());
+            if (dizionarioParzialeIncrementale != null) {
+                long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO UNIONE DIZIONARI: " + tempoTotale + "ms");
+                List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+                tempoIniziale = System.currentTimeMillis();
+                String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeIncrementale, etichetteOsservabilita, tempoIniziale);
+                if (diagnosi != null) {
+                    System.out.println(diagnosi);
+                    tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                    System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
                 } else {
-                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
+                    if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                        // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                    } else {
+                        //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                        View.messaggioErroreDiagnosi();
+                    }
                 }
+            } else {
+                System.out.println("NON E' STATO POSSIBILE CREARE IL DIZIONARIO INCREMENTALE");
             }
-        } else {
-            System.out.println("NON E' STATO POSSIBILE CREARE IL DIZIONARIO INCREMENTALE");
-        }}
+        }
     }
-
+    
     private static void costruzioneDiSpaziVincolati(Rete rete) {
         View.stampaLegendaEspressioneRegolareTransizioni(rete);
-
+        
         List<Transizione> transizioni = new ArrayList<Transizione>();
         List<Automa> automi = rete.getAutomi();
         for (Automa automa : automi) {
@@ -516,32 +518,33 @@ public class ControllerUtente {
         //SpazioComportamentale spaziVincolati = Controller.creaRiconoscitoreEspressione(rete, osservazione);
         rete.setDizionarioParzialeVincolato(null);
         SpazioComportamentale dizionarioParzialeVincolato = Controller.creaDizionarioParzialeVincolato(rete, osservazione, tempoIniziale);
-         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
-                } else {
-        if (dizionarioParzialeVincolato != null) {
-
-            long tempoTotale = System.currentTimeMillis() - tempoIniziale;
-            System.out.println("TEMPO COSTRUZIONE DIZIONARIO VINCOLATO: " + tempoTotale + "ms");
-            rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
-            List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
-            tempoIniziale = System.currentTimeMillis();
-            String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita, tempoIniziale);
-            if (diagnosi != null) {
-                View.stampaDiagnosi(diagnosi);
-                tempoTotale = System.currentTimeMillis() - tempoIniziale;
-                System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
-            } else {
-                if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
-                } else {
-                    //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
-                    View.messaggioErroreDiagnosi();
-                }
-            }
+        if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+            // TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
         } else {
-            //TODO CAMO: "non è possibile eseguire una diagnosi
-        }}
+            if (dizionarioParzialeVincolato != null) {
+                
+                long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO COSTRUZIONE DIZIONARIO VINCOLATO: " + tempoTotale + "ms");
+                rete.setDizionarioParzialeVincolato(dizionarioParzialeVincolato);
+                List<String> etichetteOsservabilita = acquisisciStringaEtichetteOsservabilita(rete);
+                tempoIniziale = System.currentTimeMillis();
+                String diagnosi = Controller.distillaDiagnosi(dizionarioParzialeVincolato, etichetteOsservabilita, tempoIniziale);
+                if (diagnosi != null) {
+                    View.stampaDiagnosi(diagnosi);
+                    tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                    System.out.println("TEMPO DISTILLAZIONE DIAGNOSI: " + tempoTotale + "ms");
+                } else {
+                    if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                        //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+                    } else {
+                        //SE DIAGNOSI == NULL  o non e' uno stato finale, oppure e' andato storto qualcosa;
+                        View.messaggioErroreDiagnosi();
+                    }
+                }
+            } else {
+                //TODO CAMO: "non è possibile eseguire una diagnosi
+            }
+        }
     }
 
     /**
@@ -554,14 +557,14 @@ public class ControllerUtente {
 
         return 2; // per i test ho impostato 2 di default
     }
-
+    
     public static void cambiaRete(Rete rete) {
         if (InputDati.yesOrNo(Parametri.RICHIESTA_CAMBIO_RETE)) {
-            if(InputDati.yesOrNo(Parametri.RICHIESTA_SALVATAGGIO_RETE)){
+            if (InputDati.yesOrNo(Parametri.RICHIESTA_SALVATAGGIO_RETE)) {
                 salva(rete);
             }
             caricaNuovo();
-        } 
+        }        
     }
-
+    
 }

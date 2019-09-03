@@ -46,6 +46,12 @@ public class StatoReteDecorato extends StatoRete implements Serializable {
         super(statoReteDecorato);
         setDecorazione(statoReteDecorato.getDecorazione());
     }
+    
+     public StatoReteDecorato(StatoReteDecorato statoReteDecorato, int numero) {
+        super(statoReteDecorato);
+        super.setNumero(numero);
+        setDecorazione(statoReteDecorato.getDecorazione());
+    }
 
     public String getNumeroToString() {
         StringBuilder s = new StringBuilder();
@@ -99,7 +105,7 @@ public class StatoReteDecorato extends StatoRete implements Serializable {
         }
         if (getNumero() != -1 && stato2.getNumero() != -1) {//AGGIUNTO DI RECENTE
             if (getDecorazione() == null && stato2.getDecorazione() == null) {
-                if (getNumero() == stato2.getNumero()) {
+                if (getDescrizione().equals(stato2.getDescrizione())) {
                     return true;
                 }
                 return false;
@@ -109,6 +115,15 @@ public class StatoReteDecorato extends StatoRete implements Serializable {
                 return true;
             }
         }
+        if(getNumero()==-1 || stato2.getNumero()==-1){//AGGIUNTO DI RECENTE
+            if(getDecorazione()==null && stato2.getDecorazione()==null){
+                if(getDescrizione().equals(stato2.getDescrizione())){
+                    return true;
+                }
+                return false;
+            }
+        }
+        
         if(getDescrizione().equals(stato2.getDescrizione()) && getDecorazione().equals(stato2.getDecorazione())){
             return true;
         }
