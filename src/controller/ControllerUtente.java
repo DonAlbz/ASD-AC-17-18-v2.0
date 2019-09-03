@@ -318,6 +318,10 @@ public class ControllerUtente {
                 case 6:
                     costruzioneDiSpaziVincolati(rete);
                     break;
+                    
+                case 7:
+                    cambiaMetodoCreazioneSpazi();
+                    break;
                 
                 case 0:
                     fineMenu = true;
@@ -584,7 +588,12 @@ public class ControllerUtente {
     }
     
     public static void cambiaMetodoCreazioneSpazi(){
-        boolean metodoAlternativoDaEseguire = true;//SE TRUE ESEGUE METODO ALTERNATIVO, SE FALSE ESEGUE METODO NORMALE
+        //se true esegue il metodo alternativo, se false esegue metodo normale
+        boolean metodoAlternativoDaEseguire = InputDati.yesOrNo(Parametri.RICHIESTA_CAMBIO_METODO_ALTERNATIVO);
         Parametri.setMetodoAlternativoCreazioneSpaziDecorati(metodoAlternativoDaEseguire);
+        if(metodoAlternativoDaEseguire){
+            View.messaggioMetodoAlternativoAttivo();
+        }
     }
+    
 }
