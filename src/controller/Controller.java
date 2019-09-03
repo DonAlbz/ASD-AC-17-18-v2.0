@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import view.View;
 
 /**
- *
+ * 
  * @author alber
  */
 public class Controller {
@@ -34,8 +34,8 @@ public class Controller {
         LinkedList<StatoReteAbstract> statiSpazioC = new LinkedList<>();
         cammini = trovaCammini(rete, statiSpazioC, tempoIniziale);
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE SONO STATI FATTI ALCUNI CAMMINI, ANCORA DA FARE LO SPAZIO COMPORTAMENTALE
-            //STAMPARE CAMMINI FATTI
+            View.messaggioErroreCamminiParziali();
+            View.stampaCammini(cammini);;
         } else {
 
 //        View.stampaCammini(cammini);
@@ -48,20 +48,20 @@ public class Controller {
             SpazioComportamentale spazioC = new SpazioComportamentale();
             spazioC = creaSpazioDaCammini(spazioC, cammini, statiSpazioC, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE MA DEVE ANCORA AVERE STATI NUMERATI E RIDENOMINATI
-                //STAMPARE CAMMINI FATTI
+                View.messaggioCreazioneSpazioCompNoNumeratoNoRidenominato();
+                View.stampaCammini(cammini);
             } else {
                 spazioC = potatura3(spazioC, statiSpazioC, tempoIniziale);
                 if (!spazioC.isEmpty()) {
                     spazioC = numeraStati(spazioC, statiSpazioC, tempoIniziale);
                     if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                        //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE E NUMERATO MA NON RIDENOMINATO
-                        //STAMPARE CAMMINI FATTI
+                        View.messaggioCreazioneSpazioCompNumeratoNoRidenominato();
+                        View.stampaCammini(cammini);
                     } else {
                         spazioC = ridenominaStati(spazioC);
                         if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
-                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE E NUMERATO MA NON RIDENOMINATO
-                            //STAMPARE CAMMINI FATTI
+                            View.messaggioCreazioneSpazioCompNumeratoNoRidenominato();
+                            View.stampaCammini(cammini);
                         }
                         rete.setSpazioC(spazioC);
 
@@ -83,28 +83,22 @@ public class Controller {
             creaSpazioComportamentale(rete, tempoIniziale);
         }
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-            //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE PROSEGUIRE CON LA COSTRUZIONE DELLO SPAZIO COMPORTAMENTALE DECORATO
-            System.out.println("DA FARE");
+            View.messaggioErroreSpazioComportamentaleDecorato();
         } else {
             camminiDecorati = trovaCamminiDecorati(rete.getSpazioC(), statiDecoratiSpazioC, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE CREARE TUTTI I CAMMINI DECORATI
-                //STAMPARE QUELLI FATTI
-                System.out.println("DA FARE");
+                View.messaggioErroreSpazioComportamentaleDecoratoCamminiParziali();
+                View.stampaCammini(camminiDecorati);
             } else {
 //        View.stampaCammini(camminiDecorati);
                 spazioComportamentaleDecorato = new SpazioComportamentale();
                 spazioComportamentaleDecorato = inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
                 if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                    //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TUTTI I VERTICI DELLO SPAZIO COMPORTAMENTALE
-
-                    System.out.println("DA FARE");
+                    View.messaggioErroreSpazioComportamentaleDecoratoVerticiParziali();
                 } else {
                     spazioComportamentaleDecorato = inserisciLatiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati);
                     if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                        //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TUTTI I VERTICI DELLO SPAZIO COMPORTAMENTALE
-
-                        System.out.println("DA FARE");
+                        View.messaggioErroreSpazioComportamentaleDecoratoVerticiParziali();
                     } else {
 //        spazioComportamentaleDecorato = creaSpazioDaCammini(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
 //        spazioComportamentaleDecorato = potatura3(spazioComportamentaleDecorato, statiDecoratiSpazioC);
@@ -179,7 +173,7 @@ public class Controller {
         if (statoRaggiunto != null) {
             diagnosi = getDiagnosi(statoRaggiunto);
         } else {
-            System.out.println("Non e' stato possibile raggiungere alcuno stato con l'osservazione inserita");
+            View.messaggioErroreNoSpazioDaOsservazione();
         }
         return diagnosi;
     }
@@ -1257,9 +1251,7 @@ public class Controller {
             cammini = trovaCamminiParzialiMetodoAlternativo(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
         }
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-            //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TROVARE TUTTI I CAMMINI
-
-            System.out.println("DA FARE");
+            View.messaggioErroreSpazioComportamentaleCamminiParziali();
         } else {
             View.stampaCammini(cammini);
 //        List<Cammino> traiettorie = potatura2(cammini);
@@ -1269,9 +1261,7 @@ public class Controller {
             SpazioComportamentale spazioC = new SpazioComportamentale();
             spazioC = creaSpazioDaCammini(spazioC, cammini, statiSpazioC, tempoIniziale);
             if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TUTTO LO SPAZIO COMPORTAMENTALE
-
-                System.out.println("DA FARE");
+                View.messaggioErroreInserimentoSpazioComportamentale();
             } else {
                 spazioC = potatura3(spazioC, statiSpazioC, tempoIniziale);
                 if (!spazioC.isEmpty()) {
@@ -1283,9 +1273,7 @@ public class Controller {
 //        spazioC = inserisciLatiSpazioComportamentale(spazioC, traiettorie);
                     spazioComportamentaleParzialeDecorato = creaSpazioComportamentaleDecorato(spazioC, tempoIniziale);
                     if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-                        //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TUTTI I VERTICI DELLO SPAZIO COMPORTAMENTALE
-
-                        System.out.println("DA FARE");
+                        View.messaggioErroreSpazioComportamentaleVerticiParziali();
                     } else {
 //        System.out.println(spazioC.toString());
 //        SpazioComportamentale spazioComportamentaleDecorato = creaSpazioComportamentaleDecorato(spazioC);
@@ -1860,10 +1848,7 @@ public class Controller {
                     }
                 }
                 if (System.currentTimeMillis() - tempoIniziale > Parametri.tempoEsecuzioneMax) {
-                    //TODO CAMO MESSAGGIO INTERRUZIONE ANTICIPATA NON E' STATO COMPLETATO LO SPAZIO COMPORTAMENTALE
-
-                    System.out.println("CREAZIONE DELLO SPAZIO INTERROTTA PER MANCANZA DI TEMPO!!!");
-                    //da testare
+                    View.messaggioErroreCreazioneSpazioMancanzaTempo();
                     break;
                 }
 
@@ -1991,8 +1976,7 @@ public class Controller {
         View.stampaCammini(camminiDecorati);
         SpazioComportamentale spazioComportamentaleDecorato = null;
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-
-            //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO
+            View.messaggioErroreTempoInsufficiente();
         } else {
             spazioComportamentaleDecorato = new SpazioComportamentale();
             spazioComportamentaleDecorato = inserisciVerticiSpazioComportamentale(spazioComportamentaleDecorato, camminiDecorati, statiDecoratiSpazioC);
@@ -2392,8 +2376,7 @@ public class Controller {
     static SpazioComportamentale creaDizionarioParzialeVincolato(Rete rete, String osservazione, long tempoIniziale) {
         // parte relativa alla creazione dell'automa riconoscitore
         SpazioComportamentale automaRiconoscitore = creaRiconoscitoreEspressione(rete, osservazione);
-
-        //TODO Alby
+        
         SpazioComportamentale spazioComportamentaleParzialeVincolato = creaSpazioComportamentaleParzialeVincolato(rete, automaRiconoscitore, tempoIniziale);
         SpazioComportamentale dizionarioParzialeVincolato = null;
         if (spazioComportamentaleParzialeVincolato != null) {
@@ -2414,8 +2397,9 @@ public class Controller {
             cammini=trovaCamminiParzialiVincolatiMetodoAlternativo(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
         }
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
-
-            //TODO SCRIVERE CHE IL TEMPO NON E' BASTATO, SONO STATI TROVATI SOLO ALCUNI CAMMINI, STAMPARLI
+            View.messaggioErroreTempoInsufficiente();
+            View.messaggioErroreCamminiParziali();
+            View.stampaCammini(cammini);
         } else {
 
             View.stampaCammini(cammini);

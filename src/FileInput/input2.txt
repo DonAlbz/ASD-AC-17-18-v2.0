@@ -1,0 +1,76 @@
+input2
+-----------------------
+AUTOMI
+C1	C2	C3
+-----------------------
+LINK
+L1	L2	L3
+-----------------------
+EVENTI
+e1	e2	e3
+-----------------------
+OSSERVABILITA
+o1	o2
+-----------------------
+RILEVANZA
+f1	f3
+-----------------------
+C1
+10	11
+
+10	t1a	11
+11	t1b	10
+10	t1c	11
+
+t1a: e1(L1)
+t1b: e2(L3)
+t1c: null
+
+OSSERVABILITA
+t1a: null
+t1b: null
+t1c: null
+
+RILEVANZA
+t1a: null
+t1b: null
+t1c: f1
+-----------------------
+C2
+20	21
+
+20	t2a	21
+21	t2b	20
+
+t2a: /{e1(L1),e3(L2)}
+t2b: /{e1(L1)}
+
+OSSERVABILITA
+t2a: o1
+t2b: o2
+
+RILEVANZA
+t2a: null
+t2b: null
+-----------------------
+C3
+30	31
+
+30	t3a	31
+31	t3b	30
+31	t3c	31
+
+t3a: /{e2(L3)}
+t3b: e3(L2)
+t3c: e3(L2)
+
+OSSERVABILITA
+t3a: null
+t3b: null
+t3c: null
+
+RILEVANZA
+t3a: null
+t3b: null
+t3c: f3
+-----------------------

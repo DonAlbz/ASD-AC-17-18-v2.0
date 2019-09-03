@@ -202,4 +202,12 @@ public abstract class StatoReteAbstract implements StatoInterface, Serializable 
 
     }
 
+    public String toStringDecorazione() {
+        StringBuilder s = new StringBuilder();
+        for (String dec : decorazione) {
+            s.append(dec);
+        }
+        return s.toString();
+    }
+
 }

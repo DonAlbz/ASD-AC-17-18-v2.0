@@ -6,6 +6,7 @@
 package view;
 
 import Model.StatoReteRidenominato;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -54,7 +55,8 @@ public class Parametri {
     public final static String VOCI_MENU_RETE[] = {"Stampa informazioni della rete",
                                                     "Esegui compito",
                                                     "Salva rete",
-                                                    "Cambia rete"};
+                                                    "Cambia rete",
+                                                    "Modifica tempo massimo di esecuzione"};
     public final static String PATH_FILE_INPUT = "./src/FileInput";
     public final static String MESSAGGIO_PATH_FILE_IMPORT = "Il file importato risiede nel seguente path:";
     public final static String OSSERVABILITA = "osservabilita";
@@ -86,7 +88,7 @@ public class Parametri {
                                                                         "+ = da mettere in seguito a ^ per definire multiplicità",
                                                                         "( ) = sono da considerarsi solo le parentesi tonde per definire l'espressione"};
     public final static String ESPRESSIONE_REGOLARE_ESEMPIO_OSSERVAZIONI = "Esempio di espressione regolare: (o2 o3)^+ o3";
-    public final static String ESPRESSIONE_REGOLARE_ESEMPIO_TRANSIZIONI = "Esempio di espressione regolare: (t2a t2b)^+ t3a";
+    public final static String ESPRESSIONE_REGOLARE_ESEMPIO_TRANSIZIONI = "Esempio di espressione regolare: t3a t2a t3b";
     public final static String MESSAGGIO_INSERISCI_ESPRESSIONE_REGOLARE = "Basandosi come nell'esempio soprastante inserisci l'espressione regolare desiderata > ";
     public final static String FINALE = "Finale";
     public final static String MESSAGGIO_SCP_NULLO = "Non e' stato identificato uno spazio comportamentale parziale in base all'automa riconoscitore. Viene ritornato null";
@@ -94,17 +96,43 @@ public class Parametri {
     public final static String MESSAGGIO_ERRORE_DIAGNOSI = "La diagnosi ricavata è nulla";
     public final static String RICHIESTA_CAMBIO_RETE = "Si è sicuri di voler cambiare la rete?";
     public final static String RICHIESTA_SALVATAGGIO_RETE = "Si vuole salvare la rete attuale?";
+
     public final static String NUMERO_VERTICI_RIMOSSI = "Il numero di stati potati e': ";
+
+    public final static String MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_1 = "(Per una corretta esecuzione il limite minimo temporale è di 1000ms)";
+    public final static String MESSAGGIO_CAMBIO_LIMITE_TEMPORALE_2 = "Si inserisca il nuovo tempo limite di esecuzione che si vuole impostare (in ms):";
+    public final static String MESSAGGIO_CAMBIO_LIMITE_EFFETTUATO = "Il cambio del tempo di esecuzione minimo è stato completato con successo";
+    public final static String MESSAGGIO_ERRORE_TEMPO_INSUFFICIENTE = "Il tempo minimo impostato per il calcolo non è sufficiente per completare il compito";
+    public final static String MESSAGGIO_ERRORE_DIAGNOSI_IMPOSSIBILE = "Non è possibile effettuare una diagnosi";
+    public final static String MESSAGGIO_RICHIESTA_NUMERO_DIZIONARI = "Quanti dizionari parziali si vogliono inserire? (minimo 2): ";
+    public final static String MESSAGGIO_ERRORE_CREAZIONE_DIZIONARIO_INCREMENTALE = "Non è stato possibile creare il dizionario incrementale";
+    public final static String MESSAGGIO_ERRORE_CAMMINI_PARZIALI = "È scaduto il tempo di computazione: i cammini calcolati sono parziali e lo spazio comportamentale è incompleto";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NO_NUMERATO_NO_RIDENOMINATO = "Lo spazio comportamentale è stato creato ma non è stato ne numerato ne ridenominato";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NUMERATO_NO_RIDENOMINATO = "Lo spazio comportamentale è stato creato e numerato ma non ridenominato";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO = "Non è stato possibile procedere con la costruzione dello spazio comportamentale decorato";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_CAMMINI_PARZIALI = "Non è stato possibile completare la costruzione completa dello spazio comportamentale decorato";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_VERTICI_PARZIALI = "Non è stato possibile inserire tutti i vertici dello spazio comportamentale decorato";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_VERTICI_PARZIALI = "Non è stato possibile inserire tutti i vertici dello spazio comportamentale";
+    public final static String MESSAGGIO_ERRORE_NO_STATO_DA_OSSERVAZIONE = "Non e' stato possibile raggiungere alcuno stato con l'osservazione inserita";
+    public final static String MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CAMMINI_PARZIALI = "Non è stato possibile completare la costruzione completa dello spazio comportamentale";
+    public final static String MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE = "Non è stato possibile inserire tutto lo spazio comportamentale";
+    public final static String MESSAGGIO_ERRORE_NO_SPAZIO_MANCANZA_TEMPO = "La creazione dello spazio comportamentale è stata interrotta per mancanza di tempo";
+
         
     
+    public final static int NUMERO_MINIMO_INSERIMENTO_DIZIONARI = 2;
     public final static int NUMERO_RIGA_NOME_RETE = 0;
     public final static int NUMERO_RIGA_NOMI_AUTOMI = 3;
     public final static int NUMERO_RIGA_NOMI_LINK = 6;
     public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
+
     public static long tempoEsecuzioneMax=Long.MAX_VALUE;// >=1000
     public static boolean metodoAlternativiCreazioneSpaziDecorati=true;
+    public final static long LIMITE_MINIMO_TEMPORALE=1000; // in millisecondi
+    
+
     
     //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
     public static void incrementaPrefissoStatoDecorato(){
