@@ -457,6 +457,8 @@ public class ControllerUtente {
                 condizioneDiFineInserimentoDizionariParziali = false;
                 View.messaggioErroreTempoInsufficiente();
             } else {
+                long tempoTotale = System.currentTimeMillis() - tempoIniziale;
+                System.out.println("TEMPO COSTRUZIONE DIZIONARIO PARZIALE: " + tempoTotale + "ms");
                 rete.addDizionarioParziale(dizionarioParziale);
                 //Il prefisso degli statiDecorati appartenenti allo stesso spazio incrementale, viene incrementato di una posizione alfabetica
                 Parametri.incrementaPrefissoStatoDecorato();
