@@ -325,13 +325,13 @@ public class View {
         System.out.print(Parametri.A_CAPO);
     }
     
-    public static void messaggioCreazioneSpazioCompNoNumeratoNoRidenominato(){
+    public static void messaggioErroreCreazioneSpazioCompNoNumeratoNoRidenominato(){
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NO_NUMERATO_NO_RIDENOMINATO);
         System.out.print(Parametri.A_CAPO);
     }
     
-    public static void messaggioCreazioneSpazioCompNumeratoNoRidenominato(){
+    public static void messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato(){
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NUMERATO_NO_RIDENOMINATO);
         System.out.print(Parametri.A_CAPO);
@@ -390,5 +390,16 @@ public class View {
         System.out.println();
     }
     
+    public static void messaggioConfermaSpazioComportamentaleDecoratoCreato(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_SPAZIO_COMPORTAMENTALE_DECORATO_CREATO);
+        System.out.print(Parametri.A_CAPO);
+    }
+    
+    public static void messaggioMetodoAlternativoAttivo(){
+        System.out.print(Parametri.A_CAPO);
+        System.out.println(Parametri.MESSAGGIO_METODO_ALTERNATIVO_ATTIVO);
+        System.out.print(Parametri.A_CAPO);
+    }
     
 }
