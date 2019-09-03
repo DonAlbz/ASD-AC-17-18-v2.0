@@ -103,8 +103,8 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_EVENTI = 9;
     public final static int NUMERO_RIGA_NOMI_OSSERVABILITA = 12;
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
-    public static long tempoEsecuzioneMax=2000000000;// >=100
-    public static boolean metodoAlternativiCreazioneSpaziDecorati=false;
+    public static long tempoEsecuzioneMax=Long.MAX_VALUE;// >=1000
+    public static boolean metodoAlternativiCreazioneSpaziDecorati=true;
     
     //incrementa di una posizione alfabetica, la lettera prefisso degli stati rete decorati
     public static void incrementaPrefissoStatoDecorato(){

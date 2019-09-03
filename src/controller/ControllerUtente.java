@@ -52,7 +52,7 @@ public class ControllerUtente {
         switch (selezione) {
             case 1:
                 rete = importa();
-                Controller.creaSpazioComportamentaleDecoratoMetodoAlternativo(rete, System.currentTimeMillis());
+//                Controller.creaSpazioComportamentaleDecoratoMetodoAlternativo(rete, System.currentTimeMillis());
                 
                 break;
             

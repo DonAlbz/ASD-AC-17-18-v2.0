@@ -1251,7 +1251,11 @@ public class Controller {
         List<Cammino> cammini;
         List<StatoReteAbstract> statiSpazioC = new ArrayList<>();
         SpazioComportamentale spazioComportamentaleParzialeDecorato = null;
-        cammini = trovaCamminiParziali(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
+        if (!Parametri.getMetodoAlternativiCreazioneSpaziDecorati()) {
+            cammini = trovaCamminiParziali(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
+        } else {
+            cammini = trovaCamminiParzialiMetodoAlternativo(rete, statiSpazioC, automaRiconoscitore, tempoIniziale);
+        }
         if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
             //TODO CAMO SCRIVERE CHE NON E' STATO POSSIBILE INSERIRE TROVARE TUTTI I CAMMINI
 
@@ -1639,9 +1643,7 @@ public class Controller {
         return cammini;
 
     }
-    
-    
-    
+
     private static List<Cammino> trovaCamminiParzialiMetodoAlternativo(Rete rete, List<StatoReteAbstract> stati, SpazioComportamentale automaRiconoscitore, long tempoIniziale) {
         //  TO-DO inserire l'automa riconoscitore 
 
@@ -1654,7 +1656,7 @@ public class Controller {
         Cammino camminoAttuale = creaNuovoCammino(rete);//il cammino attuale diventa un nuovo cammino con gli stati degli automi e i link azzerati
         int numeroStati = -1;
         StatoDFA statoRadiceRiconoscitore = (StatoDFA) automaRiconoscitore.getRoot();
-        StatoReteDecorato statoRadice = new StatoReteDecorato((StatoReteAbstract)creaStatoCorrente(rete, numeroStati), null);
+        StatoReteDecorato statoRadice = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete, numeroStati), null);
         statoRadice.setStatoAutomaRiconoscitore(statoRadiceRiconoscitore);
         statoRadice.aggiungiStatoAutomaRinocitoreAllaDescrizione();
         pilaStato.push(statoRadice);
@@ -1690,12 +1692,11 @@ public class Controller {
                     ArrayList<StatoReteDecorato> statiDopoLoScatto = new ArrayList<>();
                     Transizione transizioneEseguita;
                     StatoReteDecorato copiaStatoAttuale;
-                     List<String> decorazioneAggiornata = null;
+                    List<String> decorazioneAggiornata = null;
                     if (numeroTransizioniAbilitate == 1) {
                         for (int i = 0; i < rete.getAutomi().size(); i++) {
                             if (rete.getAutomi().get(i).isAbilitato(rete.getLink())) {
-                                                            
-                                
+
                                 //la prima e unica transizione abilitata allo scatto
                                 Transizione transizioneDaEseguire = rete.getAutomi().get(i).getTransizioneAbilitata().get(0);
                                 boolean abilitata = transizioneDaEseguire.getOsservabilita() == null;
@@ -1711,13 +1712,13 @@ public class Controller {
                                 }
                                 if (abilitata) {
                                     if (decorazione != null) {
-                                    decorazioneAggiornata = new ArrayList<String>(decorazione);
-                                }    
+                                        decorazioneAggiornata = new ArrayList<String>(decorazione);
+                                    }
                                     transizioneEseguita = rete.getAutomi().get(i).scatta(rete.getLink());//l'automa attuale viene fatto scattare e transizione eseguita diventa la transizione che è stata eseguita
                                     if (transizioneEseguita.getRilevanza() != null) {
-                                    decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(transizioneEseguita.getRilevanza()));
-                                }
-                                    
+                                        decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(transizioneEseguita.getRilevanza()));
+                                    }
+
 //                                statoAttuale.setTransizionePrecedente(transizioneEseguita);//la transizione eseguita viene aggiunta allo StatoRete attuale
                                     StatoReteDecorato statoDopoLoScatto = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati), decorazioneAggiornata);
                                     statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
@@ -1755,14 +1756,14 @@ public class Controller {
 
                                 if (abilitata) {
                                     if (decorazione != null) {
-                                    decorazioneAggiornata = new ArrayList<String>(decorazione);
-                                } else {
-                                    decorazioneAggiornata = null;
-                                }
+                                        decorazioneAggiornata = new ArrayList<String>(decorazione);
+                                    } else {
+                                        decorazioneAggiornata = null;
+                                    }
                                     transizioneEseguita = rete.getAutomi().get(i).scatta(transizioneDaEseguire, rete.getLink());//viene fatta scattare la transizione da eseguire
-                                     if (transizioneEseguita.getRilevanza() != null) {
-                                    decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(transizioneEseguita.getRilevanza()));
-                                }
+                                    if (transizioneEseguita.getRilevanza() != null) {
+                                        decorazioneAggiornata = aggiornaDecorazione(decorazioneAggiornata, Arrays.asList(transizioneEseguita.getRilevanza()));
+                                    }
                                     copiaStatoAttuale.setTransizionePrecedente(transizioneEseguita);
                                     StatoReteDecorato statoDopoLoScatto = new StatoReteDecorato((StatoReteAbstract) creaStatoCorrente(rete.getAutomi(), rete.getLink(), numeroStati), decorazioneAggiornata);
                                     statoDopoLoScatto.setTransizionePrecedente(transizioneEseguita);
@@ -1811,8 +1812,6 @@ public class Controller {
         return cammini;
 
     }
-    
-    
 
     private static SpazioComportamentale creaSpazioDaCammini(SpazioComportamentale spazioC, List<Cammino> cammini, List<StatoReteAbstract> stati, long tempoIniziale) {
         if (stati.size() > 0) {
@@ -1876,7 +1875,7 @@ public class Controller {
     //Questa potatura rimuove gli statoRete foglia non finali da uno spazio comportamentale
     private static SpazioComportamentale potatura3(SpazioComportamentale spazioC, List<StatoReteAbstract> statiSpazioC, long tempoIniziale) {
         ArrayList<StatoInterface> vertici = new ArrayList<>(spazioC.getVertici());
-        int numeroVerticiRimossi=-1;
+        int numeroVerticiRimossi = -1;
         boolean verticeRimosso = true;
         while (verticeRimosso && System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
             numeroVerticiRimossi++;
@@ -1935,12 +1934,14 @@ public class Controller {
             if (!visited.contains(vertex)) {
 
                 visited.add(vertex);
-                StatoInterface vertexDaControllareVicinato =  vertex;
-                if(vertex.getClass() == StatoReteDecorato.class){
-                    vertexDaControllareVicinato=new StatoReteDecorato((StatoReteDecorato)vertex, -1);
-                    
+                StatoReteAbstract vertexDaControllareVicinato = (StatoRete)vertex;
+                if (vertex.getClass() == StatoReteDecorato.class) {
+                    vertexDaControllareVicinato = new StatoReteDecorato((StatoReteDecorato) vertex, -1);
+                    vertexDaControllareVicinato.setDescrizione(((StatoReteAbstract)vertex).getDescrizione());
+
                 }
-                for (StatoInterface v : spazioC.getVerticiAdiacenti(vertexDaControllareVicinato)) {
+                List<StatoInterface> verticiAdiacenti = spazioC.getVerticiAdiacenti(vertexDaControllareVicinato);
+                for (StatoInterface v : verticiAdiacenti) {
                     stack.push(v);
                 }
             }
@@ -1964,11 +1965,12 @@ public class Controller {
             spazioComportamentaleRidenominato.aggiungiVertice(v);
         }
         for (StatoInterface v : vertici) {
-            StatoInterface verticeDaControllareVicinato = v;
+            StatoReteAbstract verticeDaControllareVicinato = (StatoRete) v;
             List<StatoInterface> verticiAdiacenti;
-            if(v.getClass()==StatoReteDecorato.class){
+            if (v.getClass() == StatoReteDecorato.class) {
                 //in questo caso lo spazio comportamentale e' stato inserito con le key aventi numero=-1, pertanto la funzione hash e' già stata calcolata
-                verticeDaControllareVicinato=new StatoReteDecorato((StatoReteDecorato)v,-1);
+                verticeDaControllareVicinato = new StatoReteDecorato((StatoReteDecorato) v, -1);
+                verticeDaControllareVicinato.setDescrizione(((StatoReteAbstract)v).getDescrizione());
             }
             verticiAdiacenti = spazioC.getVerticiAdiacenti(verticeDaControllareVicinato);
             StatoReteRidenominato vRidenominato = new StatoReteRidenominato((StatoReteAbstract) v);
