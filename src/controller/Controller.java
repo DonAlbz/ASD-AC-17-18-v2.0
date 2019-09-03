@@ -146,8 +146,13 @@ public class Controller {
                         //STAMPARE CAMMINI FATTI
                     } else {
                         spazioComportamentaleDecorato = ridenominaStati(spazioComportamentaleDecorato);
-                        if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
-                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE E NUMERATO MA NON RIDENOMINATO
+                        if (System.currentTimeMillis() - tempoIniziale > Parametri.getTempoEsecuzioneMax()) {
+                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE 
+                            //STAMPARE CAMMINI FATTI
+                        }else{
+                            spazioComportamentaleDecorato = etichettaOsservabilita(spazioComportamentaleDecorato);
+                        } if (System.currentTimeMillis() - tempoIniziale < Parametri.getTempoEsecuzioneMax()) {
+                            //TODO CAMO MESSAGGIO INTERRUZIONE, DIRE CHE E' CREATO LO SPAZIO COMPORTAMENTALE 
                             //STAMPARE CAMMINI FATTI
                         }
                         rete.setSpazioC(spazioComportamentaleDecorato);

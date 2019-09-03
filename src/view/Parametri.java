@@ -129,7 +129,7 @@ public class Parametri {
     public final static int NUMERO_RIGA_NOMI_RILEVANZA = 15;
 
     public static long tempoEsecuzioneMax=Long.MAX_VALUE;// >=1000
-    public static boolean metodoAlternativiCreazioneSpaziDecorati=true;
+    public static boolean metodoAlternativiCreazioneSpaziDecorati=false;
     public final static long LIMITE_MINIMO_TEMPORALE=1000; // in millisecondi
     
 
