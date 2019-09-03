@@ -122,13 +122,13 @@ public class View {
         System.out.println("L'import della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
         System.out.println("");
     }
-    
-    public static void messaggioSalvataggioCorretto(Rete rete){
+
+    public static void messaggioSalvataggioCorretto(Rete rete) {
         System.out.println("");
         System.out.println("Il salvataggio della rete è avvenuto in maniera corretta");
         System.out.println("");
     }
-    
+
     public static void messaggioCaricamentoCorretto(Rete rete) {
         System.out.println("");
         System.out.println("Il caricamento della rete " + rete.getDescrizione() + " è avvenuto in maniera corretta");
@@ -166,15 +166,15 @@ public class View {
     public static void stampaDiagnosi(String diagnosi) {
         System.out.println(diagnosi);
     }
-    
-    public static void stampaDeterminizzazione(List<StatoDFA> vertici){
+
+    public static void stampaDeterminizzazione(List<StatoDFA> vertici) {
         System.out.println(Parametri.DETERMINIZZAZIONE_ETICHETTA);
         // modifico il nome del vertice lasciando soltanto il numero e togliendo la "a" e aggiungendo una unità al nome
         List<String> daStampare = new ArrayList<>();
         for (StatoDFA s : vertici) {
             String nomeStato = s.getNome();
             String[] listaNomi = nomeStato.split(" ");
-            if(listaNomi.length==1){
+            if (listaNomi.length == 1) {
                 String nomeDaStampare = listaNomi[0];
                 nomeDaStampare = nomeDaStampare.replace("a", "");
                 nomeDaStampare = nomeDaStampare.replace("b", "");
@@ -197,23 +197,23 @@ public class View {
                 daStampare.add(totale);
             }
         }
-        
+
         // stampa
         int count = 0;
         String stampa = "";
         String ultimoStato = "";
-        for(String s : daStampare){
-            if(count == 0){
+        for (String s : daStampare) {
+            if (count == 0) {
                 ultimoStato = s;
                 count++;
             } else {
                 stampa = stampa.concat(ultimoStato);
                 stampa = stampa.concat(Parametri.TAB);
                 stampa = stampa.concat(Parametri.TAB);
-                if(ultimoStato.length()<10){
+                if (ultimoStato.length() < 10) {
                     stampa = stampa.concat(Parametri.TAB);
                 }
-                if(ultimoStato.length()<15){
+                if (ultimoStato.length() < 15) {
                     stampa = stampa.concat(Parametri.TAB);
                 }
 //                stampa = stampa.concat(Parametri.TAB);
@@ -231,8 +231,8 @@ public class View {
         }
         System.out.println(stampa);
     }
-    
-    public static void stampaDeterminizzazioneFusioneDizionari(List<StatoDFA> vertici){
+
+    public static void stampaDeterminizzazioneFusioneDizionari(List<StatoDFA> vertici) {
         System.out.println(Parametri.DETERMINIZZAZIONE_DIZIONARI);
         List<String> daStampare = new ArrayList<>();
         int count = 0;
@@ -240,13 +240,13 @@ public class View {
         String ultimoStato = "";
         for (StatoDFA s : vertici) {
             String nomeStato = s.getNome();
-            if(count==0){
+            if (count == 0) {
                 ultimoStato = nomeStato;
                 count++;
             } else {
                 stampa = stampa.concat(ultimoStato);
                 stampa = stampa.concat(Parametri.TAB);
-                if(ultimoStato.length()<10){
+                if (ultimoStato.length() < 10) {
                     stampa = stampa.concat(Parametri.TAB);
                 }
                 stampa = stampa.concat(Parametri.TAB);
@@ -264,7 +264,7 @@ public class View {
         }
         System.out.println(stampa);
     }
-    
+
     public static void stampaLegendaEspressioneRegolareTransizioni(Rete rete) {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.SEPARATORE);
@@ -272,11 +272,11 @@ public class View {
         System.out.print(Parametri.A_CAPO);
         System.out.print("L'alfabeto è composto da queste transizioni: [ ");
         List<Automa> automi = rete.getAutomi();
-        for(Automa automa : automi){
+        for (Automa automa : automi) {
             List<Stato> stati = automa.getStati();
-            for(Stato stato : stati){
+            for (Stato stato : stati) {
                 List<Transizione> transizioni = stato.getTransizioni();
-                for(Transizione transizione : transizioni){
+                for (Transizione transizione : transizioni) {
                     System.out.print(transizione.getDescrizione() + " ");
                 }
             }
@@ -289,95 +289,95 @@ public class View {
         System.out.println(Parametri.SEPARATORE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreDiagnosiImpossibile(){
+
+    public static void messaggioErroreDiagnosiImpossibile() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI_IMPOSSIBILE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void stampaLimiteTemporale(){
+
+    public static void stampaLimiteTemporale() {
         System.out.print(Parametri.A_CAPO);
         System.out.println("Il tempo di esecuzione massimo impostato nel progetto è di: " + Parametri.tempoEsecuzioneMax + "ms");
     }
-    
-    public static void messaggioErroreTempoInsufficiente(){
+
+    public static void messaggioErroreTempoInsufficiente() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_TEMPO_INSUFFICIENTE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioImpossibileDiagnosi(){
+
+    public static void messaggioImpossibileDiagnosi() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_DIAGNOSI_IMPOSSIBILE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioImpossibileCreareDizionarioIncrementale(){
+
+    public static void messaggioImpossibileCreareDizionarioIncrementale() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_CREAZIONE_DIZIONARIO_INCREMENTALE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreCamminiParziali(){
+
+    public static void messaggioErroreCamminiParziali() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_CAMMINI_PARZIALI);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreCreazioneSpazioCompNoNumeratoNoRidenominato(){
+
+    public static void messaggioErroreCreazioneSpazioCompNoNumeratoNoRidenominato() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NO_NUMERATO_NO_RIDENOMINATO);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato(){
+
+    public static void messaggioErroreCreazioneSpazioCompNumeratoNoRidenominato() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CREATO_NUMERATO_NO_RIDENOMINATO);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreSpazioComportamentaleDecorato(){
+
+    public static void messaggioErroreSpazioComportamentaleDecorato() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreSpazioComportamentaleDecoratoCamminiParziali(){
+
+    public static void messaggioErroreSpazioComportamentaleDecoratoCamminiParziali() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_CAMMINI_PARZIALI);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreSpazioComportamentaleCamminiParziali(){
+
+    public static void messaggioErroreSpazioComportamentaleCamminiParziali() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_CAMMINI_PARZIALI);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreSpazioComportamentaleDecoratoVerticiParziali(){
+
+    public static void messaggioErroreSpazioComportamentaleDecoratoVerticiParziali() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_DECORATO_VERTICI_PARZIALI);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreSpazioComportamentaleVerticiParziali(){
+
+    public static void messaggioErroreSpazioComportamentaleVerticiParziali() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_SPAZIO_COMPORTAMENTALE_VERTICI_PARZIALI);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreNoSpazioDaOsservazione(){
+
+    public static void messaggioErroreNoSpazioDaOsservazione() {
         System.out.println(Parametri.MESSAGGIO_ERRORE_NO_STATO_DA_OSSERVAZIONE);
     }
-    
-    public static void messaggioErroreInserimentoSpazioComportamentale(){
+
+    public static void messaggioErroreInserimentoSpazioComportamentale() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioErroreCreazioneSpazioMancanzaTempo(){
+
+    public static void messaggioErroreCreazioneSpazioMancanzaTempo() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_ERRORE_INSERIMENTO_SPAZIO_COMPORTAMENTALE);
         System.out.print(Parametri.A_CAPO);
@@ -389,17 +389,140 @@ public class View {
         System.out.println();
         System.out.println();
     }
-    
-    public static void messaggioConfermaSpazioComportamentaleDecoratoCreato(){
+
+    public static void messaggioConfermaSpazioComportamentaleDecoratoCreato() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_SPAZIO_COMPORTAMENTALE_DECORATO_CREATO);
         System.out.print(Parametri.A_CAPO);
     }
-    
-    public static void messaggioMetodoAlternativoAttivo(){
+
+    public static void messaggioMetodoAlternativoAttivo() {
         System.out.print(Parametri.A_CAPO);
         System.out.println(Parametri.MESSAGGIO_METODO_ALTERNATIVO_ATTIVO);
         System.out.print(Parametri.A_CAPO);
     }
-    
+
+    public static void stampaSpazioComportamentale(SpazioComportamentale spazio) {
+
+        StringBuilder s = new StringBuilder();
+        s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
+        s.append(Parametri.A_CAPO);
+        for (StatoInterface statoPartenza : spazio.getVertici()) {
+            s.append(Parametri.PARENTESI_QUADRA_A);
+            s.append(statoPartenza.getNome());
+            s.append(Parametri.PARENTESI_QUADRA_C);
+            s.append(Parametri.TAB);
+            s.append(((StatoReteAbstract) statoPartenza).getDescrizione());
+
+            // aggiunta della decorazione
+//            StatoReteAbstract statoReteAbstract = (StatoReteAbstract) statoPartenza;
+//            List<String> decorazioni = statoReteAbstract.getDecorazione();
+//            for(String d : decorazioni){
+//                s.append(d);
+//            }
+//            s.append(statoReteAbstract.getDecorazione());
+            s.append(Parametri.TAB);
+            s.append(Parametri.FRECCIA);
+            s.append(Parametri.TAB);
+            int i = 0;
+            for (StatoInterface statoArrivo : spazio.getVerticiAdiacenti(statoPartenza)) {
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+                s.append(Parametri.PARENTESI_QUADRA_A);
+                s.append(((StatoReteAbstract) statoArrivo).getTransizionePrecedente().getDescrizione());
+                s.append(Parametri.SPAZIO);
+                s.append(Parametri.PARENTESI_TONDA_A);
+//                if (((StatoReteAbstract) statoArrivo).getOsservabilita() != null) {
+//                    s.append(((StatoReteAbstract) statoArrivo).getOsservabilita());
+//                } else {
+//                    s.append(Parametri.EVENTO_NULLO);
+//                }
+//                    s.append(Parametri.SPAZIO);
+                if (statoArrivo.getNome() != null) {
+                    s.append(statoArrivo.getNome());
+                } else {
+                    s.append(((StatoRete) statoArrivo).getNumero());
+                }
+//                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
+                s.append(Parametri.PARENTESI_TONDA_C);
+                s.append(Parametri.PARENTESI_QUADRA_C);
+                i++;
+            }
+            s.append(Parametri.A_CAPO);
+
+        }
+        System.out.println(s.toString());
+    }
+
+    public static void stampaSpazioComportamentaleDecorato(SpazioComportamentale spazio) {
+
+        StringBuilder s = new StringBuilder();
+        s.append(Parametri.SPAZIO_COMPORTAMENTALE_ETICHETTA);
+        s.append(Parametri.A_CAPO);
+        for (StatoInterface statoPartenza : spazio.getVertici()) {
+            s.append(Parametri.PARENTESI_QUADRA_A);
+            s.append(statoPartenza.getNome());
+            s.append(Parametri.PARENTESI_QUADRA_C);
+            s.append(Parametri.TAB);
+            s.append(((StatoReteAbstract) statoPartenza).getDescrizione());
+
+            // aggiunta della decorazione
+//            StatoReteAbstract statoReteAbstract = (StatoReteAbstract) statoPartenza;
+//            List<String> decorazioni = statoReteAbstract.getDecorazione();
+//            for(String d : decorazioni){
+//                s.append(d);
+//            }
+//            s.append(statoReteAbstract.getDecorazione());
+            s.append(Parametri.TAB);
+            s.append(Parametri.FRECCIA);
+            s.append(Parametri.TAB);
+            int i = 0;
+            for (StatoInterface statoArrivo : spazio.getVerticiAdiacenti(statoPartenza)) {
+                if (i > 0) {
+                    s.append(Parametri.VIRGOLA);
+                    s.append(Parametri.SPAZIO);
+                }
+                s.append(Parametri.PARENTESI_QUADRA_A);
+                s.append(((StatoReteAbstract) statoArrivo).getTransizionePrecedente().getDescrizione());
+                s.append(Parametri.SPAZIO);
+                s.append(Parametri.PARENTESI_TONDA_A);
+//                if (((StatoReteAbstract) statoArrivo).getOsservabilita() != null) {
+//                    s.append(((StatoReteAbstract) statoArrivo).getOsservabilita());
+//                } else {
+//                    s.append(Parametri.EVENTO_NULLO);
+//                }
+//                    s.append(Parametri.SPAZIO);
+                if (statoArrivo.getNome() != null) {
+                    s.append(statoArrivo.getNome());
+                } else {
+                    s.append(((StatoRete) statoArrivo).getNumero());
+                }
+//                s.append(((StatoReteAbstract) statoArrivo).toStringShort());//                
+                s.append(Parametri.PARENTESI_TONDA_C);
+                s.append(Parametri.PARENTESI_GRAFFA_A);
+                if (((StatoReteRidenominato) statoArrivo).getDecorazione() == null) {
+                    s.append(Parametri.INSIEME_VUOTO);
+                } else {
+                    int j = 0;
+                    for (String decorazione : ((StatoReteRidenominato) statoArrivo).getDecorazione()) {
+                        if (j > 0) {
+                            s.append(Parametri.VIRGOLA);
+                            s.append(Parametri.SPAZIO);
+                        }
+                        s.append(decorazione);
+                        j++;
+                    }
+                }
+                s.append(Parametri.PARENTESI_GRAFFA_C);
+                s.append(Parametri.PARENTESI_QUADRA_C);
+                i++;
+            }
+            s.append(Parametri.A_CAPO);
+
+        }
+        System.out.println(s.toString());
+    }
+
 }
