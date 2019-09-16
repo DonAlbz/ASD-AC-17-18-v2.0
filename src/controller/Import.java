@@ -5,8 +5,6 @@ package controller;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import view.Parametri;
 import view.View;
 import Model.Stato;
@@ -73,7 +71,7 @@ public class Import {
             // aggiunta dell'automa
             Automa automa = new Automa(automa_str);
             rete.addAutoma(automa);
-            
+
             // aggiunta degli stati di automa
             ArrayList<String> statiAutoma = getStatiDaAutoma(automa, file);
             int i = 1;
@@ -99,7 +97,7 @@ public class Import {
                     int indiceEventoRichiesto = getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file);
                     if (indiceEventoRichiesto == -1) {
 //                        System.out.println("Nessun evento richiesto");
-                        String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
+                        String[] eventiInUscitaString = getEventiInUscita(linkString, automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         String rilevanza = getRilevanza(automa, nomeTransizione, file);
 //                        System.out.println("La sua rilevanza è: " + rilevanza);
@@ -110,7 +108,7 @@ public class Import {
                     } else {
                         Evento eventoRichiesto = eventi[getIndiceEventoRichiesto(automa, nomeTransizione, eventi, file)];
 //                        System.out.println("Evento richiesto: " + eventoRichiesto.getDescrizione());
-                        String[] eventiInUscitaString = getEventiInUscita(automa, transizione, file);
+                        String[] eventiInUscitaString = getEventiInUscita(linkString, automa, transizione, file);
                         Evento[] eventiInUscita = getEventiInUscita(rete, eventiString, eventiInUscitaString);
                         String rilevanza = getRilevanza(automa, nomeTransizione, file);
 //                        System.out.println("La sua rilevanza è: " + rilevanza);
@@ -123,7 +121,7 @@ public class Import {
                 }
             }
         }
-        
+
         return rete;
     }
 
@@ -232,14 +230,14 @@ public class Import {
         String[] eventi = daSplittare.split("\t");
         return eventi;
     }
-    
-    private String[] getEtichettaOsservabilita(List<String> fileInput){
+
+    private String[] getEtichettaOsservabilita(List<String> fileInput) {
         String daSplittare = fileInput.get(Parametri.NUMERO_RIGA_NOMI_OSSERVABILITA);
         String[] dizionario = daSplittare.split("\t");
         return dizionario;
     }
-    
-    private String[] getEtichettaRilevanza(List<String> fileInput){
+
+    private String[] getEtichettaRilevanza(List<String> fileInput) {
         String daSplittare = fileInput.get(Parametri.NUMERO_RIGA_NOMI_RILEVANZA);
         String[] dizionario = daSplittare.split("\t");
         return dizionario;
@@ -283,9 +281,11 @@ public class Import {
     /**
      *
      * @param automa automa che contiene tutti gli stati
-     * @param nomeTransizione nome della transizione di riferimento per cercare il suo stato di destinazione
+     * @param nomeTransizione nome della transizione di riferimento per cercare
+     * il suo stato di destinazione
      * @param fileInput lista contenente le stringhe del file input.txt
-     * @return viene ritornato il nome dello stato destinazione della transizione
+     * @return viene ritornato il nome dello stato destinazione della
+     * transizione
      */
     private String getStatoDestinazioneDiTransizione(Automa automa, String nomeTransizione, List<String> fileInput) {
         String statoDestinazione = null;
@@ -338,8 +338,8 @@ public class Import {
         return indiceEventoRichiesto;
     }
 
-    private String[] getEventiInUscita(Automa automa, String nomeTransizione, List<String> fileInput) {
-        String[] eventiInUscita = null;
+    private String[] getEventiInUscita(String[] linkString, Automa automa, String nomeTransizione, List<String> fileInput) {
+        String[] eventiInUscita = new String[linkString.length];
         for (int i = 0; i < fileInput.size(); i++) {
             if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
                 while (!fileInput.get(i).equals(Parametri.SEPARATORE)) {
@@ -357,9 +357,15 @@ public class Import {
                                 // salto il primo carattere perche' e' "{"
                                 String eventiDaSplittare = transizioneDaConfrontare.substring(j + 2, transizioneDaConfrontare.length() - 1);
                                 // lo split dei successivi eventi in uscita avviene soltanto dividendo con la virgola
-                                eventiInUscita = eventiDaSplittare.split(",");
-                                for (int x = 0; x < eventiInUscita.length; x++) {
-                                    eventiInUscita[x] = rimuoviParentesi(eventiInUscita[x]);
+                                String eventiSplittati[] = eventiDaSplittare.split(",");
+                                for (int x = 0; x < eventiSplittati.length; x++) {
+                                    String linkPosizioneEvento = eventiSplittati[x].substring(3, 5);
+                                    for (int k = 0; k < linkString.length; k++) {
+                                        if (linkPosizioneEvento.equals(linkString[k])) {
+                                            eventiInUscita[k] = rimuoviParentesi(eventiSplittati[x]);
+                                        }
+                                    }
+//                                    eventiInUscita[x] = rimuoviParentesi(eventiInUscita[x]);
                                 }
                                 return eventiInUscita;
                             }
@@ -373,31 +379,43 @@ public class Import {
     }
 
     /**
-     * e' un metodo di conversione da String[] a Evento[] necessario per la costruzione dell'istanza di transizione
+     * e' un metodo di conversione da String[] a Evento[] necessario per la
+     * costruzione dell'istanza di transizione
      *
      * @param eventi array che contiene tutti gli eventi della rete
      * @param eventiInUscita eventi in uscita dalla transizione considerata
-     * @return ritorna l'array di Evento nel caso ci sono eventiInUscita dalla transizione, altrimenti ritorna null
+     * @return ritorna l'array di Evento nel caso ci sono eventiInUscita dalla
+     * transizione, altrimenti ritorna null
      */
     private Evento[] getEventiInUscita(Rete rete, String[] eventi, String[] eventiInUscita) {
-        Evento[] eventiFinale = new Evento[eventi.length];
-        for (int x = 0; x < eventi.length; x++) {
+        Evento[] eventiFinale = new Evento[rete.getLink().length];
+        for (int x = 0; x < rete.getLink().length; x++) {
             //eventiFinale[x] = new Evento(null);
             eventiFinale[x] = null;
         }
 
-        int i = 0;
+//        int i = 0;
         if (eventiInUscita != null) {
-            while (i < eventiInUscita.length) {
-                for (int j = 0; j < eventi.length; j++) {
-                    if (eventiInUscita[i].equalsIgnoreCase(eventi[j])) {
-                        String daCopiare = eventiInUscita[i];
-                        //eventiFinale[j] = new Evento(daCopiare);
-                        eventiFinale[j] = rete.getEvento(daCopiare);
+            for (int i = 0; i < eventiInUscita.length; i++) {
+                if (eventiInUscita[i] != null) {
+                    for (int j = 0; j < eventi.length; j++) {
+                        if (eventi[j].equals(eventiInUscita[i])) {
+                            eventiFinale[i]=rete.getEvento(eventiInUscita[i]);
+                        }
                     }
                 }
-                i++;
             }
+
+//            while (i < eventiInUscita.length) {
+//                for (int j = 0; j < eventi.length; j++) {
+//                    if (eventiInUscita[i].equalsIgnoreCase(eventi[j])) {
+//                        String daCopiare = eventiInUscita[i];
+//                        //eventiFinale[j] = new Evento(daCopiare);
+//                        eventiFinale[i] = rete.getEvento(daCopiare);
+//                    }
+//                }
+//                i++;
+//            }
         } else {
             eventiFinale = null;
         }
@@ -441,16 +459,20 @@ public class Import {
      * @param nomeTransizione e' il nome della transizione che sto considerando
      * @param elencoLink
      * @param fileInput
-     * @return la funzione ritorna un int in cui, se esiste, ritorna la posizione del link "attivatore" della transizione altrimenti ritorna -1. 
-     * Di riferimento si veda il metodo getLink in cui si calcolano quanti link ci sono nella rete
+     * @return la funzione ritorna un int in cui, se esiste, ritorna la
+     * posizione del link "attivatore" della transizione altrimenti ritorna -1.
+     * Di riferimento si veda il metodo getLink in cui si calcolano quanti link
+     * ci sono nella rete
      */
     private int getLinkInDiTransizione(Automa automa, String nomeTransizione, String[] elencoLink, List<String> fileInput) {
         int posizioneLink = -1;
         for (int i = 0; i < fileInput.size(); i++) {
             if (fileInput.get(i).equals(automa.getDescrizione()) && i != 3) {
                 while (!fileInput.get(i).equalsIgnoreCase(Parametri.OSSERVABILITA)) {
+                    //La transizione deve contenere la lettera t
                     if (fileInput.get(i).length() != 0 && fileInput.get(i).contains("t")) {
                         String transizioneIntera = fileInput.get(i);
+                        //deve essere di 3 caratteri
                         String transizione = transizioneIntera.substring(0, 3);
                         if (transizione.equalsIgnoreCase(nomeTransizione)) {
                             // controllo che la transizione non abbia linkIn vuoti
@@ -481,7 +503,8 @@ public class Import {
      * @param stato stato in cui si vuole cercare se esce qualche transizione.
      * @param automa automa dove e' contenuto lo stato considerato
      * @param fileInput fine inpunt contenente il txt
-     * @return vengono ritornate le strighe con i nomi delle transizioni che escono dallo stato, null se non esce alcuna transizione
+     * @return vengono ritornate le strighe con i nomi delle transizioni che
+     * escono dallo stato, null se non esce alcuna transizione
      */
     private ArrayList<String> getStatiDiPartenza(Stato stato, Automa automa, List<String> fileInput) {
         ArrayList<String> transizioniUscenti = new ArrayList<>();
@@ -502,22 +525,21 @@ public class Import {
         }
         return transizioniUscenti;
     }
-    
-    private String getOsservabilita(Automa automa, String nomeTransizione, List<String> fileInput){
+
+    private String getOsservabilita(Automa automa, String nomeTransizione, List<String> fileInput) {
         String osservabilita = null;
-        for(int i = 0; i < fileInput.size(); i++){
-            if(fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())){
-                while(!fileInput.get(i).equals(Parametri.SEPARATORE)){
-                    if(fileInput.get(i).equalsIgnoreCase(Parametri.OSSERVABILITA)){
+        for (int i = 0; i < fileInput.size(); i++) {
+            if (fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())) {
+                while (!fileInput.get(i).equals(Parametri.SEPARATORE)) {
+                    if (fileInput.get(i).equalsIgnoreCase(Parametri.OSSERVABILITA)) {
                         i++;
-                        while(!fileInput.get(i).isEmpty()){
+                        while (!fileInput.get(i).isEmpty()) {
                             String transizione = fileInput.get(i).substring(0, 3);
-                            if(transizione.equalsIgnoreCase(nomeTransizione)){
-                                if(fileInput.get(i).contains(Parametri.NULL)){
+                            if (transizione.equalsIgnoreCase(nomeTransizione)) {
+                                if (fileInput.get(i).contains(Parametri.NULL)) {
                                     osservabilita = null;
-                                }
-                                else{
-                                    osservabilita = fileInput.get(i).substring(5,7);
+                                } else {
+                                    osservabilita = fileInput.get(i).substring(5, 7);
                                 }
                             }
                             i++;
@@ -529,24 +551,23 @@ public class Import {
         }
         return osservabilita;
     }
-    
-    private String getRilevanza(Automa automa, String nomeTransizione, List<String> fileInput){
+
+    private String getRilevanza(Automa automa, String nomeTransizione, List<String> fileInput) {
         String rilevanza = null;
-        for(int i = 0; i < fileInput.size(); i++){
-            if(fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())){
+        for (int i = 0; i < fileInput.size(); i++) {
+            if (fileInput.get(i).equalsIgnoreCase(automa.getDescrizione())) {
                 i++;
-                while(!fileInput.get(i).equalsIgnoreCase(Parametri.RILEVANZA)){
+                while (!fileInput.get(i).equalsIgnoreCase(Parametri.RILEVANZA)) {
                     i++;
                 }
                 i++;
-                while(!fileInput.get(i).contains(nomeTransizione)){
+                while (!fileInput.get(i).contains(nomeTransizione)) {
                     i++;
                 }
-                if(fileInput.get(i).contains(Parametri.NULL)){
+                if (fileInput.get(i).contains(Parametri.NULL)) {
                     rilevanza = null;
-                }
-                else {
-                    rilevanza = fileInput.get(i).substring(5,6);
+                } else {
+                    rilevanza = fileInput.get(i).substring(5, 6);
                 }
             }
         }

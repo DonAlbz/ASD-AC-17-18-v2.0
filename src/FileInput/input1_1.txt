@@ -1,0 +1,79 @@
+inputSB
+-----------------------
+AUTOMI
+S	B
+-----------------------
+LINK
+L1
+-----------------------
+EVENTI
+op	cl
+-----------------------
+OSSERVABILITA
+ac	op	cl	sb
+-----------------------
+RILEVANZA
+a	b	c	d
+-----------------------
+S
+0	1	2
+
+0	ts1	1
+0	ts3	2
+1	ts2	0
+1	ts4	2
+
+
+
+ts1: /{op(L1)}
+ts2: /{cl(L1)}
+ts3: /{cl(L1)}
+ts4: /{op(L1)}
+
+OSSERVABILITA
+ts1: ac
+ts2: sb
+ts3: ac
+ts4: sb
+
+RILEVANZA
+ts1: null
+ts2: null
+ts3: a
+ts4: b
+
+-----------------------
+B
+20	21
+
+20	tb1	21
+20	tb3	20
+20	tb5	20
+21	tb2	20
+21	tb4	21
+21	tb6	21
+
+tb1: op(L1)
+tb2: cl(L1)
+tb3: op(L1)
+tb4: cl(L1)
+tb5: cl(L1)
+tb6: op(L1)
+
+OSSERVABILITA
+tb1: op
+tb2: cl
+tb3: null
+tb4: null
+tb5: null
+tb6: null
+
+RILEVANZA
+tb1: null
+tb2: null
+tb3: c
+tb4: d
+tb5: null
+tb6: null
+
+-----------------------
